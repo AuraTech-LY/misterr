@@ -88,7 +88,23 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         setIsLocating(false);
         
         // Call Geoapify reverse geocoding via Edge Function
-        await reverseGeocode(latitude, longitude);
+        try {
+          await reverseGeocode(latitude, longitude);
+        } catch (geoError) {
+          console.error('Reverse geocoding failed:', geoError);
+          setLocationError(`خطأ في تحديد المنطقة: ${geoError instanceof Error ? geoError.message : 'Unknown error'}. يرجى إدخال اسم المنطقة يدوياً.`);
+          setManualAreaRequired(true);
+          setAutoDetectedArea('');
+          setShowAreaConfirmation(false);
+          setAreaConfirmed(false);
+          setFormData(prev => ({
+            ...prev,
+            deliveryInfo: {
+              ...prev.deliveryInfo,
+              area: ''
+            }
+          }));
+        }
       },
       (error) => {
         setIsLocating(false);
