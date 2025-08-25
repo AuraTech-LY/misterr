@@ -125,25 +125,50 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
   // Reverse geocoding using Supabase Edge Function
   const reverseGeocode = async (latitude: number, longitude: number) => {
     try {
-      setGeoApiLoading(true);
+      console.log('Calling Geoapify API directly with coordinates:', { latitude, longitude });
       
-      console.log('Calling Edge Function for reverse geocoding...');
+      // Call Geoapify API directly from client
+      const requestOptions = {
+        method: 'GET',
+      };
+
+      const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
       
-      const { data, error } = await supabase.functions.invoke('geoapify-reverse-geocode', {
-        body: { latitude, longitude }
-      });
+      console.log(`Making direct request to: ${geoapifyUrl}`);
 
-      console.log('Edge Function response:', { data, error });
+      const response = await fetch(geoapifyUrl, requestOptions);
+      const result = await response.json();
 
-      if (error) {
-        console.error('Edge Function error:', error);
-        throw new Error(`Edge Function error: ${error.message || 'Unknown error'}`);
+      console.log('Geoapify direct response:', JSON.stringify(result, null, 2));
+
+      if (!response.ok) {
+        console.error("Geoapify API error:", result);
+        throw new Error(`Geoapify API error: ${result.message || 'Unknown error'}`);
       }
 
-      if (data?.success && data?.neighborhood) {
-        console.log('Successfully got neighborhood:', data.neighborhood);
-        setAutoDetectedArea(data.neighborhood);
-        setShowAreaConfirmation(true);
+      // Parse the results array
+      const locationResult = result.results?.[0];
+      if (!locationResult) {
+        throw new Error("No location data found for these coordinates");
+      }
+
+      // Extract neighborhood/area from the result
+      const neighborhood = 
+        locationResult.suburb ||
+        locationResult.city_district ||
+        locationResult.neighbourhood ||
+        locationResult.quarter ||
+        locationResult.district ||
+        locationResult.city ||
+        locationResult.town ||
+        locationResult.village ||
+        locationResult.state_district ||
+        locationResult.county ||
+        'منطقة غير محددة';
+
+      console.log(`Extracted neighborhood: ${neighborhood}`);
+      return neighborhood.trim();
+      
         setLocationError('');
       } else {
         console.log('No neighborhood found, falling back to manual input');
@@ -152,7 +177,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
       }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
-      setManualAreaRequired(true);
+      throw new Error(`Reverse geocoding error: ${error.message}`);
       setLocationError(`خطأ في تحديد المنطقة: ${error.message}. يرجى إدخال اسم المنطقة يدوياً.`);
     } finally {
       setGeoApiLoading(false);
