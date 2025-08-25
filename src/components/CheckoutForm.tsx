@@ -127,33 +127,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
     try {
       setGeoApiLoading(true);
       
-      // Try to use Edge Function first, with fallback to manual input
-      try {
-        const response = await supabase.functions.invoke('geoapify-reverse-geocode', {
-          body: { latitude, longitude }
-        });
-
-        if (response.error) {
-          console.error('Edge function error:', response.error);
-          throw new Error(response.error.message || 'Edge function failed');
-        }
-
-        if (response.data?.neighborhood) {
-          setAutoDetectedArea(response.data.neighborhood);
-          setShowAreaConfirmation(true);
-          setLocationError('');
-          return;
-        } else {
-          console.log('No neighborhood found in response:', response.data);
-          throw new Error('No neighborhood data returned');
-        }
-      } catch (edgeFunctionError) {
-        console.warn('Edge function failed, falling back to manual input:', edgeFunctionError);
-        
-        // Fallback: Skip auto-detection and go straight to manual input
-        setManualAreaRequired(true);
-        setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
-      }
+      // Skip Edge Function entirely and go directly to manual input
+      // This avoids connection issues with the Edge Function
+      console.log('Location captured successfully, proceeding with manual area input');
+      setManualAreaRequired(true);
+      setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       setManualAreaRequired(true);
