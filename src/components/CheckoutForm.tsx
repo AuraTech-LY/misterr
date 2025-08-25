@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { User, Phone, MapPin, Truck, Store, ArrowRight } from 'lucide-react';
 import { CartItem } from '../types';
 import { CustomSelect } from './CustomSelect';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 interface CheckoutFormProps {
   total: number;
@@ -46,7 +52,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
   const [customerLocation, setCustomerLocation] = useState<{latitude: number, longitude: number} | null>(null);
-  const [showManualAddressInput, setShowManualAddressInput] = useState(false);
+  const [autoDetectedArea, setAutoDetectedArea] = useState('');
+  const [showAreaConfirmation, setShowAreaConfirmation] = useState(false);
+  const [areaConfirmed, setAreaConfirmed] = useState(false);
+  const [manualAreaRequired, setManualAreaRequired] = useState(false);
+  const [geoApiLoading, setGeoApiLoading] = useState(false);
 
   // Smart defaults based on common patterns
   const popularAreas = ['المدينة القديمة', 'الحدائق', 'الجامعة', 'السوق المركزي', 'الكورنيش'];
@@ -55,14 +65,18 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
       setLocationError('الموقع الجغرافي غير مدعوم في هذا المتصفح. يرجى استخدام متصفح يدعم تحديد الموقع.');
+      setManualAreaRequired(true);
       return;
     }
 
     setIsLocating(true);
     setLocationError('');
+    setAutoDetectedArea('');
+    setShowAreaConfirmation(false);
+    setAreaConfirmed(false);
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
         const location = { latitude, longitude };
         
@@ -72,11 +86,14 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
           customerLocation: location
         }));
         setIsLocating(false);
-        setLocationError('');
+        
+        // Call Geoapify reverse geocoding via Edge Function
+        await reverseGeocode(latitude, longitude);
       },
       (error) => {
         setIsLocating(false);
         setCustomerLocation(null);
+        setManualAreaRequired(true);
         setFormData(prev => ({
           ...prev,
           customerLocation: undefined
@@ -103,6 +120,68 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         maximumAge: 300000 // 5 minutes
       }
     );
+  };
+
+  // Reverse geocoding using Supabase Edge Function
+  const reverseGeocode = async (latitude: number, longitude: number) => {
+    try {
+      setGeoApiLoading(true);
+      
+      const { data, error } = await supabase.functions.invoke('geoapify-reverse-geocode', {
+        body: { latitude, longitude }
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        setManualAreaRequired(true);
+        setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
+        return;
+      }
+
+      if (data?.neighborhood) {
+        setAutoDetectedArea(data.neighborhood);
+        setShowAreaConfirmation(true);
+        setLocationError('');
+      } else {
+        console.log('No neighborhood found in response:', data);
+        setManualAreaRequired(true);
+        setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
+      }
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      setManualAreaRequired(true);
+      setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
+    } finally {
+      setGeoApiLoading(false);
+    }
+  };
+
+  // Handle area confirmation
+  const handleAreaConfirmation = (confirmed: boolean) => {
+    if (confirmed) {
+      // User confirmed the auto-detected area
+      setFormData(prev => ({
+        ...prev,
+        deliveryInfo: {
+          ...prev.deliveryInfo,
+          area: autoDetectedArea
+        }
+      }));
+      setAreaConfirmed(true);
+      setShowAreaConfirmation(false);
+    } else {
+      // User denied the auto-detected area
+      setManualAreaRequired(true);
+      setShowAreaConfirmation(false);
+      setAutoDetectedArea('');
+      setFormData(prev => ({
+        ...prev,
+        deliveryInfo: {
+          ...prev.deliveryInfo,
+          area: ''
+        }
+      }));
+    }
   };
 
   // Real-time validation
@@ -175,7 +254,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
   const canProceedToStep2 = () => {
     return formData.customerInfo.name.trim().length >= 2 && 
            /^(091|092|093|094|095)\d{7}$/.test(formData.customerInfo.phone) &&
-           formData.deliveryInfo?.area?.trim() &&
+           (areaConfirmed || (manualAreaRequired && formData.deliveryInfo?.area?.trim())) &&
            !errors.name && !errors.phone;
   };
 
@@ -184,7 +263,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
     if (formData.deliveryMethod === 'delivery') {
       // Require location to be captured for delivery
       const hasLocation = formData.customerLocation?.latitude && formData.customerLocation?.longitude;
-      const hasArea = formData.deliveryInfo?.area?.trim();
+      const hasArea = areaConfirmed || (manualAreaRequired && formData.deliveryInfo?.area?.trim());
       
       return basicValid && hasLocation && hasArea;
     }
@@ -308,12 +387,46 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                     <input
                       type="text"
                       placeholder="المنطقة أو الحي (مثل: فينيسيا، الحدائق، حي السلام)"
-                      value={formData.deliveryInfo?.area || ''}
-                      onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
+                      value={areaConfirmed ? autoDetectedArea : (formData.deliveryInfo?.area || '')}
+                      onChange={(e) => {
+                        if (!areaConfirmed) {
+                          handleInputChange('deliveryInfo.area', e.target.value);
+                        }
+                      }}
+                      disabled={areaConfirmed}
                       className={`w-full p-4 border-2 rounded-full text-right transition-all ${
-                        errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#7A1120]'
+                        errors.area 
+                          ? 'border-red-300 bg-red-50' 
+                          : areaConfirmed 
+                          ? 'border-green-300 bg-green-50 text-green-800' 
+                          : 'border-gray-200 focus:border-[#7A1120]'
                       }`}
                     />
+                    {areaConfirmed && (
+                      <p className="text-green-600 text-xs sm:text-sm mt-1 flex items-center gap-1">
+                        ✓ تم تأكيد المنطقة تلقائياً
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAreaConfirmed(false);
+                            setManualAreaRequired(true);
+                            setAutoDetectedArea('');
+                            setFormData(prev => ({
+                              ...prev,
+                              deliveryInfo: { ...prev.deliveryInfo, area: '' }
+                            }));
+                          }}
+                          className="text-blue-600 hover:text-blue-800 underline mr-2"
+                        >
+                          تعديل
+                        </button>
+                      </p>
+                    )}
+                    {manualAreaRequired && !areaConfirmed && (
+                      <p className="text-orange-600 text-xs sm:text-sm mt-1">
+                        يرجى إدخال المنطقة يدوياً
+                      </p>
+                    )}
                     {errors.area && (
                       <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
                     )}
@@ -408,7 +521,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                         {isLocating ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            جاري تحديد الموقع...
+                            {geoApiLoading ? 'جاري تحديد المنطقة...' : 'جاري تحديد الموقع...'}
                           </>
                         ) : (
                           <>
@@ -417,6 +530,34 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                           </>
                         )}
                       </button>
+                    )}
+
+                    {/* Area Confirmation Prompt */}
+                    {showAreaConfirmation && autoDetectedArea && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3 animate-fadeInUp">
+                        <div className="text-center">
+                          <h4 className="font-semibold text-blue-800 mb-3">تأكيد المنطقة</h4>
+                          <p className="text-blue-700 mb-4">
+                            هل أنت في <span className="font-bold">{autoDetectedArea}</span>؟
+                          </p>
+                          <div className="flex gap-3 justify-center">
+                            <button
+                              type="button"
+                              onClick={() => handleAreaConfirmation(true)}
+                              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
+                            >
+                              نعم
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleAreaConfirmation(false)}
+                              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
+                            >
+                              لا
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     )}
 
                     {customerLocation && (
@@ -444,20 +585,49 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                   </div>
                   
                   {/* Manual Area Input */}
-                  {customerLocation && (
+                  {customerLocation && (areaConfirmed || manualAreaRequired) && (
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        المنطقة (مطلوب)
+                        {areaConfirmed ? 'المنطقة المؤكدة' : 'المنطقة (مطلوب)'}
                       </label>
                       <textarea
-                        placeholder="أدخل اسم المنطقة أو الحي (مثل: المدينة القديمة، الحدائق، الجامعة)"
-                        value={formData.deliveryInfo?.area || ''}
-                        onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
+                        placeholder={areaConfirmed ? '' : "أدخل اسم المنطقة أو الحي (مثل: المدينة القديمة، الحدائق، الجامعة)"}
+                        value={areaConfirmed ? autoDetectedArea : (formData.deliveryInfo?.area || '')}
+                        onChange={(e) => {
+                          if (!areaConfirmed) {
+                            handleInputChange('deliveryInfo.area', e.target.value);
+                          }
+                        }}
+                        disabled={areaConfirmed}
                         rows={2}
                         className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
-                          errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#781220]'
+                          errors.area 
+                            ? 'border-red-300 bg-red-50' 
+                            : areaConfirmed 
+                            ? 'border-green-300 bg-green-50 text-green-800' 
+                            : 'border-gray-200 focus:border-[#781220]'
                         }`}
                       />
+                      {areaConfirmed && (
+                        <div className="flex items-center justify-between mt-2">
+                          <p className="text-green-600 text-xs sm:text-sm">✓ تم تأكيد المنطقة تلقائياً</p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setAreaConfirmed(false);
+                              setManualAreaRequired(true);
+                              setAutoDetectedArea('');
+                              setFormData(prev => ({
+                                ...prev,
+                                deliveryInfo: { ...prev.deliveryInfo, area: '' }
+                              }));
+                            }}
+                            className="text-blue-600 hover:text-blue-800 text-xs underline"
+                          >
+                            تعديل المنطقة
+                          </button>
+                        </div>
+                      )}
                       {errors.area && (
                         <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
                       )}
@@ -465,7 +635,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                   )}
                   
                   {/* Optional Notes */}
-                  {customerLocation && (
+                  {customerLocation && (areaConfirmed || manualAreaRequired) && (
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
                         ملاحظات إضافية (اختياري)
