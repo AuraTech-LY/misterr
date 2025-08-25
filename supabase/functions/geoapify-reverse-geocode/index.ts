@@ -41,27 +41,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const GEOAPIFY_API_KEY = Deno.env.get("GEO_API");
-
-    if (!GEOAPIFY_API_KEY) {
-      console.error("Geoapify API key not configured");
-      return new Response(
-        JSON.stringify({ error: "Geoapify API key not configured" }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-            ...corsHeaders,
-          },
-        }
-      );
-    }
-
-    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=${GEOAPIFY_API_KEY}`;
+    // Use the direct fetch approach with the API key
+    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
 
     console.log(`Making request to Geoapify: ${geoapifyUrl}`);
 
-    const response = await fetch(geoapifyUrl);
+    const requestOptions = {
+      method: 'GET',
+    };
+
+    const response = await fetch(geoapifyUrl, requestOptions);
     const data = await response.json();
 
     if (!response.ok) {
@@ -83,9 +72,9 @@ Deno.serve(async (req: Request) => {
 
     console.log("Geoapify response:", JSON.stringify(data, null, 2));
 
-    // Extract neighborhood name with fallback options
-    const feature = data.features?.[0];
-    if (!feature) {
+    // Extract neighborhood name from the results array (similar to your JSON example structure)
+    const result = data.results?.[0];
+    if (!result) {
       return new Response(
         JSON.stringify({ error: "No location data found for these coordinates" }),
         {
@@ -98,28 +87,26 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const properties = feature.properties;
-    
     // Try different property names for neighborhood/area in order of preference
     const neighborhood = 
-      properties.suburb ||
-      properties.city_district ||
-      properties.neighbourhood ||
-      properties.quarter ||
-      properties.district ||
-      properties.city ||
-      properties.town ||
-      properties.village ||
-      properties.state_district ||
-      properties.county ||
-      properties.formatted;
+      result.suburb ||
+      result.city_district ||
+      result.neighbourhood ||
+      result.quarter ||
+      result.district ||
+      result.city ||
+      result.town ||
+      result.village ||
+      result.state_district ||
+      result.county ||
+      result.formatted;
 
     if (neighborhood) {
       return new Response(
         JSON.stringify({ 
           neighborhood: neighborhood.trim(),
-          fullAddress: properties.formatted || '',
-          confidence: feature.properties.confidence || 0
+          fullAddress: result.formatted || '',
+          confidence: result.rank?.confidence || 0
         }),
         {
           status: 200,
@@ -130,11 +117,11 @@ Deno.serve(async (req: Request) => {
         }
       );
     } else {
-      console.log("Available properties:", Object.keys(properties));
+      console.log("Available properties:", Object.keys(result));
       return new Response(
         JSON.stringify({ 
           error: "Neighborhood not found for these coordinates",
-          availableData: properties.formatted || 'No formatted address available'
+          availableData: result.formatted || 'No formatted address available'
         }),
         {
           status: 404,
