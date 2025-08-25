@@ -149,7 +149,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
       // Parse the results array
       const locationResult = result.results?.[0];
       if (!locationResult) {
-        throw new Error("No location data found for these coordinates");
+        console.log('No location data found for these coordinates, falling back to manual input');
+        setManualAreaRequired(true);
+        setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+        return;
       }
 
       // Extract neighborhood/area from the result
