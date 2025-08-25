@@ -132,7 +132,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         method: 'GET',
       };
 
-      const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+      const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
       
       console.log(`Making direct request to: ${geoapifyUrl}`);
 
