@@ -150,7 +150,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         console.warn('Edge Function failed, using client-side API call:', edgeFunctionError);
         
         // Fallback to direct client-side API call
-        const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+        const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
         
         const response = await fetch(geoapifyUrl);
         if (!response.ok) {
@@ -160,11 +160,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         const result = await response.json();
         console.log('Direct API response:', JSON.stringify(result, null, 2));
         
-        const locationResult = result.results?.[0];
-        if (!locationResult) {
+        // Use the correct features array structure from official documentation
+        if (!result.features || result.features.length === 0) {
           throw new Error("No location data found for these coordinates");
         }
 
+        const locationResult = result.features[0].properties;
         neighborhood = 
           locationResult.suburb ||
           locationResult.city_district ||

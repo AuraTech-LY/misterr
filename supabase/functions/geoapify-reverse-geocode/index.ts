@@ -43,17 +43,15 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Reverse geocoding for coordinates: ${latitude}, ${longitude}`);
 
-    // Use the exact fetch pattern from your working test
-    const requestOptions = {
-      method: 'GET',
-    };
-
-    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+    // Use the official Geoapify API format from documentation
+    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
     
     console.log(`Making request to: ${geoapifyUrl}`);
 
     try {
-      const response = await fetch(geoapifyUrl, requestOptions);
+      const response = await fetch(geoapifyUrl, {
+        method: 'GET',
+      });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -62,9 +60,8 @@ Deno.serve(async (req: Request) => {
       const result = await response.json();
       console.log('Geoapify response:', JSON.stringify(result, null, 2));
       
-      // Parse the results array like in your example
-      const locationResult = result.results?.[0];
-      if (!locationResult) {
+      // Parse the features array as per official documentation
+      if (!result.features || result.features.length === 0) {
         return new Response(
           JSON.stringify({ error: "No location data found for these coordinates" }),
           {
@@ -77,7 +74,9 @@ Deno.serve(async (req: Request) => {
         );
       }
 
-      // Extract neighborhood/area from the result using the structure from your example
+      const locationResult = result.features[0].properties;
+      
+      // Extract neighborhood/area from the properties
       const neighborhood = 
         locationResult.suburb ||
         locationResult.city_district ||
