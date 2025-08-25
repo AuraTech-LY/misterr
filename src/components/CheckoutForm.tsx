@@ -254,7 +254,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
   const canProceedToStep2 = () => {
     return formData.customerInfo.name.trim().length >= 2 && 
            /^(091|092|093|094|095)\d{7}$/.test(formData.customerInfo.phone) &&
-           (areaConfirmed || (manualAreaRequired && formData.deliveryInfo?.area?.trim())) &&
            !errors.name && !errors.phone;
   };
 
@@ -383,54 +382,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                     )}
                   </div>
 
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="المنطقة أو الحي (مثل: فينيسيا، الحدائق، حي السلام)"
-                      value={areaConfirmed ? autoDetectedArea : (formData.deliveryInfo?.area || '')}
-                      onChange={(e) => {
-                        if (!areaConfirmed) {
-                          handleInputChange('deliveryInfo.area', e.target.value);
-                        }
-                      }}
-                      disabled={areaConfirmed}
-                      className={`w-full p-4 border-2 rounded-full text-right transition-all ${
-                        errors.area 
-                          ? 'border-red-300 bg-red-50' 
-                          : areaConfirmed 
-                          ? 'border-green-300 bg-green-50 text-green-800' 
-                          : 'border-gray-200 focus:border-[#7A1120]'
-                      }`}
-                    />
-                    {areaConfirmed && (
-                      <p className="text-green-600 text-xs sm:text-sm mt-1 flex items-center gap-1">
-                        ✓ تم تأكيد المنطقة تلقائياً
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setAreaConfirmed(false);
-                            setManualAreaRequired(true);
-                            setAutoDetectedArea('');
-                            setFormData(prev => ({
-                              ...prev,
-                              deliveryInfo: { ...prev.deliveryInfo, area: '' }
-                            }));
-                          }}
-                          className="text-blue-600 hover:text-blue-800 underline mr-2"
-                        >
-                          تعديل
-                        </button>
-                      </p>
-                    )}
-                    {manualAreaRequired && !areaConfirmed && (
-                      <p className="text-orange-600 text-xs sm:text-sm mt-1">
-                        يرجى إدخال المنطقة يدوياً
-                      </p>
-                    )}
-                    {errors.area && (
-                      <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
-                    )}
-                  </div>
                 </div>
               </div>
 
