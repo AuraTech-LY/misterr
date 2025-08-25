@@ -127,38 +127,60 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
     try {
       console.log('Calling Supabase Edge Function with coordinates:', { latitude, longitude });
       
-      // Call Supabase Edge Function
-      const { data, error } = await supabase.functions.invoke('geoapify-reverse-geocode', {
-        body: { latitude, longitude }
-      });
+      // Direct API call to Geoapify reverse geocoding
+      const requestOptions = {
+        method: 'GET',
+      };
 
-      console.log('Edge Function response:', { data, error });
+      const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+      
+      console.log(`Making direct request to: ${geoapifyUrl}`);
 
-      if (error) {
-        console.error("Edge Function error:", error);
-        throw new Error(`Edge Function error: ${error.message || 'Unknown error'}`);
+      const response = await fetch(geoapifyUrl, requestOptions);
+      const result = await response.json();
+
+      console.log('Geoapify direct response:', JSON.stringify(result, null, 2));
+
+      if (!response.ok) {
+        console.error("Geoapify API error:", result);
+        throw new Error(`Geoapify API error: ${result.message || 'Unknown error'}`);
       }
 
-      if (!data || !data.neighborhood) {
+      // Parse the results array
+      const locationResult = result.results?.[0];
+      if (!locationResult) {
         throw new Error("No location data found for these coordinates");
       }
 
-      const neighborhood = data.neighborhood;
-      console.log(`Extracted neighborhood from Edge Function: ${neighborhood}`);
+      // Extract neighborhood/area from the result
+      const neighborhood = 
+        locationResult.suburb ||
+        locationResult.city_district ||
+        locationResult.neighbourhood ||
+        locationResult.quarter ||
+        locationResult.district ||
+        locationResult.city ||
+        locationResult.town ||
+        locationResult.village ||
+        locationResult.state_district ||
+        locationResult.county ||
+        'منطقة غير محددة';
+
+      console.log(`Extracted neighborhood from direct API: ${neighborhood}`);
       
       if (neighborhood && neighborhood !== 'منطقة غير محددة') {
         setAutoDetectedArea(neighborhood);
         setShowAreaConfirmation(true);
         setLocationError('');
       } else {
-        console.log('No neighborhood found, falling back to manual input');
+        console.log('No neighborhood found from direct API, falling back to manual input');
         setManualAreaRequired(true);
         setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
       }
     } catch (error) {
-      console.error('Reverse geocoding error:', error);
+      console.error('Direct API reverse geocoding error:', error);
       setManualAreaRequired(true);
-      setLocationError(`خطأ في تحديد المنطقة: ${error instanceof Error ? error.message : 'Unknown error'}. يرجى إدخال اسم المنطقة يدوياً.`);
+      setLocationError(`خطأ في تحديد المنطقة من API: ${error instanceof Error ? error.message : 'Unknown error'}. يرجى إدخال اسم المنطقة يدوياً.`);
     } finally {
       setGeoApiLoading(false);
     }
