@@ -89,10 +89,27 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         
         // Call Geoapify reverse geocoding via Edge Function
         try {
-          await reverseGeocode(latitude, longitude);
+          try {
+            await reverseGeocode(latitude, longitude);
+          } catch (reverseGeocodeError) {
+            console.warn('Reverse geocoding failed:', reverseGeocodeError);
+            // Set manual area input as fallback
+            setManualAreaRequired(true);
+            setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+            setAutoDetectedArea('');
+            setShowAreaConfirmation(false);
+            setAreaConfirmed(false);
+            setFormData(prev => ({
+              ...prev,
+              deliveryInfo: {
+                ...prev.deliveryInfo,
+                area: ''
+              }
+            }));
+          }
         } catch (geoError) {
-          console.error('Reverse geocoding failed:', geoError);
-          setLocationError(`خطأ في تحديد المنطقة: ${geoError instanceof Error ? geoError.message : 'Unknown error'}. يرجى إدخال اسم المنطقة يدوياً.`);
+          console.error('Location detection failed:', geoError);
+          setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
           setManualAreaRequired(true);
           setAutoDetectedArea('');
           setShowAreaConfirmation(false);
@@ -166,19 +183,25 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         console.warn('Edge Function failed, using client-side API call:', edgeFunctionError);
         
         // Fallback to direct client-side API call
-        const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+        const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=c17596bb6ccf4016a35575463bdebee8`;
         
-        const response = await fetch(geoapifyUrl);
+        const response = await fetch(geoapifyUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          }
+        });
+        
         if (!response.ok) {
-          throw new Error(`Geoapify API error: ${response.status}`);
+          throw new Error(`API request failed with status: ${response.status}`);
         }
         
         const result = await response.json();
-        console.log('Direct API response:', JSON.stringify(result, null, 2));
+        console.log('Direct API response:', result);
         
-        // Use the correct features array structure from official documentation
+        // Check for features array as per official documentation
         if (!result.features || result.features.length === 0) {
-          throw new Error("No location data found for these coordinates");
+          throw new Error("No address data available for this location");
         }
 
         const locationResult = result.features[0].properties;
@@ -195,7 +218,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
           locationResult.county ||
           'منطقة غير محددة';
         
-        console.log(`Extracted neighborhood from direct API: ${neighborhood}`);
+        console.log(`Extracted area from API: ${neighborhood}`);
       }
       
       if (neighborhood && neighborhood !== 'منطقة غير محددة') {
@@ -203,15 +226,13 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         setShowAreaConfirmation(true);
         setLocationError('');
       } else {
-        console.log('No neighborhood found from Edge Function, falling back to manual input');
-        console.log('No neighborhood found, falling back to manual input');
-        setManualAreaRequired(true);
-        setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+        throw new Error('No specific area information available');
       }
     } catch (error) {
-      console.error('Reverse geocoding error:', error);
+      console.warn('Geocoding service unavailable:', error);
       setManualAreaRequired(true);
-      setLocationError(`خطأ في تحديد المنطقة: ${error instanceof Error ? error.message : 'Unknown error'}. يرجى إدخال اسم المنطقة يدوياً.`);
+      setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+      setAutoDetectedArea('');
     } finally {
       setGeoApiLoading(false);
     }
