@@ -127,30 +127,37 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
     try {
       setGeoApiLoading(true);
       
-      const response = await supabase.functions.invoke('geoapify-reverse-geocode', {
-        body: { latitude, longitude }
-      });
+      // Try to use Edge Function first, with fallback to manual input
+      try {
+        const response = await supabase.functions.invoke('geoapify-reverse-geocode', {
+          body: { latitude, longitude }
+        });
 
-      if (response.error) {
-        console.error('Edge function error:', response.error);
-        setManualAreaRequired(true);
-        setLocationError(`تعذر تحديد المنطقة تلقائياً: ${response.error.message || 'خطأ في الاتصال'}. يرجى إدخال المنطقة يدوياً.`);
-        return;
-      }
+        if (response.error) {
+          console.error('Edge function error:', response.error);
+          throw new Error(response.error.message || 'Edge function failed');
+        }
 
-      if (response.data?.neighborhood) {
-        setAutoDetectedArea(response.data.neighborhood);
-        setShowAreaConfirmation(true);
-        setLocationError('');
-      } else {
-        console.log('No neighborhood found in response:', response.data);
+        if (response.data?.neighborhood) {
+          setAutoDetectedArea(response.data.neighborhood);
+          setShowAreaConfirmation(true);
+          setLocationError('');
+          return;
+        } else {
+          console.log('No neighborhood found in response:', response.data);
+          throw new Error('No neighborhood data returned');
+        }
+      } catch (edgeFunctionError) {
+        console.warn('Edge function failed, falling back to manual input:', edgeFunctionError);
+        
+        // Fallback: Skip auto-detection and go straight to manual input
         setManualAreaRequired(true);
-        setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
+        setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
       }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       setManualAreaRequired(true);
-      setLocationError(`خطأ في الاتصال بخدمة تحديد المنطقة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}. يرجى إدخال المنطقة يدوياً.`);
+      setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
     } finally {
       setGeoApiLoading(false);
     }
