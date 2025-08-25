@@ -43,44 +43,82 @@ Deno.serve(async (req: Request) => {
 
     console.log(`Reverse geocoding for coordinates: ${latitude}, ${longitude}`);
 
-    // Use the exact fetch pattern you provided
+    // Use the exact fetch pattern from your working test
     const requestOptions = {
       method: 'GET',
     };
 
-    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=c17596bb6ccf4016a35575463bdebee8`;
     
     console.log(`Making request to: ${geoapifyUrl}`);
 
-    const response = await fetch(geoapifyUrl, requestOptions);
-    const result = await response.json();
+    try {
+      const response = await fetch(geoapifyUrl, requestOptions);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('Geoapify response:', JSON.stringify(result, null, 2));
+      
+      // Parse the results array like in your example
+      const locationResult = result.results?.[0];
+      if (!locationResult) {
+        return new Response(
+          JSON.stringify({ error: "No location data found for these coordinates" }),
+          {
+            status: 404,
+            headers: {
+              "Content-Type": "application/json",
+              ...corsHeaders,
+            },
+          }
+        );
+      }
 
-    console.log('Geoapify response:', JSON.stringify(result, null, 2));
+      // Extract neighborhood/area from the result using the structure from your example
+      const neighborhood = 
+        locationResult.suburb ||
+        locationResult.city_district ||
+        locationResult.neighbourhood ||
+        locationResult.quarter ||
+        locationResult.district ||
+        locationResult.city ||
+        locationResult.town ||
+        locationResult.village ||
+        locationResult.state_district ||
+        locationResult.county ||
+        'منطقة غير محددة';
 
-    if (!response.ok) {
-      console.error("Geoapify API error:", result);
+      console.log(`Extracted neighborhood: ${neighborhood}`);
+
       return new Response(
         JSON.stringify({ 
-          error: result.message || "Error from Geoapify API",
-          details: result 
+          neighborhood: neighborhood.trim(),
+          fullAddress: locationResult.formatted || '',
+          confidence: locationResult.rank?.confidence || 0,
+          success: true
         }),
         {
-          status: response.status,
+          status: 200,
           headers: {
             "Content-Type": "application/json",
             ...corsHeaders,
           },
         }
       );
-    }
-
-    // Parse the results array like in your example
-    const locationResult = result.results?.[0];
-    if (!locationResult) {
+      
+    } catch (fetchError) {
+      console.error("Fetch error:", fetchError);
       return new Response(
-        JSON.stringify({ error: "No location data found for these coordinates" }),
+        JSON.stringify({ 
+          error: "Failed to fetch from Geoapify API",
+          message: fetchError.message,
+          success: false
+        }),
         {
-          status: 404,
+          status: 500,
           headers: {
             "Content-Type": "application/json",
             ...corsHeaders,
@@ -88,38 +126,6 @@ Deno.serve(async (req: Request) => {
         }
       );
     }
-
-    // Extract neighborhood/area from the result using the structure from your example
-    const neighborhood = 
-      locationResult.suburb ||
-      locationResult.city_district ||
-      locationResult.neighbourhood ||
-      locationResult.quarter ||
-      locationResult.district ||
-      locationResult.city ||
-      locationResult.town ||
-      locationResult.village ||
-      locationResult.state_district ||
-      locationResult.county ||
-      'منطقة غير محددة';
-
-    console.log(`Extracted neighborhood: ${neighborhood}`);
-
-    return new Response(
-      JSON.stringify({ 
-        neighborhood: neighborhood.trim(),
-        fullAddress: locationResult.formatted || '',
-        confidence: locationResult.rank?.confidence || 0,
-        success: true
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders,
-        },
-      }
-    );
 
   } catch (error) {
     console.error("Edge function error:", error);
