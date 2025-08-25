@@ -127,30 +127,30 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
     try {
       setGeoApiLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('geoapify-reverse-geocode', {
+      const response = await supabase.functions.invoke('geoapify-reverse-geocode', {
         body: { latitude, longitude }
       });
 
-      if (error) {
-        console.error('Edge function error:', error);
+      if (response.error) {
+        console.error('Edge function error:', response.error);
         setManualAreaRequired(true);
-        setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
+        setLocationError(`تعذر تحديد المنطقة تلقائياً: ${response.error.message || 'خطأ في الاتصال'}. يرجى إدخال المنطقة يدوياً.`);
         return;
       }
 
-      if (data?.neighborhood) {
-        setAutoDetectedArea(data.neighborhood);
+      if (response.data?.neighborhood) {
+        setAutoDetectedArea(response.data.neighborhood);
         setShowAreaConfirmation(true);
         setLocationError('');
       } else {
-        console.log('No neighborhood found in response:', data);
+        console.log('No neighborhood found in response:', response.data);
         setManualAreaRequired(true);
         setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
       }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       setManualAreaRequired(true);
-      setLocationError('تعذر تحديد المنطقة تلقائياً. يرجى إدخال المنطقة يدوياً.');
+      setLocationError(`خطأ في الاتصال بخدمة تحديد المنطقة: ${error instanceof Error ? error.message : 'خطأ غير معروف'}. يرجى إدخال المنطقة يدوياً.`);
     } finally {
       setGeoApiLoading(false);
     }
