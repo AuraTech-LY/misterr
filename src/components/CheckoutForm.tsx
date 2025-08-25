@@ -127,15 +127,33 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
     try {
       setGeoApiLoading(true);
       
-      // Skip Edge Function entirely and go directly to manual input
-      // This avoids connection issues with the Edge Function
-      console.log('Location captured successfully, proceeding with manual area input');
-      setManualAreaRequired(true);
-      setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+      console.log('Calling Edge Function for reverse geocoding...');
+      
+      const { data, error } = await supabase.functions.invoke('geoapify-reverse-geocode', {
+        body: { latitude, longitude }
+      });
+
+      console.log('Edge Function response:', { data, error });
+
+      if (error) {
+        console.error('Edge Function error:', error);
+        throw new Error(`Edge Function error: ${error.message || 'Unknown error'}`);
+      }
+
+      if (data?.success && data?.neighborhood) {
+        console.log('Successfully got neighborhood:', data.neighborhood);
+        setAutoDetectedArea(data.neighborhood);
+        setShowAreaConfirmation(true);
+        setLocationError('');
+      } else {
+        console.log('No neighborhood found, falling back to manual input');
+        setManualAreaRequired(true);
+        setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+      }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       setManualAreaRequired(true);
-      setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+      setLocationError(`خطأ في تحديد المنطقة: ${error.message}. يرجى إدخال اسم المنطقة يدوياً.`);
     } finally {
       setGeoApiLoading(false);
     }

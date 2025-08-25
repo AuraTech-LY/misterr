@@ -41,24 +41,28 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Use the direct fetch approach with the API key
-    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+    console.log(`Reverse geocoding for coordinates: ${latitude}, ${longitude}`);
 
-    console.log(`Making request to Geoapify: ${geoapifyUrl}`);
-
+    // Use the exact fetch pattern you provided
     const requestOptions = {
       method: 'GET',
     };
 
+    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+    
+    console.log(`Making request to: ${geoapifyUrl}`);
+
     const response = await fetch(geoapifyUrl, requestOptions);
-    const data = await response.json();
+    const result = await response.json();
+
+    console.log('Geoapify response:', JSON.stringify(result, null, 2));
 
     if (!response.ok) {
-      console.error("Geoapify API error:", data);
+      console.error("Geoapify API error:", result);
       return new Response(
         JSON.stringify({ 
-          error: data.message || "Error from Geoapify API",
-          details: data 
+          error: result.message || "Error from Geoapify API",
+          details: result 
         }),
         {
           status: response.status,
@@ -70,11 +74,9 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    console.log("Geoapify response:", JSON.stringify(data, null, 2));
-
-    // Extract neighborhood name from the results array (similar to your JSON example structure)
-    const result = data.results?.[0];
-    if (!result) {
+    // Parse the results array like in your example
+    const locationResult = result.results?.[0];
+    if (!locationResult) {
       return new Response(
         JSON.stringify({ error: "No location data found for these coordinates" }),
         {
@@ -87,57 +89,45 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Try different property names for neighborhood/area in order of preference
+    // Extract neighborhood/area from the result using the structure from your example
     const neighborhood = 
-      result.suburb ||
-      result.city_district ||
-      result.neighbourhood ||
-      result.quarter ||
-      result.district ||
-      result.city ||
-      result.town ||
-      result.village ||
-      result.state_district ||
-      result.county ||
-      result.formatted;
+      locationResult.suburb ||
+      locationResult.city_district ||
+      locationResult.neighbourhood ||
+      locationResult.quarter ||
+      locationResult.district ||
+      locationResult.city ||
+      locationResult.town ||
+      locationResult.village ||
+      locationResult.state_district ||
+      locationResult.county ||
+      'منطقة غير محددة';
 
-    if (neighborhood) {
-      return new Response(
-        JSON.stringify({ 
-          neighborhood: neighborhood.trim(),
-          fullAddress: result.formatted || '',
-          confidence: result.rank?.confidence || 0
-        }),
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/json",
-            ...corsHeaders,
-          },
-        }
-      );
-    } else {
-      console.log("Available properties:", Object.keys(result));
-      return new Response(
-        JSON.stringify({ 
-          error: "Neighborhood not found for these coordinates",
-          availableData: result.formatted || 'No formatted address available'
-        }),
-        {
-          status: 404,
-          headers: {
-            "Content-Type": "application/json",
-            ...corsHeaders,
-          },
-        }
-      );
-    }
+    console.log(`Extracted neighborhood: ${neighborhood}`);
+
+    return new Response(
+      JSON.stringify({ 
+        neighborhood: neighborhood.trim(),
+        fullAddress: locationResult.formatted || '',
+        confidence: locationResult.rank?.confidence || 0,
+        success: true
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      }
+    );
+
   } catch (error) {
     console.error("Edge function error:", error);
     return new Response(
       JSON.stringify({ 
         error: "Internal server error",
-        message: error.message 
+        message: error.message,
+        success: false
       }),
       {
         status: 500,
