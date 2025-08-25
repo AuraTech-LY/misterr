@@ -167,8 +167,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         'منطقة غير محددة';
 
       console.log(`Extracted neighborhood: ${neighborhood}`);
-      return neighborhood.trim();
       
+      if (neighborhood && neighborhood !== 'منطقة غير محددة') {
+        setAutoDetectedArea(neighborhood);
+        setShowAreaConfirmation(true);
         setLocationError('');
       } else {
         console.log('No neighborhood found, falling back to manual input');
@@ -177,7 +179,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
       }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
-      throw new Error(`Reverse geocoding error: ${error.message}`);
+      setManualAreaRequired(true);
       setLocationError(`خطأ في تحديد المنطقة: ${error.message}. يرجى إدخال اسم المنطقة يدوياً.`);
     } finally {
       setGeoApiLoading(false);
