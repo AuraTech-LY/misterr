@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
     console.log(`Reverse geocoding for coordinates: ${latitude}, ${longitude}`);
 
     // Use the official Geoapify API format from documentation
-    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&lang=ar&apiKey=c17596bb6ccf4016a35575463bdebee8`;
+    const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=c17596bb6ccf4016a35575463bdebee8`;
     
     console.log(`Making request to: ${geoapifyUrl}`);
 
