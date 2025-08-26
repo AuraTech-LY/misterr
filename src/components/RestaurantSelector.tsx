@@ -99,12 +99,14 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                 {/* Branch List */}
                 <div className="space-y-2 flex-1">
                   <p className="font-semibold text-gray-800 text-sm">الفروع المتاحة:</p>
-                  {restaurant.branches.map((branch) => (
-                    <div key={branch.id} className="flex items-center gap-2 text-sm text-gray-600">
-                      <div className="w-1.5 h-1.5 bg-[#781220] rounded-full"></div>
-                      <span>{branch.area}</span>
-                    </div>
-                  ))}
+                  <div className="flex flex-wrap gap-2">
+                    {restaurant.branches.map((branch) => (
+                      <div key={branch.id} className="flex items-center gap-1 text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded-full">
+                        <div className="w-1.5 h-1.5 bg-[#781220] rounded-full"></div>
+                        <span>{branch.area}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Action Button */}
