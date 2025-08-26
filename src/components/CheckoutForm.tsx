@@ -244,10 +244,15 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       } else {
         throw new Error('No specific area information available');
       }
-    } catch (error) {
-      console.warn('Using manual area input due to service unavailability:', error);
+    } catch (error: any) {
+      console.warn('Reverse geocoding failed:', error);
+      // Check if it's specifically an API key missing error
+      if (error.message && error.message.includes('API_KEY_MISSING')) {
+        setLocationError('تم تحديد موقعك بنجاح. خدمة تحديد المنطقة تتطلب إعداد مفتاح API، يرجى إدخال اسم المنطقة يدوياً.');
+      } else {
+        setLocationError('تم تحديد موقعك بنجاح. خدمة تحديد المنطقة غير متاحة حالياً، يرجى إدخال اسم المنطقة يدوياً.');
+      }
       setManualAreaRequired(true);
-      setLocationError('تم تحديد موقعك بنجاح. خدمة تحديد المنطقة غير متاحة حالياً، يرجى إدخال اسم المنطقة يدوياً.');
       setAutoDetectedArea('');
     } finally {
       setGeoApiLoading(false);
