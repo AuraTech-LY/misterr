@@ -187,7 +187,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       });
 
       if (error) {
-        console.error("Distance calculation failed:", error);
+        console.warn("Distance calculation service unavailable:", error);
         setRoadDistance(null);
         return;
       }
@@ -196,11 +196,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         setRoadDistance(data.distance_km);
         console.log(`Distance calculated: ${data.distance_km} km`);
       } else {
-        console.error("Invalid distance data received:", data);
+        console.warn("No distance data available:", data);
         setRoadDistance(null);
       }
     } catch (error) {
-      console.error('Distance calculation error:', error);
+      console.warn('Distance calculation service unavailable:', error);
       setRoadDistance(null);
     } finally {
       setIsCalculatingDistance(false);
@@ -221,56 +221,20 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         });
 
         if (error) {
-          console.warn("Edge Function error, falling back to client-side:", error);
-          throw new Error('Edge Function failed');
+          console.warn("Geocoding service not configured, using manual input:", error);
+          throw new Error('Geocoding service unavailable');
         }
 
         if (data && data.neighborhood) {
           neighborhood = data.neighborhood;
           console.log(`Extracted neighborhood from Edge Function: ${neighborhood}`);
         } else {
-          throw new Error('No neighborhood data from Edge Function');
+          throw new Error('Geocoding service unavailable');
         }
       } catch (edgeFunctionError) {
-        console.warn('Edge Function failed, using client-side API call:', edgeFunctionError);
-        
-        // Fallback to direct client-side API call
-        const geoapifyUrl = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=c17596bb6ccf4016a35575463bdebee8`;
-        
-        const response = await fetch(geoapifyUrl, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`API request failed with status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        console.log('Direct API response:', result);
-        
-        // Check for features array as per official documentation
-        if (!result.features || result.features.length === 0) {
-          throw new Error("No address data available for this location");
-        }
 
-        const locationResult = result.features[0].properties;
-        neighborhood = 
-          locationResult.suburb ||
-          locationResult.city_district ||
-          locationResult.neighbourhood ||
-          locationResult.quarter ||
-          locationResult.district ||
-          locationResult.city ||
-          locationResult.town ||
-          locationResult.village ||
-          locationResult.state_district ||
-          locationResult.county ||
-          'منطقة غير محددة';
-        
-        console.log(`Extracted area from API: ${neighborhood}`);
+        console.warn('Geocoding service unavailable, requiring manual input:', edgeFunctionError);
+        throw new Error('Geocoding service unavailable');
       }
       
       if (neighborhood && neighborhood !== 'منطقة غير محددة') {
@@ -281,9 +245,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         throw new Error('No specific area information available');
       }
     } catch (error) {
-      console.warn('Geocoding service unavailable:', error);
+      console.warn('Using manual area input due to service unavailability:', error);
       setManualAreaRequired(true);
-      setLocationError('تم تحديد موقعك بنجاح. يرجى إدخال اسم المنطقة يدوياً.');
+      setLocationError('تم تحديد موقعك بنجاح. خدمة تحديد المنطقة غير متاحة حالياً، يرجى إدخال اسم المنطقة يدوياً.');
       setAutoDetectedArea('');
     } finally {
       setGeoApiLoading(false);
@@ -663,7 +627,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                             </div>
                           ) : (
                             <div className="text-gray-500 text-sm">
-                              <span>خدمة حساب المسافة غير متاحة حالياً</span>
+                              <span>⚠️ خدمة حساب المسافة غير متاحة (يتطلب إعداد GEO_API)</span>
                             </div>
                           )}
                         </div>
