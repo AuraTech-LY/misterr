@@ -662,8 +662,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                               <span className="font-bold">{roadDistance} كم</span>
                             </div>
                           ) : (
-                            <div className="text-gray-600 text-sm">
-                              <span>لم يتم حساب المسافة</span>
+                            <div className="text-gray-500 text-sm">
+                              <span>خدمة حساب المسافة غير متاحة حالياً</span>
                             </div>
                           )}
                         </div>
