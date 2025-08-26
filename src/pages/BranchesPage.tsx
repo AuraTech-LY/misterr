@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BranchSelector } from '../components/BranchSelector';
-import { branches } from '../data/branchData';
+import { getAllBranches } from '../data/restaurantsData';
 import { Branch } from '../types';
 
 export const BranchesPage: React.FC = () => {
@@ -18,7 +18,7 @@ export const BranchesPage: React.FC = () => {
 
   return (
     <BranchSelector
-      branches={branches}
+      branches={getAllBranches()}
       selectedBranch={selectedBranch}
       onBranchSelect={handleBranchSelect}
     />
