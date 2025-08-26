@@ -1,12 +1,12 @@
 // Time utilities for Libya Tripoli timezone (UTC+2)
 
-export const LIBYA_TIMEZONE = 'Africa/Tripoli';
+export const LIBYA_TIMEZONE = 'Etc/GMT+2'; // UTC-2 (temporary)
 export const OPENING_HOUR = 11; // 11:00 AM
 export const CLOSING_HOUR = 23; // 11:00 PM
 export const CLOSING_MINUTE = 59; // 11:59 PM
 
 /**
- * Get current time in Libya Tripoli timezone
+ * Get current time in UTC-2 timezone (temporary)
  */
 export const getLibyaTime = (): Date => {
   return new Date(new Date().toLocaleString("en-US", { timeZone: LIBYA_TIMEZONE }));
