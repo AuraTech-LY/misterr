@@ -441,6 +441,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                           : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                       }`}
+                      style={{ borderRadius: '9999px' }}
+                      style={{ borderRadius: '9999px' }}
                     >
                       <Save className="w-4 h-4" />
                       {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
