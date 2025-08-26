@@ -355,7 +355,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} selectedRestaurant={selectedRestaurant} />
+            <ItemForm item={newItem} onChange={setNewItem} categories={categories} selectedRestaurant={selectedRestaurant} />
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
               <button
                 onClick={handleAddItem}
