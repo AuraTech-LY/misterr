@@ -83,7 +83,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, isNew = false }) =>
             id={`popular-${isNew ? 'new' : (item as MenuItem).id}`}
             checked={item.is_popular}
             onChange={(e) => onChange({ ...item, is_popular: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
           />
           <label htmlFor={`popular-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             الأكثر طلباً
@@ -95,7 +95,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, isNew = false }) =>
             id={`available-${isNew ? 'new' : (item as MenuItem).id}`}
             checked={item.is_available}
             onChange={(e) => onChange({ ...item, is_available: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
           />
           <label htmlFor={`available-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             متوفر
@@ -107,7 +107,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, isNew = false }) =>
             id={`airport-${isNew ? 'new' : (item as MenuItem).id}`}
             checked={item.available_airport}
             onChange={(e) => onChange({ ...item, available_airport: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
           />
           <label htmlFor={`airport-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             مستر شيش - فرع طريق المطار
@@ -119,7 +119,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, isNew = false }) =>
             id={`dollar-${isNew ? 'new' : (item as MenuItem).id}`}
             checked={item.available_dollar}
             onChange={(e) => onChange({ ...item, available_dollar: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
           />
           <label htmlFor={`dollar-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             مستر كريسبي
@@ -131,7 +131,7 @@ const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, isNew = false }) =>
             id={`balaoun-${isNew ? 'new' : (item as MenuItem).id}`}
             checked={item.available_balaoun}
             onChange={(e) => onChange({ ...item, available_balaoun: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
           />
           <label htmlFor={`balaoun-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             مستر شيش - بلعون
