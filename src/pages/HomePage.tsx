@@ -6,7 +6,6 @@ import { Menu } from '../components/Menu';
 import { Cart } from '../components/Cart';
 import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
-import { categories } from '../data/menuData';
 import { branches } from '../data/branchData';
 import { Branch } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
@@ -19,7 +18,7 @@ export const HomePage: React.FC = () => {
     return saved ? JSON.parse(saved) : null;
   });
   const [selectedCategory, setSelectedCategory] = useState('الكل');
-  const { menuItems, loading, error } = useMenu(selectedBranch?.id);
+  const { menuItems, categories, loading, error } = useMenu(selectedBranch?.id);
   const {
     cartItems,
     isCartOpen,
@@ -99,6 +98,9 @@ export const HomePage: React.FC = () => {
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
 
+  // Create categories array with "الكل" option
+  const categoryOptions = ['الكل', ...categories.map(cat => cat.name)];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100" dir="rtl">
       <Header
@@ -132,7 +134,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <CategoryFilter
-          categories={categories}
+          categories={categoryOptions}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />

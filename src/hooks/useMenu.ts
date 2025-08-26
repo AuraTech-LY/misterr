@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { MenuItem } from '../types';
 import { createClient } from '@supabase/supabase-js';
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -9,15 +14,29 @@ const supabase = createClient(
 
 export const useMenu = (branchId?: string) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMenu = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
+        // Fetch categories
+        const { data: categoriesData, error: categoriesError } = await supabase
+          .from('categories')
+          .select('*')
+          .order('name');
+
+        if (categoriesError) {
+          throw categoriesError;
+        }
+
+        setCategories(categoriesData || []);
+
+        // Fetch menu items
         let query = supabase
           .from('menu_items')
           .select('*')
@@ -49,16 +68,17 @@ export const useMenu = (branchId?: string) => {
         setMenuItems(transformedItems);
       } catch (err) {
         console.error('Error fetching menu:', err);
-        setError('فشل في تحميل القائمة');
+        setError('فشل في تحميل البيانات');
         // Fallback to static data if database fails
         setMenuItems([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMenu();
+    fetchData();
   }, [branchId]);
 
-  return { menuItems, loading, error };
+  return { menuItems, categories, loading, error };
 };

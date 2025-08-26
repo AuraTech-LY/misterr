@@ -6,7 +6,6 @@ import { Menu } from '../components/Menu';
 import { Cart } from '../components/Cart';
 import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
-import { categories } from '../data/menuData';
 import { branches } from '../data/branchData';
 import { Branch } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
@@ -22,7 +21,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   // Find the branch data
   const branch = branches.find(b => b.id === branchId);
   
-  const { menuItems, loading, error } = useMenu(branchId);
+  const { menuItems, categories, loading, error } = useMenu(branchId);
   const {
     cartItems,
     isCartOpen,
@@ -79,6 +78,9 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
 
+  // Create categories array with "الكل" option
+  const categoryOptions = ['الكل', ...categories.map(cat => cat.name)];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100" dir="rtl">
       <Header
@@ -114,7 +116,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         </div>
 
         <CategoryFilter
-          categories={categories}
+          categories={categoryOptions}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
         />

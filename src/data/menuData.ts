@@ -175,4 +175,3 @@ export const branchMenus: Record<string, MenuItem[]> = {
 };
 
 export const menuData: MenuItem[] = baseMenuItems;
-export const categories = ['الكل', 'برجر', 'دجاج', 'مشروبات', 'حلويات'];

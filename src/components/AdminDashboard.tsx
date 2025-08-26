@@ -1,164 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, LogOut, MapPin } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
-import { branches } from '../data/branchData';
 import { CustomSelect } from './CustomSelect';
-
-// Move ItemForm outside to prevent recreation on every render
-interface ItemFormProps {
-  item: MenuItem | Omit<MenuItem, 'id'>;
-  onChange: (item: any) => void;
-  isNew?: boolean;
-}
-
-const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, isNew = false }) => {
-  const categories = ['برجر', 'دجاج', 'مشروبات', 'حلويات'];
-  
-  return (
-    <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">اسم العنصر</label>
-          <input
-            type="text"
-            value={item.name}
-            onChange={(e) => onChange({ ...item, name: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
-            placeholder="أدخل اسم العنصر"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">السعر (د.ل)</label>
-          <input
-            type="number"
-            step="0.01"
-            value={item.price}
-            onChange={(e) => onChange({ ...item, price: parseFloat(e.target.value) || 0 })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
-            placeholder="0.00"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
-        <textarea
-          value={item.description}
-          onChange={(e) => onChange({ ...item, description: e.target.value })}
-          rows={3}
-          className="w-full p-3 border border-gray-300 rounded-2xl focus:border-[#7A1120] text-right resize-none"
-          placeholder="أدخل وصف العنصر"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">الفئة</label>
-          <CustomSelect
-            value={item.category}
-            onChange={(value) => onChange({ ...item, category: value })}
-            options={categories.map(cat => ({
-              value: cat,
-              label: cat
-            }))}
-            placeholder="اختر الفئة"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">رابط الصورة</label>
-          <input
-            type="url"
-            value={item.image_url}
-            onChange={(e) => onChange({ ...item, image_url: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`popular-${isNew ? 'new' : (item as MenuItem).id}`}
-            checked={item.is_popular}
-            onChange={(e) => onChange({ ...item, is_popular: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`popular-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            الأكثر طلباً
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`available-${isNew ? 'new' : (item as MenuItem).id}`}
-            checked={item.is_available}
-            onChange={(e) => onChange({ ...item, is_available: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`available-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            متوفر
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`airport-${isNew ? 'new' : (item as MenuItem).id}`}
-            checked={item.available_airport}
-            onChange={(e) => onChange({ ...item, available_airport: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`airport-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            مستر شيش - فرع طريق المطار
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`dollar-${isNew ? 'new' : (item as MenuItem).id}`}
-            checked={item.available_dollar}
-            onChange={(e) => onChange({ ...item, available_dollar: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`dollar-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            مستر كريسبي
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`balaoun-${isNew ? 'new' : (item as MenuItem).id}`}
-            checked={item.available_balaoun}
-            onChange={(e) => onChange({ ...item, available_balaoun: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`balaoun-${isNew ? 'new' : (item as MenuItem).id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            مستر شيش - بلعون
-          </label>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { ItemForm, MenuItem } from './ItemForm';
+import { AdminCategories } from './AdminCategories';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-interface MenuItem {
+interface Category {
   id: string;
   name: string;
-  description: string;
-  price: number;
-  image_url: string;
-  category: string;
-  is_popular: boolean;
-  is_available: boolean;
-  available_airport: boolean;
-  available_dollar: boolean;
-  available_balaoun: boolean;
 }
 
 interface AdminDashboardProps {
@@ -167,13 +21,15 @@ interface AdminDashboardProps {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>('all');
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<'menu' | 'categories'>('menu');
 
-  const newItemTemplate: Omit<MenuItem, 'id'> = {
+  const newItemTemplate: MenuItem = {
     name: '',
     description: '',
     price: 0,
@@ -189,7 +45,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [newItem, setNewItem] = useState(newItemTemplate);
 
   useEffect(() => {
-    fetchMenuItems();
+    fetchData();
     checkAuthStatus();
   }, []);
 
@@ -200,9 +56,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
-  const fetchMenuItems = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
+      
+      // Fetch categories
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+
+      if (categoriesError) throw categoriesError;
+      setCategories(categoriesData || []);
+
+      // Fetch menu items
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
@@ -211,10 +78,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       if (error) throw error;
       setMenuItems(data || []);
     } catch (error) {
-      console.error('Error fetching menu items:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCategoriesChange = () => {
+    fetchData();
   };
 
   const filteredItems = selectedBranch === 'all' 
@@ -334,7 +205,41 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         </div>
       </header>
 
+      {/* Tab Navigation */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-3 sm:px-8">
+          <div className="flex gap-1">
+            <button
+              onClick={() => setActiveTab('menu')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'menu'
+                  ? 'text-[#781220] border-[#781220] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+              }`}
+            >
+              <Menu className="w-5 h-5" />
+              إدارة المنتجات
+            </button>
+            <button
+              onClick={() => setActiveTab('categories')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'categories'
+                  ? 'text-[#781220] border-[#781220] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+              }`}
+            >
+              <Tag className="w-5 h-5" />
+              إدارة الفئات
+            </button>
+          </div>
+        </div>
+      </div>
+
       <main className="container mx-auto px-3 sm:px-8 py-4 sm:py-8">
+        {activeTab === 'categories' ? (
+          <AdminCategories onCategoriesChange={handleCategoriesChange} />
+        ) : (
+          <>
         {/* Controls */}
         <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -392,7 +297,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <ItemForm item={newItem} onChange={setNewItem} isNew={true} />
+            <ItemForm item={newItem} onChange={setNewItem} categories={categories} isNew={true} />
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
               <button
                 onClick={handleAddItem}
@@ -431,7 +336,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <X className="w-6 h-6" />
                     </button>
                   </div>
-                  <ItemForm item={editingItem} onChange={setEditingItem} />
+                  <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} />
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
                     <button
                       onClick={() => handleSaveItem(editingItem)}
@@ -441,7 +346,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                           : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                       }`}
-                      style={{ borderRadius: '9999px' }}
                       style={{ borderRadius: '9999px' }}
                     >
                       <Save className="w-4 h-4" />
@@ -511,6 +415,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="text-center py-12">
             <div className="text-gray-400 text-base sm:text-lg">لا توجد عناصر في هذا الفرع</div>
           </div>
+        )}
+          </>
         )}
       </main>
     </div>
