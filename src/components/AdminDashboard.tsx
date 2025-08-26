@@ -256,7 +256,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             className="w-5 h-5 text-[#7A1120] border-gray-300 rounded-full focus:ring-[#7A1120]"
           />
           <label htmlFor={`airport-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700">
-            المطار
+            مستر شيش - فرع طريق المطار
           </label>
         </div>
         <div className="flex items-center gap-2">
@@ -268,7 +268,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             className="w-5 h-5 text-[#7A1120] border-gray-300 rounded-full focus:ring-[#7A1120]"
           />
           <label htmlFor={`dollar-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700">
-            الدولار
+            مستر كريسبي
           </label>
         </div>
         <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             className="w-5 h-5 text-[#7A1120] border-gray-300 rounded-full focus:ring-[#7A1120]"
           />
           <label htmlFor={`balaoun-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700">
-            بلعون
+            مستر شيش - بلعون
           </label>
         </div>
       </div>
@@ -348,7 +348,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   },
                   { 
                     value: 'airport', 
-                    label: 'فرع المطار',
+                    label: 'مستر شيش - فرع طريق المطار',
                     icon: <MapPin className="w-4 h-4 text-blue-500" />
                   },
                   { 
@@ -473,9 +473,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           )}
                         </div>
                         <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
-                          {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">المطار</span>}
-                          {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">الدولار</span>}
-                          {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">بلعون</span>}
+                          {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">مستر شيش - فرع طريق المطار</span>}
+                          {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
+                          {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">مستر شيش - بلعون</span>}
                         </div>
                       </div>
                       <div className="flex gap-2 self-end sm:self-start">
