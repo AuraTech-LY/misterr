@@ -175,7 +175,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const calculateRoadDistance = async (branchLat: number, branchLon: number, customerLat: number, customerLon: number) => {
     try {
       setIsCalculatingDistance(true);
-      console.log(`Calculating distance from branch (${branchLat}, ${branchLon}) to customer (${customerLat}, ${customerLon})`);
+      console.log(`Calculating route from branch (${branchLat}, ${branchLon}) to customer (${customerLat}, ${customerLon})`);
       
       const { data, error } = await supabase.functions.invoke('geoapify-distance', {
         body: { 
@@ -187,7 +187,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       });
 
       if (error) {
-        console.warn("Distance calculation service unavailable:", error);
+        console.error("Distance calculation failed:", error);
         setRoadDistance(null);
         return;
       }
@@ -196,11 +196,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         setRoadDistance(data.distance_km);
         console.log(`Distance calculated: ${data.distance_km} km`);
       } else {
-        console.warn("Distance calculation service unavailable");
+        console.error("Invalid distance data received:", data);
         setRoadDistance(null);
       }
     } catch (error) {
-      console.warn('Distance calculation service unavailable:', error);
+      console.error('Distance calculation error:', error);
       setRoadDistance(null);
     } finally {
       setIsCalculatingDistance(false);

@@ -238,7 +238,7 @@ Deno.serve(async (req: Request) => {
         message: "An unexpected error occurred while calculating the route"
       }),
       {
-        status: 500,
+      status: 500,
         headers: corsHeaders,
       }
     );
