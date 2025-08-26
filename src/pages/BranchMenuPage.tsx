@@ -21,6 +21,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   // Find the branch data
   const branchData = getBranchById(branchId);
   const branch = branchData?.branch;
+  const restaurant = branchData?.restaurant;
   
   const { menuItems, categories, loading, error } = useMenu(branchId);
   const {
@@ -87,6 +88,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
       <Header
         cartItemCount={getTotalItems()}
         onCartClick={openCart}
+        selectedRestaurant={restaurant}
         selectedBranch={branch}
         onBranchChange={() => navigate('/branches')}
         cartTotal={getTotalPrice()}

@@ -118,6 +118,7 @@ export const HomePage: React.FC = () => {
         cartItemCount={getTotalItems()}
         onCartClick={openCart}
         selectedRestaurant={selectedRestaurant}
+        selectedRestaurant={selectedRestaurant}
         selectedBranch={selectedBranch}
         onBranchChange={() => {
           setSelectedBranch(null);

@@ -9,6 +9,7 @@ import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils'
 interface HeaderProps {
   cartItemCount: number;
   onCartClick: () => void;
+  selectedRestaurant?: { id: string; name: string };
   selectedBranch?: Branch;
   onBranchChange?: () => void;
   cartTotal?: number;
@@ -17,6 +18,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ 
   cartItemCount, 
   onCartClick, 
+  selectedRestaurant,
   selectedBranch,
   onBranchChange,
   cartTotal = 0
@@ -65,7 +67,9 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             <div className="flex flex-col justify-center text-right">
-              <h1 className="text-xl sm:text-3xl font-black">المستر</h1>
+              <h1 className="text-xl sm:text-3xl font-black">
+                {selectedRestaurant?.name || 'المستر'}
+              </h1>
               <p className="text-xs sm:text-sm opacity-90 leading-tight text-right">مطعم الوجبات السريعة</p>
               {!isOpen && (
                 <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
