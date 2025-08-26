@@ -66,10 +66,10 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
             <div
               key={restaurant.id}
               onClick={() => onSelectRestaurant(restaurant)}
-              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 w-full max-w-sm"
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 w-full max-w-sm h-[400px] flex flex-col"
             >
               {/* Restaurant Header */}
-              <div className="bg-[#781220] text-white p-6 relative">
+              <div className="bg-[#781220] text-white p-6 relative flex-shrink-0">
                 <div className="text-center">
                   <ChefHat className="w-8 h-8 mx-auto mb-3" />
                   <h3 className="text-xl sm:text-2xl font-bold mb-2">{restaurant.name}</h3>
@@ -87,7 +87,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
               </div>
 
               {/* Restaurant Details */}
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 flex-1 flex flex-col">
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-[#781220]" />
                   <div>
@@ -97,7 +97,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                 </div>
 
                 {/* Branch List */}
-                <div className="space-y-2">
+                <div className="space-y-2 flex-1">
                   <p className="font-semibold text-gray-800 text-sm">الفروع المتاحة:</p>
                   {restaurant.branches.map((branch) => (
                     <div key={branch.id} className="flex items-center gap-2 text-sm text-gray-600">
@@ -108,16 +108,18 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                 </div>
 
                 {/* Action Button */}
-                <button
+                <div className="mt-auto pt-4">
+                  <button
                   disabled={!isOpen}
                   className={`w-full py-3 rounded-full font-bold text-base transition-all duration-300 ${
                     !isOpen
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : 'bg-gray-100 text-gray-700 hover:bg-[#781220] hover:text-white'
                   }`}
-                >
+                  >
                   {!isOpen ? 'مغلق حالياً' : 'اختر هذا المطعم'}
-                </button>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
