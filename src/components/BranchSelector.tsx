@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { MapPin, Phone, CheckCircle } from 'lucide-react';
+import { MapPin, Phone, CheckCircle, ArrowRight } from 'lucide-react';
 import { Branch } from '../types';
 import { getFormattedLibyaTime, getTimeUntilOpening, isWithinOperatingHours } from '../utils/timeUtils';
 
@@ -8,21 +7,16 @@ interface BranchSelectorProps {
   branches: Branch[];
   selectedBranch: Branch | null;
   onBranchSelect: (branch: Branch) => void;
+  restaurantName: string;
+  onBackToRestaurants: () => void;
 }
 
-// Helper function to get branch menu URL
-const getBranchMenuUrl = (branchId: string) => {
-  const urlMap: Record<string, string> = {
-    'airport': '/airport-menu',
-    'dollar': '/dollar-menu',
-    'balaoun': '/balaoun-menu'
-  };
-  return urlMap[branchId] || '/';
-};
 export const BranchSelector: React.FC<BranchSelectorProps> = ({
   branches,
   selectedBranch,
   onBranchSelect,
+  restaurantName,
+  onBackToRestaurants,
 }) => {
   const [currentTime, setCurrentTime] = React.useState(getFormattedLibyaTime());
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
@@ -42,22 +36,33 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
       <div className="max-w-6xl w-full mx-auto">
         {/* Header */}
         <div className="text-center mb-4 sm:mb-8">
+          {/* Back Button */}
+          <div className="flex justify-start mb-4">
+            <button
+              onClick={onBackToRestaurants}
+              className="flex items-center gap-2 text-[#781220] hover:text-[#5c0d18] font-semibold transition-colors"
+            >
+              <ArrowRight className="w-5 h-5" />
+              العودة للمطاعم
+            </button>
+          </div>
+          
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-gradient-to-br from-[#781220] to-[#5c0d18] rounded-2xl shadow-xl border-2 border-white/20 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
               <img 
                 src="/New Element 88 [8BACFE9].png" 
-                alt="مطعم المستر" 
+                alt={restaurantName}
                 className="w-8 h-8 sm:w-12 sm:h-12 object-contain filter drop-shadow-lg"
               />
             </div>
             <div>
-              <h1 className="text-3xl sm:text-5xl font-black text-gray-800">المستر</h1>
+              <h1 className="text-3xl sm:text-5xl font-black text-gray-800">{restaurantName}</h1>
               <p className="text-base sm:text-lg text-gray-600">مطعم الوجبات السريعة</p>
             </div>
           </div>
           <h2 className="text-lg sm:text-3xl font-bold text-gray-800 mb-2 px-4">اختر الفرع الأقرب إليك</h2>
           <p className="text-sm sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
-            لدينا ثلاثة فروع في أفضل المواقع لخدمتك بأسرع وقت ممكن
+            فروع {restaurantName} في أفضل المواقع لخدمتك بأسرع وقت ممكن
           </p>
           
           {/* Current Time Display */}
@@ -161,12 +166,12 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
               <p className="text-gray-600 mb-4 text-base">
                 تم اختيار <span className="font-bold text-[#781220]">{selectedBranch.name}</span>
               </p>
-              <Link
-                to={getBranchMenuUrl(selectedBranch.id)}
+              <button
+                onClick={() => onBranchSelect(selectedBranch)}
                 className="block w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-3 rounded-full font-bold text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-center"
               >
                 تصفح القائمة
-              </Link>
+              </button>
             </div>
           </div>
         )}

@@ -27,3 +27,9 @@ export interface Branch {
   deliveryTime: string;
   isOpen: boolean;
 }
+
+export interface Restaurant {
+  id: string;
+  name: string;
+  branches: Branch[];
+}

@@ -1,22 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header';
 import { CategoryFilter } from '../components/CategoryFilter';
 import { Menu } from '../components/Menu';
 import { Cart } from '../components/Cart';
+import { RestaurantSelector } from '../components/RestaurantSelector';
+import { BranchSelector } from '../components/BranchSelector';
 import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
-import { branches } from '../data/branchData';
-import { Branch } from '../types';
+import { restaurants, getRestaurantById, getBranchById } from '../data/restaurantsData';
+import { Branch, Restaurant } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(() => {
-    // Load selected branch from localStorage
-    const saved = localStorage.getItem('selectedBranch');
-    return saved ? JSON.parse(saved) : null;
+  
+  // Load selected restaurant and branch from localStorage
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(() => {
+    const savedRestaurantId = localStorage.getItem('selectedRestaurantId');
+    return savedRestaurantId ? getRestaurantById(savedRestaurantId) || null : null;
   });
+  
+  const [selectedBranch, setSelectedBranch] = useState<Branch | null>(() => {
+    const savedBranchId = localStorage.getItem('selectedBranchId');
+    if (savedBranchId) {
+      const branchData = getBranchById(savedBranchId);
+      return branchData ? branchData.branch : null;
+    }
+    return null;
+  });
+  
   const [selectedCategory, setSelectedCategory] = useState('الكل');
   const { menuItems, categories, loading, error } = useMenu(selectedBranch?.id);
   const {
@@ -50,46 +63,44 @@ export const HomePage: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Show branch selector if no branch is selected
-  if (!selectedBranch) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-3 sm:p-4" dir="rtl">
-        <div className="max-w-2xl w-full mx-auto text-center">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-gradient-to-br from-[#781220] to-[#5c0d18] rounded-2xl shadow-xl border-2 border-white/20 backdrop-blur-sm transform hover:scale-105 transition-all duration-300">
-                <img 
-                  src="/New Element 88 [8BACFE9].png" 
-                  alt="مطعم المستر" 
-                  className="w-8 h-8 sm:w-12 sm:h-12 object-contain filter drop-shadow-lg"
-                />
-              </div>
-              <div>
-                <h1 className="text-3xl sm:text-5xl font-black text-gray-800">المستر</h1>
-                <p className="text-base sm:text-lg text-gray-600">مطعم الوجبات السريعة</p>
-              </div>
-            </div>
-            <h2 className="text-lg sm:text-3xl font-bold text-gray-800 mb-4 px-4">مرحباً بك في مطعم المستر</h2>
-            <p className="text-sm sm:text-xl text-gray-600 leading-relaxed px-4 mb-8">
-              يرجى اختيار الفرع الأقرب إليك للمتابعة
-            </p>
-          </div>
+  // Handle restaurant selection
+  const handleRestaurantSelect = (restaurant: Restaurant) => {
+    setSelectedRestaurant(restaurant);
+    localStorage.setItem('selectedRestaurantId', restaurant.id);
+    // Clear branch selection when restaurant changes
+    setSelectedBranch(null);
+    localStorage.removeItem('selectedBranchId');
+  };
 
-          {/* Action Button */}
-          <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg">
-            <Link
-              to="/branches"
-              className="w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-4 px-8 rounded-full font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-block"
-            >
-              اختيار الفرع
-            </Link>
-            <p className="text-gray-500 text-sm mt-4">
-              لدينا 3 فروع في أفضل المواقع لخدمتك
-            </p>
-          </div>
-        </div>
-      </div>
+  // Handle branch selection
+  const handleBranchSelect = (branch: Branch) => {
+    setSelectedBranch(branch);
+    localStorage.setItem('selectedBranchId', branch.id);
+  };
+
+  // Show restaurant selector if no restaurant is selected
+  if (!selectedRestaurant) {
+    return (
+      <RestaurantSelector
+        restaurants={restaurants}
+        onSelectRestaurant={handleRestaurantSelect}
+      />
+    );
+  }
+
+  // Show branch selector if restaurant is selected but no branch is selected
+  if (selectedRestaurant && !selectedBranch) {
+    return (
+      <BranchSelector
+        branches={selectedRestaurant.branches}
+        selectedBranch={selectedBranch}
+        onBranchSelect={handleBranchSelect}
+        restaurantName={selectedRestaurant.name}
+        onBackToRestaurants={() => {
+          setSelectedRestaurant(null);
+          localStorage.removeItem('selectedRestaurantId');
+        }}
+      />
     );
   }
 
@@ -106,9 +117,12 @@ export const HomePage: React.FC = () => {
       <Header
         cartItemCount={getTotalItems()}
         onCartClick={openCart}
+        selectedRestaurant={selectedRestaurant}
         selectedBranch={selectedBranch}
-        onBranchChange={() => setSelectedBranch(null)}
-        onBranchChange={() => navigate('/branches')}
+        onBranchChange={() => {
+          setSelectedBranch(null);
+          localStorage.removeItem('selectedBranchId');
+        }}
         cartTotal={getTotalPrice()}
       />
 
@@ -186,7 +200,7 @@ export const HomePage: React.FC = () => {
                 className="w-full h-full object-contain"
               />
             </div>
-            <h3 className="text-2xl font-black">المستر</h3>
+            <h3 className="text-2xl font-black">{selectedRestaurant.name}</h3>
           </div>
           <p className="text-gray-400 text-lg mb-6">مطعم الوجبات السريعة الأفضل في المدينة</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -200,7 +214,7 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6">
-            <p className="text-gray-500">© 2025 المستر. جميع الحقوق محفوظة</p>
+            <p className="text-gray-500">© 2025 {selectedRestaurant.name}. جميع الحقوق محفوظة</p>
           </div>
         </div>
       </footer>
