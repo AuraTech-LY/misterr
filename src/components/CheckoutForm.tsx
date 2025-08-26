@@ -187,7 +187,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       });
 
       if (error) {
-        console.error("Distance calculation error:", error);
+        console.warn("Distance calculation service unavailable:", error);
         setRoadDistance(null);
         return;
       }
@@ -196,11 +196,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         setRoadDistance(data.distance_km);
         console.log(`Distance calculated: ${data.distance_km} km`);
       } else {
-        console.warn("Invalid distance data received:", data);
+        console.warn("Distance calculation service unavailable");
         setRoadDistance(null);
       }
     } catch (error) {
-      console.error('Error calculating road distance:', error);
+      console.warn('Distance calculation service unavailable:', error);
       setRoadDistance(null);
     } finally {
       setIsCalculatingDistance(false);
