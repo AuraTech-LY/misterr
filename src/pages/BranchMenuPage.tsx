@@ -6,7 +6,7 @@ import { Menu } from '../components/Menu';
 import { Cart } from '../components/Cart';
 import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
-import { branches } from '../data/branchData';
+import { getBranchById } from '../data/restaurantsData';
 import { Branch } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
 
@@ -19,7 +19,8 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   const [selectedCategory, setSelectedCategory] = useState('الكل');
   
   // Find the branch data
-  const branch = branches.find(b => b.id === branchId);
+  const branchData = getBranchById(branchId);
+  const branch = branchData?.branch;
   
   const { menuItems, categories, loading, error } = useMenu(branchId);
   const {
