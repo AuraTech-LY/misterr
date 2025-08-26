@@ -2,7 +2,7 @@ import React from 'react';
 import { ShoppingBag, Star, MapPin, ChevronDown } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
-import { branches } from '../data/branchData';
+import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
 import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
 
@@ -253,7 +253,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
             className="bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden animate-fadeInUp w-80 max-w-[90vw]"
             onClick={(e) => e.stopPropagation()}
           >
-          {branches.map((branch) => (
+          {getAllBranches().map((branch) => (
             <button
               key={branch.id}
               type="button"
