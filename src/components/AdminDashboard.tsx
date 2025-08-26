@@ -38,9 +38,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     category: 'برجر',
     is_popular: false,
     is_available: true,
-    available_airport: true,
-    available_dollar: true,
-    available_balaoun: true,
+    available_airport: false,
+    available_dollar: false,
+    available_balaoun: false,
   };
 
   const [newItem, setNewItem] = useState(newItemTemplate);
@@ -91,7 +91,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
   // Filter items based on selected restaurant and branch
   const getFilteredItems = () => {
-    let filtered = menuItems;
+    let filtered = [];
     
     // Filter by restaurant branches
     if (selectedRestaurant === 'mister-shish') {
@@ -119,25 +119,39 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const handleSaveItem = async (item: MenuItem) => {
     try {
       setSaving(true);
+      
+      // Ensure item maintains correct restaurant availability
+      const itemToSave = { ...item };
+      if (selectedRestaurant === 'mister-shish') {
+        // For Mister Shish, ensure dollar is false
+        itemToSave.available_dollar = false;
+      } else if (selectedRestaurant === 'mister-crispy') {
+        // For Mister Crispy, ensure airport and balaoun are false
+        itemToSave.available_airport = false;
+        itemToSave.available_balaoun = false;
+        // Ensure dollar is true
+        itemToSave.available_dollar = true;
+      }
+      
       const { error } = await supabase
         .from('menu_items')
         .update({
-          name: item.name,
-          description: item.description,
-          price: item.price,
-          image_url: item.image_url,
-          category: item.category,
-          is_popular: item.is_popular,
-          is_available: item.is_available,
-          available_airport: item.available_airport,
-          available_dollar: item.available_dollar,
-          available_balaoun: item.available_balaoun,
+          name: itemToSave.name,
+          description: itemToSave.description,
+          price: itemToSave.price,
+          image_url: itemToSave.image_url,
+          category: itemToSave.category,
+          is_popular: itemToSave.is_popular,
+          is_available: itemToSave.is_available,
+          available_airport: itemToSave.available_airport,
+          available_dollar: itemToSave.available_dollar,
+          available_balaoun: itemToSave.available_balaoun,
         })
-        .eq('id', item.id);
+        .eq('id', itemToSave.id);
 
       if (error) throw error;
 
-      setMenuItems(prev => prev.map(i => i.id === item.id ? item : i));
+      setMenuItems(prev => prev.map(i => i.id === itemToSave.id ? itemToSave : i));
       setEditingItem(null);
     } catch (error) {
       console.error('Error updating item:', error);
@@ -150,9 +164,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const handleAddItem = async () => {
     try {
       setSaving(true);
+      
+      // Ensure new item has correct restaurant availability based on selected restaurant
+      const itemToAdd = { ...newItem };
+      if (selectedRestaurant === 'mister-shish') {
+        // For Mister Shish, ensure dollar is false
+        itemToAdd.available_dollar = false;
+        // If no branches selected, default to both Mister Shish branches
+        if (!itemToAdd.available_airport && !itemToAdd.available_balaoun) {
+          itemToAdd.available_airport = true;
+          itemToAdd.available_balaoun = true;
+        }
+      } else if (selectedRestaurant === 'mister-crispy') {
+        // For Mister Crispy, ensure airport and balaoun are false
+        itemToAdd.available_airport = false;
+        itemToAdd.available_balaoun = false;
+        // Ensure dollar is true
+        itemToAdd.available_dollar = true;
+      }
+      
       const { data, error } = await supabase
         .from('menu_items')
-        .insert([newItem])
+        .insert([itemToAdd])
         .select()
         .single();
 
@@ -170,20 +203,61 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   };
 
   const handleDeleteItem = async (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا العنصر؟')) return;
+    // Find the item to check if it belongs to other restaurants
+    const itemToDelete = menuItems.find(item => item.id === id);
+    if (!itemToDelete) return;
+    
+    // Check if item exists in other restaurants
+    const existsInOtherRestaurants = 
+      (selectedRestaurant === 'mister-shish' && itemToDelete.available_dollar) ||
+      (selectedRestaurant === 'mister-crispy' && (itemToDelete.available_airport || itemToDelete.available_balaoun));
+    
+    if (existsInOtherRestaurants) {
+      // If item exists in other restaurants, just disable it for current restaurant
+      if (!confirm('هذا العنصر موجود في مطاعم أخرى. هل تريد إزالته من ' + (selectedRestaurant === 'mister-shish' ? 'مستر شيش' : 'مستر كريسبي') + ' فقط؟')) return;
+      
+      try {
+        const updatedItem = { ...itemToDelete };
+        if (selectedRestaurant === 'mister-shish') {
+          updatedItem.available_airport = false;
+          updatedItem.available_balaoun = false;
+        } else if (selectedRestaurant === 'mister-crispy') {
+          updatedItem.available_dollar = false;
+        }
+        
+        const { error } = await supabase
+          .from('menu_items')
+          .update({
+            available_airport: updatedItem.available_airport,
+            available_dollar: updatedItem.available_dollar,
+            available_balaoun: updatedItem.available_balaoun,
+          })
+          .eq('id', id);
 
-    try {
-      const { error } = await supabase
-        .from('menu_items')
-        .delete()
-        .eq('id', id);
+        if (error) throw error;
 
-      if (error) throw error;
+        setMenuItems(prev => prev.map(item => item.id === id ? updatedItem : item));
+      } catch (error) {
+        console.error('Error updating item:', error);
+        alert('حدث خطأ في تحديث العنصر');
+      }
+    } else {
+      // If item only exists in current restaurant, delete it completely
+      if (!confirm('هل أنت متأكد من حذف هذا العنصر نهائياً؟')) return;
 
-      setMenuItems(prev => prev.filter(item => item.id !== id));
-    } catch (error) {
-      console.error('Error deleting item:', error);
-      alert('حدث خطأ في حذف العنصر');
+      try {
+        const { error } = await supabase
+          .from('menu_items')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+
+        setMenuItems(prev => prev.filter(item => item.id !== id));
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        alert('حدث خطأ في حذف العنصر');
+      }
     }
   };
 
