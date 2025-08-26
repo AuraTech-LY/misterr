@@ -53,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
               // Clear both restaurant and branch to go to restaurant selector
               localStorage.removeItem('selectedRestaurantId');
               localStorage.removeItem('selectedBranchId');
-              navigate('/');
+             window.location.href = '/';
             }}
             className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
           >
