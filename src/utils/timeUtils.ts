@@ -1,24 +1,27 @@
-// Time utilities for Libya Tripoli timezone (UTC+2)
+// Time utilities for UTC-2 timezone
 
-export const LIBYA_TIMEZONE = 'Africa/Tripoli'; // Official IANA timezone for Tripoli, Libya
+export const TIMEZONE_OFFSET = -2; // UTC-2
 export const OPENING_HOUR = 11; // 11:00 AM
 export const CLOSING_HOUR = 23; // 11:00 PM
 export const CLOSING_MINUTE = 59; // 11:59 PM
 
 /**
- * Get current time in Africa/Tripoli timezone
+ * Get current time in UTC-2 timezone
  */
-export const getLibyaTime = (): Date => {
-  return new Date(new Date().toLocaleString("en-US", { timeZone: LIBYA_TIMEZONE }));
+export const getCurrentTime = (): Date => {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const targetTime = new Date(utc + (TIMEZONE_OFFSET * 3600000));
+  return targetTime;
 };
 
 /**
  * Check if current time is within operating hours (11:00 - 23:59)
  */
 export const isWithinOperatingHours = (): boolean => {
-  const libyaTime = getLibyaTime();
-  const currentHour = libyaTime.getHours();
-  const currentMinute = libyaTime.getMinutes();
+  const currentTime = getCurrentTime();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
   
   // Check if time is between 11:00 and 23:59
   if (currentHour < OPENING_HOUR) {
@@ -37,12 +40,11 @@ export const isWithinOperatingHours = (): boolean => {
 };
 
 /**
- * Get formatted current Libya time
+ * Get formatted current time in UTC-2
  */
 export const getFormattedLibyaTime = (): string => {
-  const libyaTime = getLibyaTime();
-  return libyaTime.toLocaleString('ar-LY', {
-    timeZone: LIBYA_TIMEZONE,
+  const currentTime = getCurrentTime();
+  return currentTime.toLocaleString('ar-LY', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
@@ -57,13 +59,14 @@ export const getTimeUntilOpening = (): string | null => {
     return null;
   }
   
-  const libyaTime = getLibyaTime();
-  const currentHour = libyaTime.getHours();
+  const currentTime = getCurrentTime();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
   
   if (currentHour < OPENING_HOUR) {
     // Before opening today
     const hoursUntilOpen = OPENING_HOUR - currentHour;
-    const minutesUntilOpen = 60 - libyaTime.getMinutes();
+    const minutesUntilOpen = 60 - currentMinute;
     
     if (minutesUntilOpen === 60) {
       return `${hoursUntilOpen} ساعة`;
@@ -85,9 +88,9 @@ export const getTimeUntilClosing = (): string | null => {
     return null;
   }
   
-  const libyaTime = getLibyaTime();
-  const currentHour = libyaTime.getHours();
-  const currentMinute = libyaTime.getMinutes();
+  const currentTime = getCurrentTime();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
   
   const hoursUntilClose = CLOSING_HOUR - currentHour;
   const minutesUntilClose = CLOSING_MINUTE - currentMinute;
@@ -98,3 +101,13 @@ export const getTimeUntilClosing = (): string | null => {
     return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
   }
 };
+
+/**
+ * Get Libya time (alias for getCurrentTime for backward compatibility)
+ */
+export const getLibyaTime = (): Date => {
+  return getCurrentTime();
+};
+
+// Keep the old constant for backward compatibility
+export const LIBYA_TIMEZONE = 'UTC-2';
