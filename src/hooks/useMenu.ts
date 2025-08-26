@@ -80,5 +80,10 @@ export const useMenu = (branchId?: string) => {
     fetchData();
   }, [branchId]);
 
-  return { menuItems, categories, loading, error };
+  // Filter categories to only include those that have items
+  const availableCategories = categories.filter(category => 
+    menuItems.some(item => item.category === category.name)
+  );
+
+  return { menuItems, categories: availableCategories, loading, error };
 };

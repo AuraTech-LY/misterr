@@ -116,6 +116,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
   const filteredItems = getFilteredItems();
 
+  // Get categories that have items in the filtered results
+  const availableCategories = categories.filter(category => 
+    filteredItems.some(item => item.category === category.name)
+  );
+
   const handleSaveItem = async (item: MenuItem) => {
     try {
       setSaving(true);
@@ -468,7 +473,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <X className="w-6 h-6" />
                     </button>
                   </div>
-                  <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} />
+                  <ItemForm item={editingItem} onChange={setEditingItem} categories={availableCategories} />
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
                     <button
                       onClick={() => handleSaveItem(editingItem)}
