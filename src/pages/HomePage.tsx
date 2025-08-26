@@ -189,6 +189,7 @@ export const HomePage: React.FC = () => {
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
+        selectedBranch={selectedBranch}
       />
 
       <footer className="bg-black text-white py-12 mt-16">

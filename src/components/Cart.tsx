@@ -10,6 +10,7 @@ interface CartProps {
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
   onClearCart: () => void;
+  selectedBranch?: any;
 }
 
 export const Cart: React.FC<CartProps> = ({
@@ -141,6 +142,7 @@ export const Cart: React.FC<CartProps> = ({
         onSubmit={handleOrderSubmit}
         onBack={handleBackToCart}
         isTransitioning={isTransitioning}
+        selectedBranch={selectedBranch}
       />
     );
   }

@@ -16,6 +16,7 @@ interface CheckoutFormProps {
   onSubmit: (orderData: OrderData, cartItems: CartItem[]) => void;
   onBack: () => void;
   isTransitioning?: boolean;
+  selectedBranch?: any;
 }
 
 interface OrderData {
@@ -57,6 +58,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
   const [areaConfirmed, setAreaConfirmed] = useState(false);
   const [manualAreaRequired, setManualAreaRequired] = useState(false);
   const [geoApiLoading, setGeoApiLoading] = useState(false);
+  const [roadDistance, setRoadDistance] = useState<number | null>(null);
+  const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
 
   // Smart defaults based on common patterns
   const popularAreas = ['المدينة القديمة', 'الحدائق', 'الجامعة', 'السوق المركزي', 'الكورنيش'];
@@ -86,6 +89,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
           customerLocation: location
         }));
         setIsLocating(false);
+        
+        // Calculate road distance if branch coordinates are available
+        if (selectedBranch?.latitude && selectedBranch?.longitude) {
+          calculateRoadDistance(selectedBranch.latitude, selectedBranch.longitude, latitude, longitude);
+        }
         
         // Call Geoapify reverse geocoding via Edge Function
         try {
@@ -153,6 +161,42 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
         maximumAge: 300000 // 5 minutes
       }
     );
+  };
+
+  // Calculate road distance using Geoapify Routing API
+  const calculateRoadDistance = async (branchLat: number, branchLon: number, customerLat: number, customerLon: number) => {
+    try {
+      setIsCalculatingDistance(true);
+      console.log(`Calculating distance from branch (${branchLat}, ${branchLon}) to customer (${customerLat}, ${customerLon})`);
+      
+      const { data, error } = await supabase.functions.invoke('geoapify-distance', {
+        body: { 
+          origin_lat: branchLat,
+          origin_lon: branchLon,
+          destination_lat: customerLat,
+          destination_lon: customerLon
+        }
+      });
+
+      if (error) {
+        console.error("Distance calculation error:", error);
+        setRoadDistance(null);
+        return;
+      }
+
+      if (data && typeof data.distance_km === 'number') {
+        setRoadDistance(data.distance_km);
+        console.log(`Distance calculated: ${data.distance_km} km`);
+      } else {
+        console.warn("Invalid distance data received:", data);
+        setRoadDistance(null);
+      }
+    } catch (error) {
+      console.error('Error calculating road distance:', error);
+      setRoadDistance(null);
+    } finally {
+      setIsCalculatingDistance(false);
+    }
   };
 
   // Reverse geocoding using Supabase Edge Function
@@ -596,6 +640,26 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, it
                     {customerLocation && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
                         <p className="text-green-800 text-sm mb-2">✓ تم تحديد موقعك بنجاح</p>
+                        
+                        {/* Distance Information */}
+                        <div className="mt-2 pt-2 border-t border-green-300">
+                          {isCalculatingDistance ? (
+                            <div className="flex items-center gap-2 text-blue-600 text-sm">
+                              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                              <span>جاري حساب المسافة...</span>
+                            </div>
+                          ) : roadDistance !== null ? (
+                            <div className="flex items-center gap-2 text-green-700 text-sm">
+                              <span>📍 المسافة من {selectedBranch?.name}: </span>
+                              <span className="font-bold">{roadDistance} كم</span>
+                            </div>
+                          ) : (
+                            <div className="text-gray-600 text-sm">
+                              <span>لم يتم حساب المسافة</span>
+                            </div>
+                          )}
+                        </div>
+                        
                         <p className="text-green-600 text-xs">
                           سيتم إرسال رابط خريطة جوجل مع الطلب لتسهيل الوصول إليك
                         </p>

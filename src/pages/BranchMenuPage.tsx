@@ -159,6 +159,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
+        selectedBranch={branch}
       />
 
       <footer className="bg-black text-white py-12 mt-16">

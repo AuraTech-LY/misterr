@@ -26,6 +26,8 @@ export interface Branch {
   phone: string;
   deliveryTime: string;
   isOpen: boolean;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Restaurant {
