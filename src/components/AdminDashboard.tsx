@@ -353,12 +353,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   },
                   { 
                     value: 'dollar', 
-                    label: 'فرع الدولار',
+                    label: 'مستر كريسبي',
                     icon: <MapPin className="w-4 h-4 text-green-500" />
                   },
                   { 
                     value: 'balaoun', 
-                    label: 'فرع بلعون',
+                    label: 'مستر شيش - بلعون',
                     icon: <MapPin className="w-4 h-4 text-purple-500" />
                   }
                 ]}
