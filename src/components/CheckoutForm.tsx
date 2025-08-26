@@ -39,7 +39,15 @@ interface OrderData {
   scheduledTime?: string;
 }
 
-export const CheckoutForm: React.FC<CheckoutFormProps> = ({ total, itemCount, items, onSubmit, onBack, isTransitioning = false }) => {
+export const CheckoutForm: React.FC<CheckoutFormProps> = ({ 
+  total, 
+  itemCount, 
+  items, 
+  onSubmit, 
+  onBack, 
+  isTransitioning = false,
+  selectedBranch
+}) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<OrderData>({
     customerInfo: { name: '', phone: '' },
