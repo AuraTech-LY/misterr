@@ -25,9 +25,10 @@ interface ItemFormProps {
   onChange: (item: MenuItem) => void;
   categories: Category[];
   isNew?: boolean;
+  selectedRestaurant?: 'mister-shish' | 'mister-crispy';
 }
 
-export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, isNew = false }) => {
+export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, isNew = false, selectedRestaurant = 'mister-shish' }) => {
   return (
     <div className="bg-gray-50 p-6 rounded-xl space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -115,42 +116,51 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             متوفر
           </label>
         </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`airport-${isNew ? 'new' : item.id}`}
-            checked={item.available_airport}
-            onChange={(e) => onChange({ ...item, available_airport: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`airport-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            مستر شيش - فرع طريق المطار
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`dollar-${isNew ? 'new' : item.id}`}
-            checked={item.available_dollar}
-            onChange={(e) => onChange({ ...item, available_dollar: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`dollar-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            مستر كريسبي
-          </label>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id={`balaoun-${isNew ? 'new' : item.id}`}
-            checked={item.available_balaoun}
-            onChange={(e) => onChange({ ...item, available_balaoun: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
-          />
-          <label htmlFor={`balaoun-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
-            مستر شيش - بلعون
-          </label>
-        </div>
+        
+        {/* Restaurant-specific branch checkboxes */}
+        {selectedRestaurant === 'mister-shish' && (
+          <>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id={`airport-${isNew ? 'new' : item.id}`}
+                checked={item.available_airport}
+                onChange={(e) => onChange({ ...item, available_airport: e.target.checked })}
+                className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+              />
+              <label htmlFor={`airport-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
+                مستر شيش - فرع طريق المطار
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id={`balaoun-${isNew ? 'new' : item.id}`}
+                checked={item.available_balaoun}
+                onChange={(e) => onChange({ ...item, available_balaoun: e.target.checked })}
+                className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+              />
+              <label htmlFor={`balaoun-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
+                مستر شيش - بلعون
+              </label>
+            </div>
+          </>
+        )}
+        
+        {selectedRestaurant === 'mister-crispy' && (
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id={`dollar-${isNew ? 'new' : item.id}`}
+              checked={item.available_dollar}
+              onChange={(e) => onChange({ ...item, available_dollar: e.target.checked })}
+              className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            />
+            <label htmlFor={`dollar-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
+              مستر كريسبي
+            </label>
+          </div>
+        )}
       </div>
     </div>
   );

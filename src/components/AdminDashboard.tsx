@@ -28,6 +28,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'menu' | 'categories'>('menu');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy'>('mister-shish');
 
   const newItemTemplate: MenuItem = {
     name: '',
@@ -88,9 +89,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     fetchData();
   };
 
-  const filteredItems = selectedBranch === 'all' 
-    ? menuItems 
-    : menuItems.filter(item => item[`available_${selectedBranch}` as keyof MenuItem]);
+  // Filter items based on selected restaurant and branch
+  const getFilteredItems = () => {
+    let filtered = menuItems;
+    
+    // Filter by restaurant branches
+    if (selectedRestaurant === 'mister-shish') {
+      filtered = menuItems.filter(item => 
+        item.available_airport || item.available_balaoun
+      );
+    } else if (selectedRestaurant === 'mister-crispy') {
+      filtered = menuItems.filter(item => 
+        item.available_dollar
+      );
+    }
+    
+    // Further filter by specific branch if selected
+    if (selectedBranch !== 'all') {
+      filtered = filtered.filter(item => 
+        item[`available_${selectedBranch}` as keyof MenuItem]
+      );
+    }
+    
+    return filtered;
+  };
+
+  const filteredItems = getFilteredItems();
 
   const handleSaveItem = async (item: MenuItem) => {
     try {
@@ -240,6 +264,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminCategories onCategoriesChange={handleCategoriesChange} />
         ) : (
           <>
+        {/* Restaurant Sub-tabs */}
+        <div className="bg-white shadow-sm border-b mb-6">
+          <div className="container mx-auto px-3 sm:px-8">
+            <div className="flex gap-1">
+              <button
+                onClick={() => setSelectedRestaurant('mister-shish')}
+                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                  selectedRestaurant === 'mister-shish'
+                    ? 'text-[#781220] border-[#781220] bg-red-50'
+                    : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+                }`}
+              >
+                مستر شيش
+              </button>
+              <button
+                onClick={() => setSelectedRestaurant('mister-crispy')}
+                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                  selectedRestaurant === 'mister-crispy'
+                    ? 'text-[#781220] border-[#781220] bg-red-50'
+                    : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+                }`}
+              >
+                مستر كريسبي
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Controls */}
         <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
@@ -250,7 +302,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               <CustomSelect
                 value={selectedBranch}
                 onChange={setSelectedBranch}
-                options={[
+                options={selectedRestaurant === 'mister-shish' ? [
                   { 
                     value: 'all', 
                     label: 'جميع الفروع',
@@ -262,14 +314,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     icon: <MapPin className="w-4 h-4 text-blue-500" />
                   },
                   { 
-                    value: 'dollar', 
-                    label: 'مستر كريسبي',
-                    icon: <MapPin className="w-4 h-4 text-green-500" />
-                  },
-                  { 
                     value: 'balaoun', 
                     label: 'مستر شيش - بلعون',
                     icon: <MapPin className="w-4 h-4 text-purple-500" />
+                  }
+                ] : [
+                  { 
+                    value: 'all', 
+                    label: 'جميع الفروع',
+                    icon: <MapPin className="w-4 h-4 text-gray-500" />
+                  },
+                  { 
+                    value: 'dollar', 
+                    label: 'مستر كريسبي',
+                    icon: <MapPin className="w-4 h-4 text-green-500" />
                   }
                 ]}
                 placeholder="اختر الفرع"
@@ -297,7 +355,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <ItemForm item={newItem} onChange={setNewItem} categories={categories} isNew={true} />
+            <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} selectedRestaurant={selectedRestaurant} />
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
               <button
                 onClick={handleAddItem}
@@ -384,9 +442,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           )}
                         </div>
                         <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
-                          {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">مستر شيش - فرع طريق المطار</span>}
-                          {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
-                          {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">مستر شيش - بلعون</span>}
+                          {selectedRestaurant === 'mister-shish' && (
+                            <>
+                              {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">مستر شيش - فرع طريق المطار</span>}
+                              {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">مستر شيش - بلعون</span>}
+                            </>
+                          )}
+                          {selectedRestaurant === 'mister-crispy' && (
+                            <>
+                              {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
+                            </>
+                          )}
                         </div>
                       </div>
                       <div className="flex gap-2 self-end sm:self-start">
