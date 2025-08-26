@@ -35,8 +35,9 @@ Deno.serve(async (req: Request) => {
       console.error("GEO_API environment variable is not set");
       return new Response(
         JSON.stringify({ 
-          error: "Server configuration error",
-          message: "Routing service is not properly configured"
+          error: "API_KEY_MISSING",
+          message: "GEO_API environment variable is not configured in Supabase Edge Functions. Please add your Geoapify API key as a secret named 'GEO_API' in your Supabase project settings.",
+          instructions: "Go to Supabase Dashboard → Edge Functions → Environment Variables → Add 'GEO_API' with your Geoapify API key"
         }),
         {
           status: 500,
