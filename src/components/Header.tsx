@@ -179,9 +179,9 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               
               {/* Total Price - Left Side */}
-              <div className="flex-shrink-0 w-16 text-left">
+              <div className="flex-shrink-0 w-20 text-left">
                 {cartItemCount > 0 && isOpen && (
-                  <span className="text-white text-base font-bold">
+                  <span className="text-white text-sm font-bold whitespace-nowrap">
                     {cartTotal.toFixed(2)} د.ل
                   </span>
                 )}
