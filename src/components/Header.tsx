@@ -29,6 +29,12 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
 
+  // Define color variables based on selected restaurant
+  const isMisterCrispy = selectedBranch?.name?.includes('كريسبي') || selectedRestaurant?.name?.includes('كريسبي');
+  const primaryColorClass = isMisterCrispy ? 'bg-[#55421A]' : 'bg-[#781220]';
+  const primaryColorHoverClass = isMisterCrispy ? 'hover:bg-[#3d2f12]' : 'hover:bg-[#5a0e18]';
+  const primaryColorTextClass = isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]';
+
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -199,13 +205,19 @@ interface BranchDropdownProps {
   onBranchSelect: (branch: Branch) => void;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
+  isMisterCrispy: boolean;
+  primaryColorClass: string;
+  primaryColorTextClass: string;
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
   onBranchSelect, 
   isChangingBranch,
-  onBranchChanging 
+  onBranchChanging,
+  isMisterCrispy,
+  primaryColorClass,
+  primaryColorTextClass
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
