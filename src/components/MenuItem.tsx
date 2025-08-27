@@ -14,6 +14,15 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
 
+  // Determine if this is مستر كريسبي based on item category or other indicators
+  // Since we don't have restaurant context here, we'll use a fallback approach
+  const isMisterCrispy = false; // Default to مستر شيش colors for now
+  
+  // Dynamic color classes based on restaurant
+  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-[#781220]';
+  const primaryColorHoverClass = isMisterCrispy ? 'bg-brand-crispy-dark' : 'bg-[#5c0d18]';
+  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-[#781220]';
+
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -106,7 +115,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                   : 'opacity-50 cursor-not-allowed'
               }`}
             >
-              <Plus className="w-4 h-4 text-[#781220]" />
+              <Plus className={`w-4 h-4 ${primaryColorTextClass}`} />
             </button>
           </div>
         </div>
@@ -130,7 +139,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                 <X className="w-5 h-5 text-gray-600" />
               </button>
               {item.popular && (
-                <div className="absolute top-3 right-3 bg-[#781220] text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+                <div className={`absolute top-3 right-3 ${primaryColorClass} text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1`}>
                   <Star className="w-4 h-4 fill-current" />
                   <span>الأكثر طلباً</span>
                 </div>
@@ -143,7 +152,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
               
               <div className="flex justify-between items-center mb-6">
-                <span className="text-2xl font-black text-[#781220]">
+                <span className={`text-2xl font-black ${primaryColorTextClass}`}>
                   {item.price.toFixed(2)} د.ل
                 </span>
               </div>
@@ -171,7 +180,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               {/* Total Price */}
               <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                 <span className="text-lg font-semibold text-gray-800">المجموع:</span>
-                <span className="text-xl font-black text-[#781220]">
+                <span className={`text-xl font-black ${primaryColorTextClass}`}>
                   {(item.price * quantity).toFixed(2)} د.ل
                 </span>
               </div>
@@ -204,7 +213,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             className="w-full h-32 lg:h-40 object-cover group-hover:scale-110 transition-transform duration-500"
           />
           {item.popular && (
-            <div className="absolute top-2 right-2 lg:top-3 lg:right-3 bg-[#781220] text-white px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-semibold flex items-center gap-1">
+            <div className={`absolute top-2 right-2 lg:top-3 lg:right-3 ${primaryColorClass} text-white px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-semibold flex items-center gap-1`}>
               <Star className="w-4 h-4 fill-current" />
               <span>الأكثر طلباً</span>
             </div>
@@ -217,7 +226,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           <p className="text-sm text-gray-600 mb-3 leading-relaxed line-clamp-2 flex-grow">{item.description}</p>
           
           <div className="flex justify-between items-center mb-3">
-            <span className="text-lg lg:text-xl font-black text-[#781220]">
+            <span className={`text-lg lg:text-xl font-black ${primaryColorTextClass}`}>
               {item.price.toFixed(2)} د.ل
             </span>
           </div>
@@ -235,7 +244,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               <span className="w-8 text-center font-bold text-sm">{desktopQuantity}</span>
               <button
                 onClick={() => handleDesktopQuantityChange(desktopQuantity + 1)}
-                className="w-7 h-7 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                className={`w-7 h-7 ${primaryColorClass} ${primaryColorHoverClass.replace('bg-', 'hover:bg-')} text-white rounded-full flex items-center justify-center transition-colors`}
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -246,7 +255,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           <div className="flex justify-between items-center mb-1">
             <div className="text-center">
               <div className="text-xs text-gray-500">المجموع</div>
-              <div className="text-lg font-black text-[#781220]">
+              <div className={`text-lg font-black ${primaryColorTextClass}`}>
                 {(item.price * desktopQuantity).toFixed(2)} د.ل
               </div>
             </div>
@@ -256,7 +265,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               disabled={!isOpen}
               className={`px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg text-sm ${
                 isOpen
-                  ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                  ? `${primaryColorClass} ${primaryColorHoverClass.replace('bg-', 'hover:bg-')} text-white hover:shadow-xl transform hover:scale-105 active:scale-95`
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >

@@ -29,6 +29,15 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
 
+  // Determine if this is مستر كريسبي based on restaurant or branch name
+  const isMisterCrispy = selectedRestaurant?.name?.includes('مستر كريسبي') || 
+                        selectedBranch?.name?.includes('مستر كريسبي');
+  
+  // Dynamic color classes based on restaurant
+  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-[#781220]';
+  const primaryColorHoverClass = isMisterCrispy ? 'bg-brand-crispy-dark' : 'bg-[#5c0d18]';
+  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-[#781220]';
+
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -47,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-50 px-3 sm:px-4 py-3 sm:py-4">
       <div className="container mx-auto">
-        <div className="bg-[#781220] text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4">
+        <div className={`${primaryColorClass} text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4`}>
         <div className="flex justify-between items-center">
           <button 
             onClick={(e) => {
@@ -84,6 +93,9 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="relative">
                 <BranchDropdown
                   selectedBranch={selectedBranch}
+                  primaryColorClass={primaryColorClass}
+                  primaryColorHoverClass={primaryColorHoverClass}
+                  primaryColorTextClass={primaryColorTextClass}
                   isChangingBranch={isChangingBranch}
                   onBranchChanging={setIsChangingBranch}
                   onBranchSelect={(branch) => {
@@ -119,13 +131,13 @@ export const Header: React.FC<HeaderProps> = ({
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
                 !isOpen
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-white text-[#781220] hover:bg-gray-100 hover:shadow-xl transform hover:scale-105'
+                  : `bg-white ${primaryColorTextClass} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 bg-[#781220] text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white">
+                <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${primaryColorClass} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
                   {cartItemCount}
                 </span>
               )}
@@ -159,7 +171,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
+                : `${primaryColorClass} ${primaryColorHoverClass.replace('bg-', 'hover:bg-')} text-white hover:shadow-xl`
             }`}
           >
             <div className="flex items-center justify-between w-full">
@@ -197,6 +209,9 @@ export const Header: React.FC<HeaderProps> = ({
 interface BranchDropdownProps {
   selectedBranch: Branch;
   onBranchSelect: (branch: Branch) => void;
+  primaryColorClass: string;
+  primaryColorHoverClass: string;
+  primaryColorTextClass: string;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
 }
@@ -204,6 +219,9 @@ interface BranchDropdownProps {
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
   onBranchSelect, 
+  primaryColorClass,
+  primaryColorHoverClass,
+  primaryColorTextClass,
   isChangingBranch,
   onBranchChanging 
 }) => {
@@ -265,7 +283,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               onClick={() => handleSelect(branch)}
               className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#7A1120] hover:text-white ${
                 selectedBranch.id === branch.id 
-                  ? 'bg-red-50 text-[#781220] font-semibold' 
+                  ? `bg-red-50 ${primaryColorTextClass} font-semibold` 
                   : 'text-gray-700'
               }`}
             >
@@ -278,7 +296,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
                 <div className="text-xs opacity-75">{branch.area}</div>
               </div>
               {selectedBranch.id === branch.id && (
-                <div className="w-2 h-2 bg-[#781220] rounded-full"></div>
+                <div className={`w-2 h-2 ${primaryColorClass} rounded-full`}></div>
               )}
             </button>
           ))}

@@ -24,6 +24,15 @@ export const Cart: React.FC<CartProps> = ({
 }) => {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  
+  // Determine if this is مستر كريسبي based on branch name
+  const isMisterCrispy = selectedBranch?.name?.includes('مستر كريسبي');
+  
+  // Dynamic color classes based on restaurant
+  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-[#781220]';
+  const primaryColorHoverClass = isMisterCrispy ? 'bg-brand-crispy-dark' : 'bg-[#5c0d18]';
+  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-[#781220]';
+  
   const [showCheckout, setShowCheckout] = React.useState(false);
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
@@ -170,7 +179,7 @@ export const Cart: React.FC<CartProps> = ({
           ? 'scale-95 opacity-0 translate-x-8'
           : 'scale-95 opacity-0 translate-y-4'
       }`}>
-        <div className="bg-[#781220] text-white p-4 sm:p-6 flex-shrink-0">
+        <div className={`${primaryColorClass} text-white p-4 sm:p-6 flex-shrink-0`}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <ShoppingBag className="w-6 h-6" />
@@ -203,7 +212,7 @@ export const Cart: React.FC<CartProps> = ({
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h3>
-                    <p className="text-[#781220] font-bold text-sm sm:text-base">
+                    <p className={`${primaryColorTextClass} font-bold text-sm sm:text-base`}>
                       {(item.price * item.quantity).toFixed(2)} د.ل
                     </p>
                   </div>
@@ -238,7 +247,7 @@ export const Cart: React.FC<CartProps> = ({
           <div className="border-t p-4 sm:p-6 bg-gray-50 mt-auto flex-shrink-0">
             <div className="flex justify-between items-center mb-4">
               <span className="text-base sm:text-lg font-semibold">المجموع الكلي:</span>
-              <span className="text-xl sm:text-2xl font-black text-[#781220]">
+              <span className={`text-xl sm:text-2xl font-black ${primaryColorTextClass}`}>
                 {total.toFixed(2)} د.ل
               </span>
             </div>
@@ -247,7 +256,7 @@ export const Cart: React.FC<CartProps> = ({
             </div>
             <button 
               onClick={handleCheckout}
-             className="w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+             className={`w-full ${primaryColorClass} ${primaryColorHoverClass.replace('bg-', 'hover:bg-')} text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
             >
               المتابعة للدفع
             </button>

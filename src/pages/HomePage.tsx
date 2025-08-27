@@ -156,7 +156,7 @@ export const HomePage: React.FC = () => {
 
         {loading && (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#781220]"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red"></div>
             <p className="mt-4 text-gray-600">جاري تحميل القائمة...</p>
           </div>
         )}
@@ -166,7 +166,7 @@ export const HomePage: React.FC = () => {
             <p className="text-red-600 text-lg">{error}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-4 bg-[#781220] text-white px-6 py-2 rounded-lg hover:bg-[#5c0d18] transition-colors"
+              className="mt-4 bg-brand-red text-white px-6 py-2 rounded-lg hover:bg-brand-red-dark transition-colors"
             >
               إعادة المحاولة
             </button>
@@ -207,11 +207,11 @@ export const HomePage: React.FC = () => {
           <p className="text-gray-400 text-lg mb-6">مطعم الوجبات السريعة الأفضل في المدينة</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             <div>
-              <h4 className="font-bold mb-2 text-[#781220]">ساعات العمل</h4>
+              <h4 className="font-bold mb-2 text-brand-red">ساعات العمل</h4>
               <p className="text-gray-300">يومياً من 10:00 ص إلى 12:00 م</p>
             </div>
             <div>
-              <h4 className="font-bold mb-2 text-[#781220]">الهاتف</h4>
+              <h4 className="font-bold mb-2 text-brand-red">الهاتف</h4>
               <p className="text-gray-300">{selectedBranch?.phone || '091-2345678'}</p>
             </div>
           </div>
