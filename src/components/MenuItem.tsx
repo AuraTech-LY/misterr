@@ -11,14 +11,11 @@ interface MenuItemProps {
 export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
-  const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
 
   // Dynamic color classes based on restaurant
   const isMisterCrispy = true; // Use مستر كريسبي colors
-  const primaryColorClass = 'bg-[#781220]';
-  const primaryColorHoverClass = 'bg-[#5c0d18]';
-  const primaryColorTextClass = 'text-[#781220]';
+  const isMisterCrispy = true; // Use مستر كريسبي colors
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -84,7 +81,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             <div className="flex items-start justify-between mb-1">
               <h3 className="text-base font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
               {item.popular && (
-                <div className={`${primaryColorClass} text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ml-2 flex-shrink-0`}>
                   <Star className="w-3 h-3 fill-current" />
                 </div>
               )}
@@ -187,7 +183,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                 onClick={handleAddToCart}
                 disabled={!isOpen}
                 className={`w-full py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${
-                  isOpen
                     ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
