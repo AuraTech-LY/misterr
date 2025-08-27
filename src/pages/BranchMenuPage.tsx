@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Menu } from '../components/Menu';
+import { MenuItem } from '../components/Menu';
 import { Header } from '../components/Header';
 import { Cart } from '../components/Cart';
 import { useCart } from '../hooks/useCart';
