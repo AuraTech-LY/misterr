@@ -15,7 +15,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
 
   // Dynamic color classes based on restaurant
   const isMisterCrispy = true; // Use مستر كريسبي colors
-  const isMisterCrispy = true; // Use مستر كريسبي colors
 
   // Update operating status every minute
   React.useEffect(() => {

@@ -15,7 +15,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
 
   // Dynamic color classes based on restaurant
   const isMisterCrispy = true; // Use مستر كريسبي colors
-
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -182,7 +181,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                 onClick={handleAddToCart}
                 disabled={!isOpen}
                 className={`w-full py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${
-                  isOpen
                     ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
