@@ -11,17 +11,11 @@ interface MenuItemProps {
 export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
-  const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
 
-  // Determine if this is مستر كريسبي based on item category or other indicators
-  // Since we don't have restaurant context here, we'll use a fallback approach
-  const isMisterCrispy = false; // Default to مستر شيش colors for now
-  
   // Dynamic color classes based on restaurant
-  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-[#781220]';
-  const primaryColorHoverClass = isMisterCrispy ? 'bg-brand-crispy-dark' : 'bg-[#5c0d18]';
-  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-[#781220]';
+  const isMisterCrispy = true; // Use مستر كريسبي colors
+  const isMisterCrispy = true; // Use مستر كريسبي colors
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -87,7 +81,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             <div className="flex items-start justify-between mb-1">
               <h3 className="text-base font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
               {item.popular && (
-                <div className="bg-[#781220] text-white px-2 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1 ml-2 flex-shrink-0">
                   <Star className="w-3 h-3 fill-current" />
                 </div>
               )}
