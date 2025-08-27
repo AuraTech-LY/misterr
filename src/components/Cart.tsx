@@ -170,7 +170,7 @@ export const Cart: React.FC<CartProps> = ({
           ? 'scale-95 opacity-0 translate-x-8'
           : 'scale-95 opacity-0 translate-y-4'
       }`}>
-        <div className="bg-[#781220] text-white p-4 sm:p-6 flex-shrink-0">
+        <div className={`${primaryColorClass} text-white p-4 sm:p-6 flex-shrink-0`}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <ShoppingBag className="w-6 h-6" />
@@ -203,7 +203,7 @@ export const Cart: React.FC<CartProps> = ({
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h3>
-                    <p className="text-[#781220] font-bold text-sm sm:text-base">
+                    <p className={`${primaryColorTextClass} font-bold text-sm sm:text-base`}>
                       {(item.price * item.quantity).toFixed(2)} د.ل
                     </p>
                   </div>
@@ -217,7 +217,7 @@ export const Cart: React.FC<CartProps> = ({
                     <span className="w-6 sm:w-8 text-center font-semibold text-sm sm:text-base">{item.quantity}</span>
                     <button
                       onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                     className="w-7 h-7 sm:w-8 sm:h-8 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                     className={`w-7 h-7 sm:w-8 sm:h-8 ${primaryColorClass} ${primaryColorHoverClass} text-white rounded-full flex items-center justify-center transition-colors`}
                     >
                       <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>

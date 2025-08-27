@@ -29,6 +29,12 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
 
+  // Define color variables based on restaurant
+  const isMisterCrispy = selectedRestaurant?.name?.includes('مستر كريسبي') || selectedBranch?.name?.includes('مستر كريسبي');
+  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-brand-red';
+  const primaryColorHoverClass = isMisterCrispy ? 'hover:bg-brand-crispy-dark' : 'hover:bg-brand-red-dark';
+  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-brand-red';
+
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -64,6 +70,10 @@ export const Header: React.FC<HeaderProps> = ({
                 src="/New Element 88 [8BACFE9].png" 
                 alt="مطعم المستر" 
                 className="w-full h-full object-contain"
+                primaryColorClass={primaryColorClass}
+                primaryColorHoverClass={primaryColorHoverClass}
+                primaryColorTextClass={primaryColorTextClass}
+                isMisterCrispy={isMisterCrispy}
               />
             </div>
             <div className="flex flex-col justify-center text-right">
@@ -199,13 +209,21 @@ interface BranchDropdownProps {
   onBranchSelect: (branch: Branch) => void;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
+  primaryColorClass: string;
+  primaryColorHoverClass: string;
+  primaryColorTextClass: string;
+  isMisterCrispy: boolean;
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
   onBranchSelect, 
   isChangingBranch,
-  onBranchChanging 
+  onBranchChanging,
+  primaryColorClass,
+  primaryColorHoverClass,
+  primaryColorTextClass,
+  isMisterCrispy
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
