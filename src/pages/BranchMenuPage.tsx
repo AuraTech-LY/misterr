@@ -147,6 +147,8 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           <Menu
             items={filteredItems}
             onAddToCart={addToCart}
+            selectedRestaurant={restaurant}
+            selectedBranch={branch}
           />
         )}
         </div>
