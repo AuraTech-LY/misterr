@@ -256,7 +256,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               disabled={!isOpen}
               className={`px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg text-sm ${
                 isOpen
-                  ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                  ? `${primaryColorClass} ${primaryColorHoverClass} text-white hover:shadow-xl transform hover:scale-105 active:scale-95`
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >

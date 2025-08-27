@@ -238,7 +238,7 @@ export const Cart: React.FC<CartProps> = ({
           <div className="border-t p-4 sm:p-6 bg-gray-50 mt-auto flex-shrink-0">
             <div className="flex justify-between items-center mb-4">
               <span className="text-base sm:text-lg font-semibold">المجموع الكلي:</span>
-              <span className="text-xl sm:text-2xl font-black text-[#781220]">
+              <span className={`text-xl sm:text-2xl font-black ${primaryColorTextClass}`}>
                 {total.toFixed(2)} د.ل
               </span>
             </div>
@@ -247,7 +247,7 @@ export const Cart: React.FC<CartProps> = ({
             </div>
             <button 
               onClick={handleCheckout}
-             className="w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+             className={`w-full ${primaryColorClass} ${primaryColorHoverClass} text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
             >
               المتابعة للدفع
             </button>
