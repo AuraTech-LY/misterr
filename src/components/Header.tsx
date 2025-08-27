@@ -258,45 +258,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
       >
         <MapPin className="w-4 h-4" />
         <span>{selectedBranch.area}</span>
-        {isChangingBranch ? (
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        ) : (
-          <ChevronDown 
-            className={`w-4 h-4 transition-transform duration-300 ${
-              isOpen ? 'transform rotate-180' : ''
-            }`} 
-          />
-        )}
-      </button>
-
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4" onClick={() => setIsOpen(false)}>
-          <div 
-            className="bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden animate-fadeInUp w-80 max-w-[90vw]"
-            onClick={(e) => e.stopPropagation()}
-          >
-          {getAllBranches().map((branch) => (
-            <button
-              key={branch.id}
-              type="button"
-              disabled={isChangingBranch}
-              onClick={() => handleSelect(branch)}
-              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
-                isMisterCrispy ? 'hover:bg-[#55421A]' : 'hover:bg-[#7A1120]'
-              } hover:text-white ${
-                selectedBranch.id === branch.id 
-                  ? `bg-red-50 ${primaryColorTextClass} font-semibold` 
-                  : 'text-gray-700'
-              }`}
-            >
-              {isChangingBranch && selectedBranch.id !== branch.id && (
-                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-              )}
-              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? 'text-[#781220]' : 'text-gray-400'}`} />
-                selectedBranch.id === branch.id 
-                  ? (isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]') 
-                  : 'text-gray-400'
-              }`} />
+              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? (isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]') : 'text-gray-400'}`} />
               <div className="flex-1 text-right">
                 <div className="font-semibold">{branch.name}</div>
                 <div className="text-xs opacity-75">{branch.area}</div>
