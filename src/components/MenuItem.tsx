@@ -6,9 +6,10 @@ import { isWithinOperatingHours } from '../utils/timeUtils';
 interface MenuItemProps {
   item: MenuItemType;
   onAddToCart: (item: MenuItemType) => void;
+  brandColors?: { primary: string; dark: string; };
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, brandColors = { primary: '#781220', dark: '#5c0d18' } }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
