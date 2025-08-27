@@ -98,6 +98,7 @@ export const Header: React.FC<HeaderProps> = ({
                   primaryColorTextClass={primaryColorTextClass}
                   isChangingBranch={isChangingBranch}
                   onBranchChanging={setIsChangingBranch}
+                  isMisterCrispy={isMisterCrispy}
                   onBranchSelect={(branch) => {
                     setIsChangingBranch(true);
                     
@@ -214,6 +215,7 @@ interface BranchDropdownProps {
   primaryColorTextClass: string;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
+  isMisterCrispy: boolean;
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
@@ -223,7 +225,8 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
   primaryColorHoverClass,
   primaryColorTextClass,
   isChangingBranch,
-  onBranchChanging 
+  onBranchChanging,
+  isMisterCrispy
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
