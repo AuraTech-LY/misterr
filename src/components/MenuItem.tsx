@@ -1,26 +1,18 @@
 import React from 'react';
 import { Plus, Star, X, Minus } from 'lucide-react';
-import { MenuItem as MenuItemType, Restaurant, Branch } from '../types';
+import { MenuItem as MenuItemType } from '../types';
 import { isWithinOperatingHours } from '../utils/timeUtils';
 
 interface MenuItemProps {
   item: MenuItemType;
   onAddToCart: (item: MenuItemType) => void;
-  selectedRestaurant?: Restaurant | null;
-  selectedBranch?: Branch | null;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, selectedRestaurant, selectedBranch }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
-
-  // Define color variables based on restaurant
-  const isMisterCrispy = selectedRestaurant?.name === 'مستر كريسبي' || selectedBranch?.name?.includes('كريسبي');
-  const primaryColorClass = isMisterCrispy ? 'bg-crispy-primary' : 'bg-[#781220]';
-  const primaryColorHoverClass = isMisterCrispy ? 'hover:bg-crispy-dark' : 'hover:bg-[#5c0d18]';
-  const primaryColorTextClass = isMisterCrispy ? 'text-crispy-primary' : 'text-[#781220]';
 
   // Update operating status every minute
   React.useEffect(() => {
