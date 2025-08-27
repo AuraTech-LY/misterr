@@ -149,8 +149,20 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : selectedBranch?.id === branch.id
                       ? 'bg-[#781220] text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-[#781220] hover:text-white'
+                      : 'bg-gray-100 text-gray-700 hover:text-white'
                   }`}
+                  onMouseEnter={(e) => {
+                    if (isOpen) {
+                      e.currentTarget.style.backgroundColor = brandColors.primary;
+                      e.currentTarget.style.color = 'white';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (isOpen) {
+                      e.currentTarget.style.backgroundColor = '';
+                      e.currentTarget.style.color = '';
+                    }
+                  }}
                 >
                   {!isOpen 
                     ? 'مغلق حالياً' 
@@ -169,14 +181,11 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
           <div className="text-center mt-6 sm:mt-12 animate-fadeInUp px-4">
             <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg max-w-md mx-auto">
               <p className="text-gray-600 mb-4 text-base">
-                تم اختيار <span className="font-bold" style={{ color: brandColors.primary }}>{selectedBranch.name}</span>
+                تم اختيار <span className="font-bold text-[#781220]">{selectedBranch.name}</span>
               </p>
               <button
                 onClick={() => onBranchSelect(selectedBranch)}
-                className="block w-full text-white py-3 rounded-full font-bold text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-center"
-                style={{ backgroundColor: brandColors.primary }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = brandColors.dark}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = brandColors.primary}
+                className="block w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-3 rounded-full font-bold text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-center"
               >
                 تصفح القائمة
               </button>

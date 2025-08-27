@@ -100,6 +100,7 @@ export const HomePage: React.FC = () => {
           setSelectedRestaurant(null);
           localStorage.removeItem('selectedRestaurantId');
         }}
+        brandColors={selectedRestaurant.brandColors}
       />
     );
   }
