@@ -61,7 +61,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
   const [customerLocation, setCustomerLocation] = useState<{latitude: number, longitude: number} | null>(null);
-  const [roadDistance, setRoadDistance] = useState<number | null>(null);
+  const [deliveryPrice, setDeliveryPrice] = useState<number | null>(null);
   const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
 
   // Smart defaults based on common patterns
@@ -148,15 +148,17 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       }
 
       if (data && typeof data.distance_km === 'number') {
-        setRoadDistance(data.distance_km);
+        // Calculate delivery price: floor of distance with minimum 5 د.ل
+        const priceFromDistance = Math.max(Math.floor(data.distance_km), 5);
+        setDeliveryPrice(priceFromDistance);
         console.log(`Distance calculated: ${data.distance_km} km`);
       } else {
         console.warn("No distance data available:", data);
-        setRoadDistance(null);
+        setDeliveryPrice(null);
       }
     } catch (error) {
       console.warn('Distance calculation service unavailable:', error);
-      setRoadDistance(null);
+      setDeliveryPrice(null);
     } finally {
       setIsCalculatingDistance(false);
     }
@@ -470,16 +472,16 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                           {isCalculatingDistance ? (
                             <div className="flex items-center gap-2 text-blue-600 text-sm">
                               <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                              <span>جاري حساب المسافة...</span>
+                              <span>جاري حساب سعر التوصيل...</span>
                             </div>
-                          ) : roadDistance !== null ? (
+                          ) : deliveryPrice !== null ? (
                             <div className="flex items-center gap-2 text-green-700 text-sm">
-                              <span>📍 المسافة من {selectedBranch?.name}: </span>
-                              <span className="font-bold">{roadDistance} كم</span>
+                              <span>🚚 سعر التوصيل من {selectedBranch?.name}: </span>
+                              <span className="font-bold">{deliveryPrice} د.ل</span>
                             </div>
                           ) : (
                             <div className="text-gray-500 text-sm">
-                              <span>⚠️ خدمة حساب المسافة غير متاحة (يتطلب إعداد GEO_API)</span>
+                              <span>⚠️ خدمة حساب سعر التوصيل غير متاحة (يتطلب إعداد GEO_API)</span>
                             </div>
                           )}
                         </div>
