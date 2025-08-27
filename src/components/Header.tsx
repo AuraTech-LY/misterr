@@ -87,6 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
                   selectedBranch={selectedBranch}
                   isChangingBranch={isChangingBranch}
                   onBranchChanging={setIsChangingBranch}
+                  brandColors={brandColors}
                   onBranchSelect={(branch) => {
                     setIsChangingBranch(true);
                     
@@ -213,13 +214,15 @@ interface BranchDropdownProps {
   onBranchSelect: (branch: Branch) => void;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
+  brandColors: { primary: string; dark: string };
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
   onBranchSelect, 
   isChangingBranch,
-  onBranchChanging 
+  onBranchChanging,
+  brandColors
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
