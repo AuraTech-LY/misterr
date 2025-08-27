@@ -38,9 +38,10 @@ export const HomePage: React.FC = () => {
         />
       ) : (
         <BranchSelector
-          restaurant={selectedRestaurant}
-          onSelect={handleBranchSelect}
-          onBack={handleBack}
+          branches={selectedRestaurant.branches}
+          restaurantName={selectedRestaurant.name}
+          onBranchSelect={handleBranchSelect}
+          onBackToRestaurants={handleBack}
         />
       )}
     </div>
