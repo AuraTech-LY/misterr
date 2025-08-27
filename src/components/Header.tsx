@@ -271,6 +271,11 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
                 className="w-full px-4 py-3 text-right hover:bg-gray-50 transition-colors duration-200 flex items-center gap-3"
               >
                 <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? (isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]') : 'text-gray-400'}`} />
+                <MapPin className={`w-4 h-4 ${
+                  selectedBranch.id === branch.id 
+                    ? primaryColorTextClass.replace('text-', 'text-')
+                    : 'text-gray-400'
+                }`} />
                 <div className="flex-1 text-right">
                   <div className="font-semibold">{branch.name}</div>
                   <div className="text-xs opacity-75">{branch.area}</div>
