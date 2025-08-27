@@ -164,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <div className="flex items-center justify-between w-full">
               {/* Item Count - Right Side */}
-              <div className="flex-shrink-0 w-16 text-right">
+              <div className="flex-shrink-0 w-16 text-left">
                 {cartItemCount > 0 && (
                   <span className="text-white text-lg font-bold">
                     {cartItemCount}
@@ -179,7 +179,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               
               {/* Total Price - Left Side */}
-              <div className="flex-shrink-0 w-20 text-left">
+              <div className="flex-shrink-0 w-20 text-right">
                 {cartItemCount > 0 && isOpen && (
                   <span className="text-white text-sm font-bold whitespace-nowrap">
                     {cartTotal.toFixed(2)} د.ل
