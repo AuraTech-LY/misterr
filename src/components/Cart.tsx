@@ -22,6 +22,12 @@ export const Cart: React.FC<CartProps> = ({
   onClearCart,
   selectedBranch,
 }) => {
+  // Define color variables based on selected branch
+  const isMisterCrispy = selectedBranch?.name?.includes('مستر كريسبي') || false;
+  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-brand-red';
+  const primaryColorHoverClass = isMisterCrispy ? 'hover:bg-brand-crispy-dark' : 'hover:bg-brand-red-dark';
+  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-brand-red';
+
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [showCheckout, setShowCheckout] = React.useState(false);
