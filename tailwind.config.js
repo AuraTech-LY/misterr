@@ -9,6 +9,8 @@ export default {
       colors: {
         'brand-red': '#781220',
         'brand-red-dark': '#5c0d18',
+        'brand-brown': '#55421A',
+        'brand-brown-dark': '#3d2f12',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

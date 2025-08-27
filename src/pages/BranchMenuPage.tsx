@@ -92,6 +92,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         selectedBranch={branch}
         onBranchChange={() => navigate('/branches')}
         cartTotal={getTotalPrice()}
+        brandColors={restaurant?.brandColors}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8">
@@ -122,6 +123,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           categories={categoryOptions}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
+          brandColors={restaurant?.brandColors}
         />
 
         {loading && (
@@ -147,6 +149,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           <Menu
             items={filteredItems}
             onAddToCart={addToCart}
+            brandColors={restaurant?.brandColors}
           />
         )}
         </div>
@@ -160,6 +163,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
         selectedBranch={branch}
+        brandColors={restaurant?.brandColors}
       />
 
       <footer className="bg-black text-white py-12 mt-16">

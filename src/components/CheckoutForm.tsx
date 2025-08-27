@@ -298,7 +298,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           : 'scale-95 opacity-0 -translate-x-8'
       }`}>
         {/* Progress Indicator */}
-        <div className="bg-[#781220] p-3 sm:p-4 flex-shrink-0">
+        <div className="p-3 sm:p-4 flex-shrink-0" style={{ backgroundColor: brandColors.primary }}>
           <div className="flex items-center justify-between text-white">
             <div className="flex items-center gap-3">
               <button
@@ -325,7 +325,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
             <div className="space-y-6 animate-fadeInUp">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-[#781220]" />
+                  <User className="w-5 h-5" style={{ color: brandColors.primary }} />
                   معلومات العميل
                 </h3>
                 
@@ -339,6 +339,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                       className={`w-full p-4 border-2 rounded-full text-right transition-all ${
                         errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#7A1120]'
                       }`}
+                      style={!errors.name ? { '--tw-border-opacity': '1', borderColor: `${brandColors.primary}` } : {}}
+                      onFocus={(e) => {
+                        if (!errors.name) {
+                          e.target.style.borderColor = brandColors.primary;
+                        }
+                      }}
                     />
                     {errors.name && (
                       <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.name}</p>
@@ -356,6 +362,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         className={`w-full p-4 pl-12 border-2 rounded-full text-right transition-all ${
                           errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#7A1120]'
                         }`}
+                        style={!errors.phone ? {} : {}}
+                        onFocus={(e) => {
+                          if (!errors.phone) {
+                            e.target.style.borderColor = brandColors.primary;
+                          }
+                        }}
                         maxLength={10}
                       />
                     </div>
@@ -375,9 +387,20 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 disabled={!canProceedToStep2()}
                 className={`w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all ${
                   canProceedToStep2()
-                    ? 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                    ? 'text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
+                style={canProceedToStep2() ? { backgroundColor: brandColors.primary } : {}}
+                onMouseEnter={(e) => {
+                  if (canProceedToStep2()) {
+                    e.currentTarget.style.backgroundColor = brandColors.dark;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (canProceedToStep2()) {
+                    e.currentTarget.style.backgroundColor = brandColors.primary;
+                  }
+                }}
               >
                 التالي
               </button>
@@ -390,7 +413,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
               {/* Delivery Method */}
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Truck className="w-5 h-5 text-[#781220]" />
+                  <Truck className="w-5 h-5" style={{ color: brandColors.primary }} />
                   طريقة الاستلام
                 </h3>
                 
@@ -399,9 +422,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     onClick={() => updateFormData('deliveryMethod', 'delivery')}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'delivery'
-                        ? 'border-[#781220] bg-red-50 text-[#781220]'
+                        ? 'bg-red-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
+                    style={formData.deliveryMethod === 'delivery' ? { borderColor: brandColors.primary, color: brandColors.primary } : {}}
                   >
                     <Truck className="w-6 h-6 mx-auto mb-2" />
                     <div className="font-semibold text-sm sm:text-base">توصيل</div>
@@ -411,9 +435,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     onClick={() => updateFormData('deliveryMethod', 'pickup')}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'pickup'
-                        ? 'border-[#781220] bg-red-50 text-[#781220]'
+                        ? 'bg-red-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
+                    style={formData.deliveryMethod === 'pickup' ? { borderColor: brandColors.primary, color: brandColors.primary } : {}}
                   >
                     <Store className="w-6 h-6 mx-auto mb-2" />
                     <div className="font-semibold text-sm sm:text-base">استلام</div>
@@ -526,6 +551,11 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
                           errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#781220]'
                         }`}
+                       onFocus={(e) => {
+                         if (!errors.area) {
+                           e.target.style.borderColor = brandColors.primary;
+                         }
+                       }}
                       />
                       {errors.area && (
                         <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
@@ -544,7 +574,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         value={formData.deliveryInfo?.address || ''}
                         onChange={(e) => handleInputChange('deliveryInfo.address', e.target.value)}
                         rows={2}
-                        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-[#781220] text-right resize-none"
+                        className="w-full p-4 border-2 border-gray-200 rounded-xl text-right resize-none"
+                        onFocus={(e) => {
+                          e.target.style.borderColor = brandColors.primary;
+                        }}
                       />
                     </div>
                   )}
@@ -565,9 +598,20 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   disabled={!canSubmit() || isValidating}
                   className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
                     canSubmit() && !isValidating
-                      ? 'bg-[#781220] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                      ? 'text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
+                  style={canSubmit() && !isValidating ? { backgroundColor: brandColors.primary } : {}}
+                  onMouseEnter={(e) => {
+                    if (canSubmit() && !isValidating) {
+                      e.currentTarget.style.backgroundColor = brandColors.dark;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (canSubmit() && !isValidating) {
+                      e.currentTarget.style.backgroundColor = brandColors.primary;
+                    }
+                  }}
                 >
                   {isValidating ? 'جاري المعالجة...' : 'تأكيد الطلب'}
                 </button>

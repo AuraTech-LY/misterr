@@ -125,6 +125,7 @@ export const HomePage: React.FC = () => {
           localStorage.removeItem('selectedBranchId');
         }}
         cartTotal={getTotalPrice()}
+        brandColors={selectedRestaurant?.brandColors}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8">
@@ -152,6 +153,7 @@ export const HomePage: React.FC = () => {
           categories={categoryOptions}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
+          brandColors={selectedRestaurant?.brandColors}
         />
 
         {loading && (
@@ -177,6 +179,7 @@ export const HomePage: React.FC = () => {
           <Menu
             items={filteredItems}
             onAddToCart={addToCart}
+            brandColors={selectedRestaurant?.brandColors}
           />
         )}
         </div>
@@ -190,6 +193,7 @@ export const HomePage: React.FC = () => {
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
         selectedBranch={selectedBranch}
+        brandColors={selectedRestaurant?.brandColors}
       />
 
       <footer className="bg-black text-white py-12 mt-16">

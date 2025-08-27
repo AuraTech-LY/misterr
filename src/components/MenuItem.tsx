@@ -130,7 +130,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                 <X className="w-5 h-5 text-gray-600" />
               </button>
               {item.popular && (
-                <div className="absolute top-3 right-3 bg-[#781220] text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+                <div className="absolute top-3 right-3 text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1" style={{ backgroundColor: brandColors.primary }}>
                   <Star className="w-4 h-4 fill-current" />
                   <span>الأكثر طلباً</span>
                 </div>
@@ -143,7 +143,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
               
               <div className="flex justify-between items-center mb-6">
-                <span className="text-2xl font-black text-[#781220]">
+                <span className="text-2xl font-black" style={{ color: brandColors.primary }}>
                   {item.price.toFixed(2)} د.ل
                 </span>
               </div>
@@ -161,7 +161,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                   <span className="w-12 text-center font-bold text-lg">{quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(quantity + 1)}
-                    className="w-10 h-10 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                    className="w-10 h-10 text-white rounded-full flex items-center justify-center transition-colors"
+                    style={{ backgroundColor: brandColors.primary }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = brandColors.dark}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = brandColors.primary}
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -171,7 +174,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               {/* Total Price */}
               <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                 <span className="text-lg font-semibold text-gray-800">المجموع:</span>
-                <span className="text-xl font-black text-[#781220]">
+                <span className="text-xl font-black" style={{ color: brandColors.primary }}>
                   {(item.price * quantity).toFixed(2)} د.ل
                 </span>
               </div>
@@ -182,9 +185,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                 disabled={!isOpen}
                 className={`w-full py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${
                   isOpen
-                    ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    ? 'text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
+                style={isOpen ? { backgroundColor: brandColors.primary } : {}}
+                onMouseEnter={(e) => {
+                  if (isOpen) e.currentTarget.style.backgroundColor = brandColors.dark;
+                }}
+                onMouseLeave={(e) => {
+                  if (isOpen) e.currentTarget.style.backgroundColor = brandColors.primary;
+                }}
               >
                 {isOpen ? `إضافة إلى السلة (${quantity})` : 'مغلق حالياً'}
               </button>
@@ -217,7 +227,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           <p className="text-sm text-gray-600 mb-3 leading-relaxed line-clamp-2 flex-grow">{item.description}</p>
           
           <div className="flex justify-between items-center mb-3">
-            <span className="text-lg lg:text-xl font-black text-[#781220]">
+            <span className="text-lg lg:text-xl font-black" style={{ color: brandColors.primary }}>
               {item.price.toFixed(2)} د.ل
             </span>
           </div>
@@ -235,7 +245,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               <span className="w-8 text-center font-bold text-sm">{desktopQuantity}</span>
               <button
                 onClick={() => handleDesktopQuantityChange(desktopQuantity + 1)}
-                className="w-7 h-7 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                className="w-7 h-7 text-white rounded-full flex items-center justify-center transition-colors"
+                style={{ backgroundColor: brandColors.primary }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = brandColors.dark}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = brandColors.primary}
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -246,7 +259,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           <div className="flex justify-between items-center mb-1">
             <div className="text-center">
               <div className="text-xs text-gray-500">المجموع</div>
-              <div className="text-lg font-black text-[#781220]">
+              <div className="text-lg font-black" style={{ color: brandColors.primary }}>
                 {(item.price * desktopQuantity).toFixed(2)} د.ل
               </div>
             </div>
@@ -256,9 +269,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               disabled={!isOpen}
               className={`px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg text-sm ${
                 isOpen
-                  ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                  ? 'text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
+              style={isOpen ? { backgroundColor: brandColors.primary } : {}}
+              onMouseEnter={(e) => {
+                if (isOpen) e.currentTarget.style.backgroundColor = brandColors.dark;
+              }}
+              onMouseLeave={(e) => {
+                if (isOpen) e.currentTarget.style.backgroundColor = brandColors.primary;
+              }}
             >
               <Plus className="w-4 h-4" />
               <span>{isOpen ? `إضافة (${desktopQuantity})` : 'مغلق'}</span>

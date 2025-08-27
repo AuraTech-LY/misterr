@@ -9,6 +9,10 @@ interface BranchSelectorProps {
   onBranchSelect: (branch: Branch) => void;
   restaurantName: string;
   onBackToRestaurants: () => void;
+  brandColors?: {
+    primary: string;
+    dark: string;
+  };
 }
 
 export const BranchSelector: React.FC<BranchSelectorProps> = ({
@@ -17,6 +21,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   onBranchSelect,
   restaurantName,
   onBackToRestaurants,
+  brandColors = { primary: '#781220', dark: '#5c0d18' }
 }) => {
   const [currentTime, setCurrentTime] = React.useState(getFormattedLibyaTime());
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
