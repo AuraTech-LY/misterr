@@ -29,12 +29,6 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
 
-  // Define color variables based on restaurant
-  const isMisterCrispy = selectedRestaurant?.name?.includes('مستر كريسبي') || selectedBranch?.name?.includes('مستر كريسبي');
-  const primaryColorClass = isMisterCrispy ? 'bg-brand-crispy' : 'bg-brand-red';
-  const primaryColorHoverClass = isMisterCrispy ? 'hover:bg-brand-crispy-dark' : 'hover:bg-brand-red-dark';
-  const primaryColorTextClass = isMisterCrispy ? 'text-brand-crispy' : 'text-brand-red';
-
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -53,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-50 px-3 sm:px-4 py-3 sm:py-4">
       <div className="container mx-auto">
-        <div className={`${primaryColorClass} text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4`}>
+        <div className="bg-[#781220] text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex justify-between items-center">
           <button 
             onClick={(e) => {
@@ -70,10 +64,6 @@ export const Header: React.FC<HeaderProps> = ({
                 src="/New Element 88 [8BACFE9].png" 
                 alt="مطعم المستر" 
                 className="w-full h-full object-contain"
-                primaryColorClass={primaryColorClass}
-                primaryColorHoverClass={primaryColorHoverClass}
-                primaryColorTextClass={primaryColorTextClass}
-                isMisterCrispy={isMisterCrispy}
               />
             </div>
             <div className="flex flex-col justify-center text-right">
@@ -129,13 +119,13 @@ export const Header: React.FC<HeaderProps> = ({
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
                 !isOpen
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : `bg-white ${primaryColorTextClass} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
+                  : 'bg-white text-[#781220] hover:bg-gray-100 hover:shadow-xl transform hover:scale-105'
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
               {cartItemCount > 0 && (
-                <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${primaryColorClass} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
+                <span className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 bg-[#781220] text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white">
                   {cartItemCount}
                 </span>
               )}
@@ -169,7 +159,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : `${primaryColorClass} ${primaryColorHoverClass} text-white hover:shadow-xl`
+                : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
             }`}
           >
             <div className="flex items-center justify-between w-full">
@@ -209,21 +199,13 @@ interface BranchDropdownProps {
   onBranchSelect: (branch: Branch) => void;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
-  primaryColorClass: string;
-  primaryColorHoverClass: string;
-  primaryColorTextClass: string;
-  isMisterCrispy: boolean;
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
   onBranchSelect, 
   isChangingBranch,
-  onBranchChanging,
-  primaryColorClass,
-  primaryColorHoverClass,
-  primaryColorTextClass,
-  isMisterCrispy
+  onBranchChanging 
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -281,22 +263,22 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               type="button"
               disabled={isChangingBranch}
               onClick={() => handleSelect(branch)}
-              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[${isMisterCrispy ? '#55421A' : '#7A1120'}] hover:text-white ${
+              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#7A1120] hover:text-white ${
                 selectedBranch.id === branch.id 
-                  ? `bg-red-50 ${primaryColorTextClass} font-semibold` 
+                  ? 'bg-red-50 text-[#781220] font-semibold' 
                   : 'text-gray-700'
               }`}
             >
               {isChangingBranch && selectedBranch.id !== branch.id && (
                 <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
               )}
-              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? primaryColorTextClass : 'text-gray-400'}`} />
+              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? 'text-[#781220]' : 'text-gray-400'}`} />
               <div className="flex-1 text-right">
                 <div className="font-semibold">{branch.name}</div>
                 <div className="text-xs opacity-75">{branch.area}</div>
               </div>
               {selectedBranch.id === branch.id && (
-                <div className={`w-2 h-2 ${primaryColorClass} rounded-full`}></div>
+                <div className="w-2 h-2 bg-[#781220] rounded-full"></div>
               )}
             </button>
           ))}
