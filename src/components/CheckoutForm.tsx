@@ -261,7 +261,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
     setTimeout(() => {
       if (canSubmit()) {
-        onSubmit(formData, items);
+        // Add delivery price to form data before submitting
+        const finalFormData = {
+          ...formData,
+          deliveryPrice: formData.deliveryMethod === 'delivery' ? deliveryPrice : null
+        };
+        onSubmit(finalFormData, items);
       }
       setIsValidating(false);
     }, 500);

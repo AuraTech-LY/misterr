@@ -70,8 +70,12 @@ export const Cart: React.FC<CartProps> = ({
     const customerName = orderData.customerInfo.name;
     const customerPhone = orderData.customerInfo.phone;
     const deliveryMethod = orderData.deliveryMethod === 'delivery' ? 'توصيل' : 'استلام';
+    const restaurantName = selectedBranch?.name?.includes('مستر شيش') ? 'مستر شيش' : 
+                          selectedBranch?.name?.includes('مستر كريسبي') ? 'مستر كريسبي' : 'المستر';
+    const branchName = selectedBranch?.name || 'غير محدد';
     
-    let message = `🍔 *طلب جديد من مطعم المستر*\n\n`;
+    let message = `🍔 *طلب جديد من ${restaurantName}*\n\n`;
+    message += `🏪 *الفرع:* ${branchName}\n`;
     message += `👤 *اسم العميل:* ${customerName}\n`;
     message += `📱 *رقم الهاتف:* ${customerPhone}\n\n`;
     
@@ -85,6 +89,14 @@ export const Cart: React.FC<CartProps> = ({
     
     message += `💰 *المجموع الكلي:* ${total.toFixed(2)} د.ل\n\n`;
     message += `🚚 *طريقة الاستلام:* ${deliveryMethod}\n`;
+    
+    // Add delivery price if it's a delivery order
+    if (orderData.deliveryMethod === 'delivery' && orderData.deliveryPrice) {
+      message += `💵 *سعر التوصيل:* ${orderData.deliveryPrice} د.ل\n`;
+      message += `💰 *المجموع مع التوصيل:* ${(total + orderData.deliveryPrice).toFixed(2)} د.ل\n\n`;
+    } else {
+      message += `\n`;
+    }
     
     if (orderData.deliveryMethod === 'delivery') {
       // Add location information if available
@@ -107,7 +119,7 @@ export const Cart: React.FC<CartProps> = ({
       message += `\n`;
     }
     
-    message += `شكراً لاختياركم مطعم المستر! 🙏`;
+    message += `شكراً لاختياركم ${restaurantName}! 🙏`;
     
     // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
