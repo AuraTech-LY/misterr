@@ -9,10 +9,6 @@ interface BranchSelectorProps {
   onBranchSelect: (branch: Branch) => void;
   restaurantName: string;
   onBackToRestaurants: () => void;
-  brandColors?: {
-    primary: string;
-    dark: string;
-  };
 }
 
 export const BranchSelector: React.FC<BranchSelectorProps> = ({
@@ -21,7 +17,6 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   onBranchSelect,
   restaurantName,
   onBackToRestaurants,
-  brandColors = { primary: '#781220', dark: '#5c0d18' }
 }) => {
   const [currentTime, setCurrentTime] = React.useState(getFormattedLibyaTime());
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
@@ -149,20 +144,8 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : selectedBranch?.id === branch.id
                       ? 'bg-[#781220] text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-[#781220] hover:text-white'
                   }`}
-                  onMouseEnter={(e) => {
-                    if (isOpen) {
-                      e.currentTarget.style.backgroundColor = brandColors.primary;
-                      e.currentTarget.style.color = 'white';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (isOpen) {
-                      e.currentTarget.style.backgroundColor = '';
-                      e.currentTarget.style.color = '';
-                    }
-                  }}
                 >
                   {!isOpen 
                     ? 'مغلق حالياً' 

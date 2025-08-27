@@ -5,10 +5,6 @@ export const restaurants: Restaurant[] = [
   {
     id: 'mister-shish',
     name: 'مستر شيش',
-    brandColors: {
-      primary: '#781220',
-      dark: '#5c0d18',
-    },
     branches: [
       {
         id: 'airport',
@@ -37,10 +33,6 @@ export const restaurants: Restaurant[] = [
   {
     id: 'mister-crispy',
     name: 'مستر كريسبي',
-    brandColors: {
-      primary: '#55421A',
-      dark: '#3d2f12',
-    },
     branches: [
       {
         id: 'dollar',

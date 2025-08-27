@@ -13,7 +13,6 @@ interface HeaderProps {
   selectedBranch?: Branch;
   onBranchChange?: () => void;
   cartTotal?: number;
-  brandColors?: { primary: string; dark: string };
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -22,8 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   selectedRestaurant,
   selectedBranch,
   onBranchChange,
-  cartTotal = 0,
-  brandColors = { primary: '#781220', dark: '#5c0d18' }
+  cartTotal = 0
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,7 +48,6 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-50 px-3 sm:px-4 py-3 sm:py-4">
       <div className="container mx-auto">
         <div className="bg-[#781220] text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4">
-        <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4`} style={{ backgroundColor: brandColors.primary }}>
         <div className="flex justify-between items-center">
           <button 
             onClick={(e) => {
@@ -89,7 +86,6 @@ export const Header: React.FC<HeaderProps> = ({
                   selectedBranch={selectedBranch}
                   isChangingBranch={isChangingBranch}
                   onBranchChanging={setIsChangingBranch}
-                  brandColors={brandColors}
                   onBranchSelect={(branch) => {
                     setIsChangingBranch(true);
                     
@@ -123,20 +119,18 @@ export const Header: React.FC<HeaderProps> = ({
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
                 !isOpen
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : `bg-white hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
+                  : 'bg-white text-[#781220] hover:bg-gray-100 hover:shadow-xl transform hover:scale-105'
               }`}
-              style={isOpen ? { color: brandColors.primary } : {}}
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white" style={{ backgroundColor: brandColors.primary }}>
+                <span className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 bg-[#781220] text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white">
                   {cartItemCount}
                 </span>
               )}
             </button>
           </div>
-        </div>
         </div>
         </div>
       </div>
@@ -165,19 +159,8 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'text-white hover:shadow-xl'
+                : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
             }`}
-            style={cartItemCount > 0 && isOpen ? { backgroundColor: brandColors.primary } : {}}
-            onMouseEnter={(e) => {
-              if (cartItemCount > 0 && isOpen) {
-                e.currentTarget.style.backgroundColor = brandColors.dark;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (cartItemCount > 0 && isOpen) {
-                e.currentTarget.style.backgroundColor = brandColors.primary;
-              }
-            }}
           >
             <div className="flex items-center justify-between w-full">
               {/* Item Count - Right Side */}
@@ -216,15 +199,13 @@ interface BranchDropdownProps {
   onBranchSelect: (branch: Branch) => void;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
-  brandColors: { primary: string; dark: string };
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
   onBranchSelect, 
   isChangingBranch,
-  onBranchChanging,
-  brandColors
+  onBranchChanging 
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -282,36 +263,22 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               type="button"
               disabled={isChangingBranch}
               onClick={() => handleSelect(branch)}
-              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:text-white ${
+              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#7A1120] hover:text-white ${
                 selectedBranch.id === branch.id 
-                  ? 'bg-red-50 font-semibold' 
+                  ? 'bg-red-50 text-[#781220] font-semibold' 
                   : 'text-gray-700'
               }`}
-              style={selectedBranch.id === branch.id ? { color: brandColors.primary } : {}}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = brandColors.primary;
-              }}
-              onMouseLeave={(e) => {
-                if (selectedBranch.id === branch.id) {
-                  e.currentTarget.style.backgroundColor = '';
-                  e.currentTarget.style.color = brandColors.primary;
-                } else {
-                  e.currentTarget.style.backgroundColor = '';
-                  e.currentTarget.style.color = '';
-                }
-              }}
             >
               {isChangingBranch && selectedBranch.id !== branch.id && (
                 <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
               )}
               <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? 'text-[#781220]' : 'text-gray-400'}`} />
-              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? '' : 'text-gray-400'}`} style={selectedBranch.id === branch.id ? { color: brandColors.primary } : {}} />
               <div className="flex-1 text-right">
                 <div className="font-semibold">{branch.name}</div>
                 <div className="text-xs opacity-75">{branch.area}</div>
               </div>
               {selectedBranch.id === branch.id && (
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: brandColors.primary }}></div>
+                <div className="w-2 h-2 bg-[#781220] rounded-full"></div>
               )}
             </button>
           ))}

@@ -34,8 +34,4 @@ export interface Restaurant {
   id: string;
   name: string;
   branches: Branch[];
-  brandColors: {
-    primary: string;
-    dark: string;
-  };
 }

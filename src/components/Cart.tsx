@@ -11,10 +11,6 @@ interface CartProps {
   onRemoveItem: (id: string) => void;
   onClearCart: () => void;
   selectedBranch?: any;
-  brandColors?: {
-    primary: string;
-    dark: string;
-  };
 }
 
 export const Cart: React.FC<CartProps> = ({
@@ -25,7 +21,6 @@ export const Cart: React.FC<CartProps> = ({
   onRemoveItem,
   onClearCart,
   selectedBranch,
-  brandColors = { primary: '#781220', dark: '#5c0d18' }
 }) => {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -161,7 +156,6 @@ export const Cart: React.FC<CartProps> = ({
         onBack={handleBackToCart}
         isTransitioning={isTransitioning}
         selectedBranch={selectedBranch}
-        brandColors={brandColors}
       />
     );
   }
@@ -176,7 +170,7 @@ export const Cart: React.FC<CartProps> = ({
           ? 'scale-95 opacity-0 translate-x-8'
           : 'scale-95 opacity-0 translate-y-4'
       }`}>
-        <div className="text-white p-4 sm:p-6 flex-shrink-0" style={{ backgroundColor: brandColors.primary }}>
+        <div className="bg-[#781220] text-white p-4 sm:p-6 flex-shrink-0">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <ShoppingBag className="w-6 h-6" />
@@ -216,17 +210,14 @@ export const Cart: React.FC<CartProps> = ({
                   <div className="flex items-center gap-1 sm:gap-2">
                     <button
                       onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                      className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors"
+                     className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors"
                     >
                       <Minus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
                     <span className="w-6 sm:w-8 text-center font-semibold text-sm sm:text-base">{item.quantity}</span>
                     <button
                       onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                      className="w-7 h-7 sm:w-8 sm:h-8 text-white rounded-full flex items-center justify-center transition-colors"
-                      style={{ backgroundColor: brandColors.primary }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = brandColors.dark}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = brandColors.primary}
+                     className="w-7 h-7 sm:w-8 sm:h-8 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
                     >
                       <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
@@ -247,7 +238,7 @@ export const Cart: React.FC<CartProps> = ({
           <div className="border-t p-4 sm:p-6 bg-gray-50 mt-auto flex-shrink-0">
             <div className="flex justify-between items-center mb-4">
               <span className="text-base sm:text-lg font-semibold">المجموع الكلي:</span>
-              <span className="text-xl sm:text-2xl font-black" style={{ color: brandColors.primary }}>
+              <span className="text-xl sm:text-2xl font-black text-[#781220]">
                 {total.toFixed(2)} د.ل
               </span>
             </div>
@@ -256,10 +247,7 @@ export const Cart: React.FC<CartProps> = ({
             </div>
             <button 
               onClick={handleCheckout}
-              className="w-full text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
-              style={{ backgroundColor: brandColors.primary }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = brandColors.dark}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = brandColors.primary}
+             className="w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
             >
               المتابعة للدفع
             </button>
