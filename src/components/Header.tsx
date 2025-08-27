@@ -258,16 +258,28 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
       >
         <MapPin className="w-4 h-4" />
         <span>{selectedBranch.area}</span>
-              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? (isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]') : 'text-gray-400'}`} />
-              <div className="flex-1 text-right">
-                <div className="font-semibold">{branch.name}</div>
-                <div className="text-xs opacity-75">{branch.area}</div>
-              </div>
-              {selectedBranch.id === branch.id && (
-                <div className={`w-2 h-2 ${primaryColorClass} rounded-full`}></div>
-              )}
-            </button>
-          ))}
+        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50">
+          <div className="py-2">
+            {getAllBranches().map((branch) => (
+              <button
+                key={branch.id}
+                onClick={() => handleSelect(branch)}
+                className="w-full px-4 py-3 text-right hover:bg-gray-50 transition-colors duration-200 flex items-center gap-3"
+              >
+                <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? (isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]') : 'text-gray-400'}`} />
+                <div className="flex-1 text-right">
+                  <div className="font-semibold">{branch.name}</div>
+                  <div className="text-xs opacity-75">{branch.area}</div>
+                </div>
+                {selectedBranch.id === branch.id && (
+                  <div className={`w-2 h-2 ${primaryColorClass} rounded-full`}></div>
+                )}
+              </button>
+            ))}
           </div>
         </div>
       )}
