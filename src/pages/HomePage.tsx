@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
       {!selectedRestaurant ? (
         <RestaurantSelector
           restaurants={restaurants}
-          onSelect={handleRestaurantSelect}
+          onSelectRestaurant={handleRestaurantSelect}
         />
       ) : (
         <BranchSelector
