@@ -161,6 +161,7 @@ export const Cart: React.FC<CartProps> = ({
         onBack={handleBackToCart}
         isTransitioning={isTransitioning}
         selectedBranch={selectedBranch}
+        brandColors={brandColors}
       />
     );
   }
