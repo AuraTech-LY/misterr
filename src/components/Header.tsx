@@ -162,9 +162,9 @@ export const Header: React.FC<HeaderProps> = ({
                 : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
             }`}
           >
-            <div className="flex items-center justify-center w-full gap-10">
-              {/* Total Amount - Left Side */}
-              <div className="flex-shrink-0">
+            <div className="flex items-center justify-between w-full">
+              {/* Item Count - Right Side */}
+              <div className="flex-shrink-0 w-16 text-right">
                 {cartItemCount > 0 && (
                   <span className="text-white text-lg font-bold">
                     {cartItemCount}
@@ -172,14 +172,14 @@ export const Header: React.FC<HeaderProps> = ({
                 )}
               </div>
               
-              {/* Cart Icon and Text - Center */}
-              <div className="flex items-center gap-2 mx-8">
+              {/* Cart Icon and Text - Fixed Center */}
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <ShoppingBag className="w-5 h-5" />
                 <span>{!isOpen ? 'مغلق حالياً' : 'عرض السلة'}</span>
               </div>
               
-              {/* Item Count - Right Side */}
-              <div className="flex-shrink-0">
+              {/* Total Price - Left Side */}
+              <div className="flex-shrink-0 w-16 text-left">
                 {cartItemCount > 0 && isOpen && (
                   <span className="text-white text-base font-bold">
                     {cartTotal.toFixed(2)} د.ل
