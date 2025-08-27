@@ -13,6 +13,7 @@ interface HeaderProps {
   selectedBranch?: Branch;
   onBranchChange?: () => void;
   cartTotal?: number;
+  brandColors?: { primary: string; dark: string };
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -21,7 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
   selectedRestaurant,
   selectedBranch,
   onBranchChange,
-  cartTotal = 0
+  cartTotal = 0,
+  brandColors = { primary: '#781220', dark: '#5c0d18' }
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
