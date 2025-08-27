@@ -88,6 +88,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           customerLocation: location
         }));
         setIsLocating(false);
+        setLocationError(''); // Clear any previous errors on success
         
         // Calculate road distance if branch coordinates are available
         if (selectedBranch?.latitude && selectedBranch?.longitude) {
