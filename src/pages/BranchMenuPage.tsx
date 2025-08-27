@@ -1,55 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Header } from '../components/Header';
-import { CategoryFilter } from '../components/CategoryFilter';
-import { Menu } from '../components/Menu';
-import { Cart } from '../components/Cart';
-import { useMenu } from '../hooks/useMenu';
-import { useCart } from '../hooks/useCart';
-import { getBranchById } from '../data/restaurantsData';
-import { Branch } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
+import React from 'react';
+import { Plus, Star, X, Minus } from 'lucide-react';
+import { MenuItem as MenuItemType } from '../types';
+import { isWithinOperatingHours } from '../utils/timeUtils';
 
-interface BranchMenuPageProps {
-  branchId: string;
+interface MenuItemProps {
+  item: MenuItemType;
+  onAddToCart: (item: MenuItemType) => void;
 }
 
-export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
-  const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('الكل');
-  
-  // Find the branch data
-  const branchData = getBranchById(branchId);
-  const branch = branchData?.branch;
-  const restaurant = branchData?.restaurant;
-  
-  const { menuItems, categories, loading, error } = useMenu(branchId);
-  const {
-    cartItems,
-    isCartOpen,
-    addToCart,
-    updateQuantity,
-    removeFromCart,
-    getTotalItems,
-    getTotalPrice,
-    openCart,
-    closeCart,
-    clearCart,
-    loadBranchCart,
-  } = useCart(branchId);
-  const [isOpen, setIsOpen] = useState(isWithinOperatingHours());
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
+  const [showMobilePopup, setShowMobilePopup] = React.useState(false);
+  const [quantity, setQuantity] = React.useState(1);
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
 
-  // Load branch-specific cart when component mounts
-  useEffect(() => {
-    loadBranchCart(branchId);
-    // Also save the branch to localStorage for consistency
-    if (branch) {
-      localStorage.setItem('selectedBranch', JSON.stringify(branch));
-    }
-  }, [branchId, loadBranchCart, branch]);
+  // Dynamic color classes based on restaurant
+  const isMisterCrispy = true; // Use مستر كريسبي colors
 
   // Update operating status every minute
-  useEffect(() => {
+  React.useEffect(() => {
     const interval = setInterval(() => {
       setIsOpen(isWithinOperatingHours());
     }, 60000);
@@ -57,144 +25,248 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Redirect to branches page if branch not found
-  if (!branch) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-4" dir="rtl">
-        <div className="max-w-md w-full mx-auto text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">الفرع غير موجود</h1>
-          <p className="text-gray-600 mb-6">الفرع المطلوب غير متوفر حالياً</p>
-          <Link
-            to="/branches"
-            className="bg-[#781220] hover:bg-[#5c0d18] text-white py-3 px-6 rounded-full font-bold transition-all duration-300 inline-block"
-          >
-            اختيار فرع آخر
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const handleMobileItemClick = () => {
+    if (!isOpen) return;
+    setShowMobilePopup(true);
+    setQuantity(1);
+  };
 
-  // Filter menu items by category
-  const filteredItems = selectedCategory === 'الكل'
-    ? menuItems
-    : menuItems.filter(item => item.category === selectedCategory);
+  const handleAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      onAddToCart(item);
+    }
+    setShowMobilePopup(false);
+    setQuantity(1);
+  };
 
-  // Create categories array with "الكل" option
-  const categoryOptions = ['الكل', ...categories.map(cat => cat.name)];
+  const handleQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1) {
+      setQuantity(newQuantity);
+    }
+  };
 
+  const handleDesktopQuantityChange = (newQuantity: number) => {
+    if (newQuantity >= 1) {
+      setDesktopQuantity(newQuantity);
+    }
+  };
+
+  const handleDesktopAddToCart = () => {
+    for (let i = 0; i < desktopQuantity; i++) {
+      onAddToCart(item);
+    }
+    setDesktopQuantity(1);
+  };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100" dir="rtl">
-      <Header
-        cartItemCount={getTotalItems()}
-        onCartClick={openCart}
-        selectedRestaurant={restaurant}
-        selectedBranch={branch}
-        onBranchChange={() => navigate('/branches')}
-        cartTotal={getTotalPrice()}
-      />
-
-      <main className="container mx-auto px-4 py-4 sm:py-8">
-        {/* Add bottom padding for mobile navigation */}
-        <div className="pb-20 sm:pb-0">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
-            اكتشف أشهى الوجبات السريعة من {branch.name}
-          </p>
-          <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
-            <div className={`w-3 h-3 rounded-full animate-pulse ${
-              isOpen ? 'bg-green-500' : 'bg-red-500'
-            }`}></div>
-            <span className="text-sm text-gray-600">
-              {isOpen ? 'متوفر للطلب الآن' : 'مغلق حالياً'}
+    <>
+      {/* Mobile Layout - Horizontal/Rectangular */}
+      <div 
+        className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group w-full ${
+          isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
+        }`}
+        onClick={handleMobileItemClick}
+      >
+        <div className="flex items-center p-4 gap-4 h-32 min-w-0">
+          {/* Price Section - Left */}
+          <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
+            <span className="text-xl font-black text-[#781220] whitespace-nowrap">
+              {item.price.toFixed(2)}
             </span>
+            <span className="text-sm text-gray-500">د.ل</span>
           </div>
-          
-          {!isOpen && (
-            <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
-              {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
+
+          {/* Content Section - Middle */}
+          <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+            <div className="flex items-start justify-between mb-1">
+              <h3 className="text-base font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
+              {item.popular && (
+                  <Star className="w-3 h-3 fill-current" />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-
-        <CategoryFilter
-          categories={categoryOptions}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
-
-        {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red"></div>
-            <p className="mt-4 text-gray-600">جاري تحميل القائمة...</p>
+            <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed flex-1 overflow-hidden">{item.description}</p>
           </div>
-        )}
 
-        {error && (
-          <div className="text-center py-12">
-            <p className="text-red-600 text-lg">{error}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="mt-4 bg-brand-red text-white px-6 py-2 rounded-lg hover:bg-brand-red-dark transition-colors"
+          {/* Image Section - Right */}
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
+            <img
+              src={item.image}
+              alt={item.name}
+              className="w-full h-full object-cover rounded-lg group-hover:scale-110 transition-transform duration-500"
+            />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isOpen) return;
+                onAddToCart(item);
+              }}
+              disabled={!isOpen}
+              className={`absolute bottom-1 left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-300 flex items-center justify-center z-10 ${
+                isOpen 
+                  ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
+                  : 'opacity-50 cursor-not-allowed'
+              }`}
             >
-              إعادة المحاولة
+              <Plus className={`w-4 h-4 ${primaryColorTextClass}`} />
             </button>
           </div>
-        )}
-
-        {!loading && !error && (
-          <Menu
-            items={filteredItems}
-            onAddToCart={addToCart}
-          />
-        )}
         </div>
-      </main>
+      </div>
 
-      <Cart
-        isOpen={isCartOpen}
-        onClose={closeCart}
-        items={cartItems}
-        onUpdateQuantity={updateQuantity}
-        onRemoveItem={removeFromCart}
-        onClearCart={clearCart}
-        selectedBranch={branch}
-      />
-
-      <footer className="bg-black text-white py-12 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <img 
-                src="/New Element 88 [8BACFE9].png" 
-                alt="مطعم المستر" 
-                className="w-full h-full object-contain"
+      {/* Mobile Popup Modal */}
+      {showMobilePopup && (
+        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden animate-fadeInUp">
+            {/* Header with close button */}
+            <div className="relative">
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-48 object-cover"
               />
+              <button
+                onClick={() => setShowMobilePopup(false)}
+                className="absolute top-3 left-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 transition-all"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+              {item.popular && (
+                <div className={`absolute top-3 right-3 ${primaryColorClass} text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1`}>
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>الأكثر طلباً</span>
+                </div>
+              )}
             </div>
-            <h3 className="text-2xl font-black">المستر</h3>
-          </div>
-          <p className="text-gray-400 text-lg mb-6">مطعم الوجبات السريعة الأفضل في المدينة</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h4 className="font-bold mb-2 text-[#781220]">الفرع الحالي</h4>
-              <p className="text-gray-300">{branch.name}</p>
-              <p className="text-gray-400 text-sm">{branch.address}</p>
+
+            {/* Content */}
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-gray-800 mb-3">{item.name}</h3>
+              <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
+              
+              <div className="flex justify-between items-center mb-6">
+                <span className={`text-2xl font-black ${primaryColorTextClass}`}>
+                  {item.price.toFixed(2)} د.ل
+                </span>
+              </div>
+
+              {/* Quantity Selector */}
+              <div className="flex items-center justify-between mb-6">
+                <span className="text-lg font-semibold text-gray-800">الكمية:</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    className="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <Minus className="w-5 h-5" />
+                  </button>
+                  <span className="w-12 text-center font-bold text-lg">{quantity}</span>
+                  <button
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    className="w-10 h-10 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Total Price */}
+              <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
+                <span className="text-lg font-semibold text-gray-800">المجموع:</span>
+                <span className={`text-xl font-black ${primaryColorTextClass}`}>
+                  {(item.price * quantity).toFixed(2)} د.ل
+                </span>
+              </div>
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!isOpen}
+                className={`w-full py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${
+                  isOpen
+                    ? 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {isOpen ? `إضافة إلى السلة (${quantity})` : 'مغلق حالياً'}
+              </button>
             </div>
-            <div>
-              <h4 className="font-bold mb-2 text-brand-red">ساعات العمل</h4>
-              <p className="text-gray-300">يومياً من 10:00 ص إلى 12:00 م</p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-2 text-brand-red">الهاتف</h4>
-              <p className="text-gray-300">{branch.phone}</p>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-6">
-            <p className="text-gray-500">© 2025 المستر. جميع الحقوق محفوظة</p>
           </div>
         </div>
-      </footer>
-    </div>
+      )}
+
+      {/* Desktop/Tablet Layout - Vertical Cards */}
+      <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group flex flex-col ${
+        isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
+      }`}>
+        <div className="relative">
+          <img
+            src={item.image}
+            alt={item.name}
+            className="w-full h-32 lg:h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          {item.popular && (
+            <div className={`absolute top-2 right-2 lg:top-3 lg:right-3 ${primaryColorClass} text-white px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-semibold flex items-center gap-1`}>
+              <Star className="w-4 h-4 fill-current" />
+              <span>الأكثر طلباً</span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
+        </div>
+        
+        <div className="p-3 lg:p-4 flex flex-col flex-grow">
+          <h3 className="text-base lg:text-lg font-bold text-gray-800 mb-2">{item.name}</h3>
+          <p className="text-sm text-gray-600 mb-3 leading-relaxed line-clamp-2 flex-grow">{item.description}</p>
+          
+          <div className="flex justify-between items-center mb-3">
+            <span className={`text-lg lg:text-xl font-black ${primaryColorTextClass}`}>
+              {item.price.toFixed(2)} د.ل
+            </span>
+          </div>
+
+          {/* Quantity Selector */}
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-gray-700">الكمية:</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleDesktopQuantityChange(desktopQuantity - 1)}
+                className="w-7 h-7 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+              <span className="w-8 text-center font-bold text-sm">{desktopQuantity}</span>
+              <button
+                onClick={() => handleDesktopQuantityChange(desktopQuantity + 1)}
+                className={`w-7 h-7 ${primaryColorClass} ${primaryColorHoverClass.replace('bg-', 'hover:bg-')} text-white rounded-full flex items-center justify-center transition-colors`}
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Total Price and Add Button */}
+          <div className="flex justify-between items-center mb-1">
+            <div className="text-center">
+              <div className="text-xs text-gray-500">المجموع</div>
+              <div className={`text-lg font-black ${primaryColorTextClass}`}>
+                {(item.price * desktopQuantity).toFixed(2)} د.ل
+              </div>
+            </div>
+
+            <button
+              onClick={handleDesktopAddToCart}
+              disabled={!isOpen}
+              className={`px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg text-sm ${
+                isOpen
+                  ? `${primaryColorClass} ${primaryColorHoverClass.replace('bg-', 'hover:bg-')} text-white hover:shadow-xl transform hover:scale-105 active:scale-95`
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <Plus className="w-4 h-4" />
+              <span>{isOpen ? `إضافة (${desktopQuantity})` : 'مغلق'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
