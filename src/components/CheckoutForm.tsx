@@ -298,7 +298,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           : 'scale-95 opacity-0 -translate-x-8'
       }`}>
         {/* Progress Indicator */}
-        <div className="bg-[#781220] p-3 sm:p-4 flex-shrink-0">
+        <div className={`p-3 sm:p-4 flex-shrink-0 ${
+          selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+        }`}>
           <div className="flex items-center justify-between text-white">
             <div className="flex items-center gap-3">
               <button
