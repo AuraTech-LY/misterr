@@ -18,12 +18,12 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   return (
     <div className="mb-8">
-      <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide px-2 sm:px-0">
+      <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 sm:px-2 py-2">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => onCategoryChange(category)}
-            className={`px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold whitespace-nowrap transition-all duration-300 text-sm sm:text-base ${
+            className={`px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold whitespace-nowrap transition-all duration-300 text-sm sm:text-base ${
               selectedCategory === category
                 ? 'text-white shadow-lg transform scale-105'
                 : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg hover:scale-105'
