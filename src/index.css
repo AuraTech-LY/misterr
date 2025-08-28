@@ -79,14 +79,6 @@ html, body {
   }
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.animate-slideUp {
-  animation: slideUp 0.3s ease-out;
-}
-
 /* Line clamp utility for mobile descriptions */
 .line-clamp-2 {
   display: -webkit-box;

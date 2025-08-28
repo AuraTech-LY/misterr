@@ -13,6 +13,7 @@ interface MenuItemProps {
 
 export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId, cartItems = [] }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
+  const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
@@ -39,14 +40,23 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
   const handleMobileItemClick = () => {
     if (!isOpen) return;
     setShowMobilePopup(true);
+    setIsClosing(false);
     setQuantity(1);
+  };
+
+  const handleClosePopup = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowMobilePopup(false);
+      setIsClosing(false);
+    }, 300); // Match animation duration
   };
 
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       onAddToCart(item);
     }
-    setShowMobilePopup(false);
+    handleClosePopup();
     setQuantity(1);
   };
 
@@ -141,8 +151,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
 
       {/* Mobile Popup Modal */}
       {showMobilePopup && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden animate-slideUp">
+        <div className={`md:hidden fixed inset-0 bg-black z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+          isClosing ? 'bg-opacity-0' : 'bg-opacity-50'
+        }`}>
+          <div className={`bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden transition-all duration-300 transform ${
+            isClosing ? 'translate-y-8 opacity-0' : 'translate-y-0 opacity-100'
+          }`}>
             {/* Header with close button */}
             <div className="relative">
               <img
@@ -151,7 +165,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
                 className="w-full h-48 object-cover"
               />
               <button
-                onClick={() => setShowMobilePopup(false)}
+                onClick={handleClosePopup}
                 className="absolute top-3 left-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center shadow-lg hover:bg-opacity-100 transition-all"
               >
                 <X className="w-5 h-5 text-gray-600" />
