@@ -234,7 +234,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               <span className="w-8 text-center font-bold text-sm">{desktopQuantity}</span>
               <button
                 onClick={() => handleDesktopQuantityChange(desktopQuantity + 1)}
-                className="w-7 h-7 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                className="w-7 h-7 bg-[#55421A] hover:bg-[#3d2f12] text-white rounded-full flex items-center justify-center transition-colors"
               >
                 <Plus className="w-4 h-4" />
               </button>
