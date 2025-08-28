@@ -161,7 +161,9 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : `${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white hover:shadow-xl`
+                : selectedRestaurant?.name?.includes('مستر كريسبي') 
+                  ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl'
+                  : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
             }`}
           >
             <div className="flex items-center justify-between w-full">
@@ -234,7 +236,11 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isChangingBranch}
-        className={`bg-white bg-opacity-20 text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold hover:bg-opacity-30 transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
+        className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
+          selectedBranch?.name?.includes('مستر كريسبي')
+            ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
+            : 'bg-white bg-opacity-20 hover:bg-opacity-30'
+        } ${
           isOpen ? 'bg-opacity-30' : ''
         } ${
          isChangingBranch || !isWithinOperatingHours() ? 'opacity-50 cursor-not-allowed' : ''
@@ -265,22 +271,32 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               type="button"
               disabled={isChangingBranch}
               onClick={() => handleSelect(branch)}
-              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#7A1120] hover:text-white ${
+              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
                 selectedBranch.id === branch.id 
                   ? 'bg-red-50 text-[#781220] font-semibold' 
                   : 'text-gray-700'
-              }`}
+              } ${
+                branch.name?.includes('مستر كريسبي')
+                  ? 'hover:bg-[#55421A]'
+                  : 'hover:bg-[#7A1120]'
+              } hover:text-white`}
             >
               {isChangingBranch && selectedBranch.id !== branch.id && (
                 <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
               )}
-              <MapPin className={`w-4 h-4 ${selectedBranch.id === branch.id ? 'text-[#781220]' : 'text-gray-400'}`} />
+              <MapPin className={`w-4 h-4 ${
+                selectedBranch.id === branch.id 
+                  ? branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
+                  : 'text-gray-400'
+              }`} />
               <div className="flex-1 text-right">
                 <div className="font-semibold">{branch.name}</div>
                 <div className="text-xs opacity-75">{branch.area}</div>
               </div>
               {selectedBranch.id === branch.id && (
-                <div className={`w-2 h-2 ${branch.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} rounded-full`}></div>
+                <div className={`w-2 h-2 rounded-full ${
+                  branch.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+                }`}></div>
               )}
             </button>
           ))}
