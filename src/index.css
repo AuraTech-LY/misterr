@@ -89,12 +89,21 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #781220;
+  background: var(--scrollbar-color, #781220);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #5c0d18;
+  background: var(--scrollbar-hover-color, #5c0d18);
+}
+
+/* Scrollbar colors for مستر كريسبي */
+.mister-crispy ::-webkit-scrollbar-thumb {
+  background: #55421A;
+}
+
+.mister-crispy ::-webkit-scrollbar-thumb:hover {
+  background: #3d2f12;
 }
 
 /* Line clamp utility for mobile descriptions */
