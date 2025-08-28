@@ -246,7 +246,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             <button
               onClick={handleDesktopAddToCart}
               disabled={!isOpen}
-              className={`w-full px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
+              className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
                   ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
