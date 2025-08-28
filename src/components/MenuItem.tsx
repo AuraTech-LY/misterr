@@ -113,7 +113,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
                   : 'opacity-50 cursor-not-allowed'
               }`}
             >
-              <Plus className="w-4 h-4 text-[#781220]" />
+              <Plus className={`w-4 h-4 ${
+                isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+              }`} />
             </button>
           </div>
         </div>
