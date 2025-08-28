@@ -42,12 +42,12 @@
        */
       function updateThemeColorBasedOnPath() {
         const path = window.location.pathname;
-        let colorToSet = '#781220'; // Default Mr. Shish color
+        let colorToSet = '#781220'; // Default مستر شيش color
 
         if (path.includes('/shish') || path.includes('airport') || path.includes('balaoun')) {
-          colorToSet = '#781220'; // Mr. Shish brand color
+          colorToSet = '#781220'; // مستر شيش brand color
         } else if (path.includes('/crispy') || path.includes('dollar')) {
-          colorToSet = '#55421A'; // Mr. Crispy brand color
+          colorToSet = '#55421A'; // مستر كريسبي brand color
         }
 
         setThemeColor(colorToSet);
