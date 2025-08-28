@@ -122,6 +122,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           categories={categoryOptions}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
+          selectedRestaurant={restaurant}
         />
 
         {loading && (

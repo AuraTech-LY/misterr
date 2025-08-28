@@ -152,6 +152,7 @@ export const HomePage: React.FC = () => {
           categories={categoryOptions}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
+          selectedRestaurant={selectedRestaurant}
         />
 
         {loading && (
