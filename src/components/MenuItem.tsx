@@ -74,7 +74,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
             <span className="text-xl font-black text-[#781220] whitespace-nowrap">
-              {item.price.toFixed(2)}
+              {Math.round(item.price)}
             </span>
             <span className="text-sm text-gray-500">د.ل</span>
           </div>
@@ -149,7 +149,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
               
               <div className="flex justify-between items-center mb-6">
                 <span className="text-2xl font-black text-[#781220]">
-                  {item.price.toFixed(2)} د.ل
+                  {Math.round(item.price)} د.ل
                 </span>
               </div>
 
@@ -181,7 +181,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
               <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                 <span className="text-lg font-semibold text-gray-800">المجموع:</span>
                 <span className="text-xl font-black text-[#781220]">
-                  {(item.price * quantity).toFixed(2)} د.ل
+                  {Math.round(item.price * quantity)} د.ل
                 </span>
               </div>
 
@@ -231,7 +231,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             <span className={`text-xl font-black ${
               item.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
             }`}>
-              {item.price.toFixed(2)} د.ل
+              {Math.round(item.price)} د.ل
             </span>
           </div>
 
