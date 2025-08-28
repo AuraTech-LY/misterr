@@ -8,14 +8,20 @@ interface MenuItemProps {
   item: MenuItemType;
   onAddToCart: (item: MenuItemType) => void;
   branchId?: string;
+  cartItems?: any[];
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId, cartItems = [] }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [isHighlighted, setIsHighlighted] = React.useState(false);
+
+  // Check if this item is in the cart
+  const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
+  const isInCart = !!cartItem;
+  const cartQuantity = cartItem?.quantity || 0;
 
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
@@ -79,7 +85,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
         className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group w-full ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
-          isHighlighted 
+          isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl scale-[1.02]`
             : ''
         }`}
@@ -88,6 +94,13 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
         <div className="flex items-center p-4 gap-4 h-32 min-w-0">
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
+            {isInCart && (
+              <div className={`text-xs font-bold mb-1 ${
+                isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+              }`}>
+                في السلة ({cartQuantity})
+              </div>
+            )}
             <div className={`text-xl whitespace-nowrap ${
               isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
             }`}>
@@ -228,6 +241,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
       {/* Desktop/Tablet Layout - Vertical Cards */}
       <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group h-80 flex flex-col ${
         isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
+      } ${
+        isInCart 
+          ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
+          : ''
       }`}>
         <div className="relative">
           <img
@@ -239,6 +256,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             <div className="absolute top-2 right-2 bg-[#781220] text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
               <Star className="w-4 h-4 fill-current" />
               <span>الأكثر طلباً</span>
+            </div>
+          )}
+          {isInCart && (
+            <div className={`absolute top-2 left-2 ${isMisterCrispy ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1`}>
+              <span>في السلة ({cartQuantity})</span>
             </div>
           )}
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
@@ -271,8 +293,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
-              <span>{isOpen ? 'إضافة' : 'مغلق'}</span>
+              {isOpen ? (isInCart ? `إضافة المزيد (${cartQuantity})` : 'إضافة إلى السلة') : 'مغلق حالياً'}
             </button>
           </div>
         </div>

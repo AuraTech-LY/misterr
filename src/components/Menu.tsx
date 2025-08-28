@@ -6,9 +6,10 @@ interface MenuProps {
   items: MenuItemType[];
   onAddToCart: (item: MenuItemType) => void;
   branchId?: string;
+  cartItems?: any[];
 }
 
-export const Menu: React.FC<MenuProps> = ({ items, onAddToCart, branchId }) => {
+export const Menu: React.FC<MenuProps> = ({ items, onAddToCart, branchId, cartItems = [] }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
       {items.map((item) => (
@@ -17,6 +18,7 @@ export const Menu: React.FC<MenuProps> = ({ items, onAddToCart, branchId }) => {
           item={item}
           onAddToCart={onAddToCart}
           branchId={branchId}
+          cartItems={cartItems}
         />
       ))}
     </div>
