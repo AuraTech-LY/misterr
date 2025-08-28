@@ -2,17 +2,23 @@ import React from 'react';
 import { Plus, Star, X, Minus } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
 import { isWithinOperatingHours } from '../utils/timeUtils';
+import { getBranchById } from '../data/restaurantsData';
 
 interface MenuItemProps {
   item: MenuItemType;
   onAddToCart: (item: MenuItemType) => void;
+  branchId?: string;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
+
+  // Determine if this is a Mister Crispy branch
+  const branchData = branchId ? getBranchById(branchId) : null;
+  const isMisterCrispy = branchData?.branch?.name?.includes('مستر كريسبي') || false;
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -160,7 +166,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                   <span className="w-12 text-center font-bold text-lg">{quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(quantity + 1)}
-                    className="w-10 h-10 bg-[#55421A] hover:bg-[#3d2f12] text-white rounded-full flex items-center justify-center transition-colors"
+                    className={`w-10 h-10 ${
+                      isMisterCrispy
+                        ? 'bg-[#55421A] hover:bg-[#3d2f12]'
+                        : 'bg-[#781220] hover:bg-[#5c0d18]'
+                    } text-white rounded-full flex items-center justify-center transition-colors`}
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -179,9 +189,13 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               <button
                 onClick={handleAddToCart}
                 disabled={!isOpen}
-                className={`w-full py-4 rounded-full font-bold text-lg transition-all duration-300 shadow-lg ${
+                className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                   isOpen
-                    ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    ? isMisterCrispy
+                      ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    ? isMisterCrispy
+                      ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                      : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >

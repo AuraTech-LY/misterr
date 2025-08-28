@@ -185,6 +185,7 @@ export const HomePage: React.FC = () => {
           <Menu
             items={filteredItems}
             onAddToCart={addToCart}
+            branchId={selectedBranch?.id}
           />
         )}
         </div>
