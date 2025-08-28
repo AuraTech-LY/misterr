@@ -35,7 +35,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
         {onBackToRestaurants && (
           <button
             onClick={onBackToRestaurants}
-            className="flex items-center gap-2 text-[#781220] mb-4"
+            className={`flex items-center gap-2 mb-4 ${
+              restaurantName?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
+            }`}
           >
             <ArrowRight className="w-5 h-5" />
             <span>العودة</span>
