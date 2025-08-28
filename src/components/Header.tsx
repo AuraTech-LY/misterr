@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Star, MapPin, ChevronDown } from 'lucide-react';
+import { ShoppingBag, Star, MapPin, ChevronDown, ArrowRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
@@ -13,6 +13,8 @@ interface HeaderProps {
   selectedBranch?: Branch;
   onBranchChange?: () => void;
   cartTotal?: number;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -21,7 +23,9 @@ export const Header: React.FC<HeaderProps> = ({
   selectedRestaurant,
   selectedBranch,
   onBranchChange,
-  cartTotal = 0
+  cartTotal = 0,
+  showBackButton = false,
+  onBackClick
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,6 +55,17 @@ export const Header: React.FC<HeaderProps> = ({
           selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
         }`}>
         <div className="flex justify-between items-center">
+          {showBackButton && (
+            <button
+              onClick={onBackClick}
+              className="flex items-center gap-2 text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-full transition-all duration-300"
+            >
+              <ArrowRight className="w-5 h-5" />
+              <span className="hidden sm:inline text-sm">العودة</span>
+            </button>
+          )}
+          
+          {!showBackButton && (
           <button 
             onClick={(e) => {
               e.preventDefault();
@@ -80,6 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
           </button>
+          )}
 
           <div className="flex items-center gap-2 sm:gap-4">
             {selectedBranch && (

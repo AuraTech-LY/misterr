@@ -86,6 +86,13 @@ export const HomePage: React.FC = () => {
     localStorage.setItem('selectedBranchId', branch.id);
   };
 
+  const handleBackToRestaurants = () => {
+    setSelectedRestaurant(null);
+    setSelectedBranch(null);
+    localStorage.removeItem('selectedRestaurantId');
+    localStorage.removeItem('selectedBranchId');
+  };
+
   // Show restaurant selector if no restaurant is selected
   if (!selectedRestaurant) {
     return (
@@ -140,6 +147,8 @@ export const HomePage: React.FC = () => {
           localStorage.removeItem('selectedBranchId');
         }}
         cartTotal={getTotalPrice()}
+        showBackButton={true}
+        onBackClick={handleBackToRestaurants}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">

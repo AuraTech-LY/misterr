@@ -83,6 +83,13 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   // Create categories array with "الكل" option
   const categoryOptions = ['الكل', ...categories.map(cat => cat.name)];
 
+  const handleBackToRestaurants = () => {
+    // Clear both restaurant and branch selection
+    localStorage.removeItem('selectedRestaurantId');
+    localStorage.removeItem('selectedBranchId');
+    navigate('/');
+  };
+
   return (
     <div 
       className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100" 
@@ -99,6 +106,8 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         selectedBranch={branch}
         onBranchChange={() => navigate('/branches')}
         cartTotal={getTotalPrice()}
+        showBackButton={true}
+        onBackClick={handleBackToRestaurants}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
