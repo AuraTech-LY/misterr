@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50">
+    <header>
       {/* Back Button - Above Navigation */}
       {showBackButton && (
         <div className="bg-gray-50 px-3 sm:px-4 py-2 lg:px-16 xl:px-32 2xl:px-48">
