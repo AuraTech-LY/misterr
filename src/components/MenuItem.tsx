@@ -222,29 +222,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           </div>
 
           {/* Quantity Selector */}
-          <div className="flex items-center justify-between mb-3 h-8">
-            <span className="text-sm font-semibold text-gray-700">الكمية:</span>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleDesktopQuantityChange(desktopQuantity - 1)}
-                className="w-7 h-7 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors"
-              >
-                <Minus className="w-3 h-3" />
-              </button>
-              <span className="w-8 text-center font-bold text-sm">{desktopQuantity}</span>
-              <button
-                onClick={() => handleDesktopQuantityChange(desktopQuantity + 1)}
-                className="w-7 h-7 bg-[#55421A] hover:bg-[#3d2f12] text-white rounded-full flex items-center justify-center transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
           {/* Add Button */}
-          <div className="mt-auto pt-2 pb-4">
+          <div className="flex items-center justify-between mb-3 h-8">
             <button
-              onClick={handleDesktopAddToCart}
+              onClick={() => onAddToCart(item)}
               disabled={!isOpen}
               className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
