@@ -66,7 +66,7 @@ export const Header: React.FC<HeaderProps> = ({
       )}
       
       {/* Main Navigation Bar */}
-      <div className="sticky top-0 z-40 bg-white shadow-sm px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48">
+      <div className="sticky top-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48">
       <div className="container mx-auto">
         <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
           selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
