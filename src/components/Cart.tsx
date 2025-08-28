@@ -171,6 +171,9 @@ export const Cart: React.FC<CartProps> = ({
           : 'scale-95 opacity-0 translate-y-4'
       }`}>
         <div className="bg-[#781220] text-white p-4 sm:p-6 flex-shrink-0">
+        <div className={`text-white p-4 sm:p-6 flex-shrink-0 ${
+          selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+        }`}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <ShoppingBag className="w-6 h-6" />
