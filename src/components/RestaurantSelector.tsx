@@ -69,7 +69,9 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:scale-105 w-full max-w-sm h-[400px] flex flex-col"
             >
               {/* Restaurant Header */}
-              <div className="bg-[#781220] text-white p-6 relative flex-shrink-0">
+              <div className={`text-white p-6 relative flex-shrink-0 ${
+                restaurant.id === 'mister-crispy' ? 'bg-[#55421A]' : 'bg-[#781220]'
+              }`}>
                 <div className="text-center">
                   <ChefHat className="w-8 h-8 mx-auto mb-3" />
                   <h3 className="text-xl sm:text-2xl font-bold mb-2">{restaurant.name}</h3>
