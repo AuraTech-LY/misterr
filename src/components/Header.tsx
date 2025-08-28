@@ -47,7 +47,9 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="sticky top-0 z-50 px-3 sm:px-4 py-3 sm:py-4">
       <div className="container mx-auto">
-        <div className="bg-[#781220] text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4">
+        <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
+          selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+        }`}>
         <div className="flex justify-between items-center">
           <button 
             onClick={(e) => {
