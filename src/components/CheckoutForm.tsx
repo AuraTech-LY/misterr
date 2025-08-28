@@ -448,7 +448,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         type="button"
                         onClick={handleGetLocation}
                         disabled={isLocating}
-                        className={\`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
+                        className={`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                           isLocating
                             ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
@@ -563,7 +563,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <button
                   onClick={handleSubmit}
                   disabled={!canSubmit() || isValidating}
-                  className={\`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
+                  className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
                     canSubmit() && !isValidating
                       ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
