@@ -193,8 +193,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
                   isOpen
                     ? isMisterCrispy
                       ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
-                    ? isMisterCrispy
-                      ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                       : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
