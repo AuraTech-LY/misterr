@@ -73,7 +73,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
         <div className="flex items-center p-4 gap-4 h-32 min-w-0">
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
-            <div className="text-xl text-[#781220] whitespace-nowrap">
+            <div className={`text-xl whitespace-nowrap ${
+              isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+            }`}>
               <span className="font-black">{Math.round(item.price)}</span>
               <span className="font-normal text-sm opacity-70"> د.ل</span>
             </div>
@@ -146,9 +148,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-3">{item.name}</h3>
               <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
-              
-              <div className="flex justify-between items-center mb-6">
-                <div className="text-2xl text-[#781220]">
+                <div className={`text-xl ${
+                  isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+                <div className={`text-2xl ${
+                  isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+                }`}>
                   <span className="font-black">{Math.round(item.price)}</span>
                   <span className="font-normal text-lg opacity-70"> د.ل</span>
                 </div>
@@ -181,7 +185,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
               {/* Total Price */}
               <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                 <span className="text-lg font-semibold text-gray-800">المجموع:</span>
-                <div className="text-xl text-[#781220]">
+                <div className={`text-xl ${
+                  isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+                }`}>
                   <span className="font-black">{Math.round(item.price * quantity)}</span>
                   <span className="font-normal text-lg opacity-70"> د.ل</span>
                 </div>
