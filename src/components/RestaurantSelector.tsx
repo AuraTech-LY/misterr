@@ -14,6 +14,14 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
 }) => {
   const isOpen = isWithinOperatingHours();
 
+  const handleRestaurantSelect = (restaurant: Restaurant) => {
+    // Update browser theme color immediately
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(restaurant.name);
+    }
+    onSelectRestaurant(restaurant);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" dir="rtl">
       {/* Simple Header */}
@@ -34,7 +42,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
         {restaurants.map((restaurant) => (
           <button
             key={restaurant.id}
-            onClick={() => onSelectRestaurant(restaurant)}
+            onClick={() => handleRestaurantSelect(restaurant)}
             disabled={!isOpen}
             className={`relative w-full p-8 rounded-3xl text-white font-bold text-xl transition-all duration-300 active:scale-95 overflow-hidden group ${
               restaurant.id === 'mister-crispy' 

@@ -35,3 +35,10 @@ export interface Restaurant {
   name: string;
   branches: Branch[];
 }
+
+// Global window interface for theme color function
+declare global {
+  interface Window {
+    updateThemeColorForRestaurant?: (restaurantName: string) => void;
+  }
+}

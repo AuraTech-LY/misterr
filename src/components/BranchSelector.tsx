@@ -20,6 +20,14 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
 }) => {
   const isOpen = isWithinOperatingHours();
 
+  const handleBranchSelect = (branch: Branch) => {
+    // Update browser theme color based on branch
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(branch.name);
+    }
+    onBranchSelect(branch);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" dir="rtl">
       {/* Simple Header */}
@@ -54,7 +62,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
         {branches.map((branch) => (
           <button
             key={branch.id}
-            onClick={() => onBranchSelect(branch)}
+            onClick={() => handleBranchSelect(branch)}
             disabled={!isOpen}
             className={`relative w-full p-8 rounded-3xl text-white font-bold transition-all duration-300 active:scale-95 overflow-hidden group ${
               branch.name?.includes('مستر كريسبي') 

@@ -65,6 +65,10 @@ export const HomePage: React.FC = () => {
 
   // Handle restaurant selection
   const handleRestaurantSelect = (restaurant: Restaurant) => {
+    // Update browser theme color immediately
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(restaurant.name);
+    }
     setSelectedRestaurant(restaurant);
     localStorage.setItem('selectedRestaurantId', restaurant.id);
     // Clear branch selection when restaurant changes
@@ -74,6 +78,10 @@ export const HomePage: React.FC = () => {
 
   // Handle branch selection
   const handleBranchSelect = (branch: Branch) => {
+    // Update browser theme color based on branch
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(branch.name);
+    }
     setSelectedBranch(branch);
     localStorage.setItem('selectedBranchId', branch.id);
   };

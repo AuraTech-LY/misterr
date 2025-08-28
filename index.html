@@ -53,6 +53,25 @@
         setThemeColor(colorToSet);
       }
 
+      /**
+       * Updates theme color based on selected restaurant data
+       * This function can be called from React components
+       */
+      function updateThemeColorForRestaurant(restaurantName) {
+        let colorToSet = '#781220'; // Default مستر شيش color
+        
+        if (restaurantName && restaurantName.includes('مستر كريسبي')) {
+          colorToSet = '#55421A'; // مستر كريسبي brand color
+        } else {
+          colorToSet = '#781220'; // مستر شيش brand color
+        }
+        
+        setThemeColor(colorToSet);
+      }
+
+      // Make the function globally available
+      window.updateThemeColorForRestaurant = updateThemeColorForRestaurant;
+
       // Run the function when the DOM is fully loaded for the initial page load
       document.addEventListener('DOMContentLoaded', updateThemeColorBasedOnPath);
 
