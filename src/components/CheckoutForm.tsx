@@ -143,7 +143,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
       if (error) {
         console.warn("Distance calculation service unavailable:", error);
-        setRoadDistance(null);
+        setDeliveryPrice(null);
         return;
       }
 
@@ -338,7 +338,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                       onChange={(e) => handleInputChange('customerInfo.name', e.target.value)}
                       className={`w-full p-4 border-2 rounded-full text-right transition-all ${
                         errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#7A1120]'
-                      className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-[#55421A] text-right resize-none"
+                      }`}
                     />
                     {errors.name && (
                       <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.name}</p>
@@ -409,7 +409,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   
                   <button
                     onClick={() => updateFormData('deliveryMethod', 'pickup')}
-                    className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
+                    className={\`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'pickup'
                         ? 'border-[#55421A] bg-red-50 text-[#55421A]'
                         : 'border-gray-200 hover:border-gray-300'
@@ -448,7 +448,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         type="button"
                         onClick={handleGetLocation}
                         disabled={isLocating}
-                        className={`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
+                        className={\`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                           isLocating
                             ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
@@ -509,7 +509,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                           المحاولة مرة أخرى
                         </button>
                       </div>
-                    <span className="font-bold text-[#55421A]">{currentTime}</span>
+                    )}
                   </div>
                   
                   {/* Area Input - Required */}
@@ -523,7 +523,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         value={formData.deliveryInfo?.area || ''}
                         onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
                         rows={2}
-                        className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
+                        className={\`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
                           errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#781220]'
                         }`}
                       />
@@ -563,7 +563,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <button
                   onClick={handleSubmit}
                   disabled={!canSubmit() || isValidating}
-                  className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
+                  className={\`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
                     canSubmit() && !isValidating
                       ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
