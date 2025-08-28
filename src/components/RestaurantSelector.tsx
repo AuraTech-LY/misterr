@@ -106,12 +106,12 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
           </div>
 
           {/* Restaurant Cards */}
-          <div className="flex-1 flex flex-col sm:grid sm:grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6 max-w-5xl mx-auto min-h-0">
+          <div className="flex-1 flex flex-col sm:flex-row gap-4 sm:gap-6 max-w-4xl mx-auto min-h-0 justify-center items-stretch">
             {restaurants.map((restaurant) => (
               <div
                 key={restaurant.id}
                 onClick={() => onSelectRestaurant(restaurant)}
-                className="group bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:scale-[1.02] border border-gray-200/50 flex-1 sm:flex-none"
+                className="group bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer transform hover:scale-[1.02] border border-gray-200/50 flex-1 sm:max-w-sm flex flex-col"
               >
                 {/* Restaurant Header */}
                 <div className={`relative p-4 sm:p-6 text-white ${
