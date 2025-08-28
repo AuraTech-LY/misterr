@@ -96,7 +96,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
               }`}
             >
               {/* Branch Header */}
-              <div className="bg-[#781220] text-white p-4 sm:p-6 relative">
+              <div className={`text-white p-4 sm:p-6 relative ${
+                branch.name.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+              }`}>
                 {selectedBranch?.id === branch.id && (
                   <div className="absolute top-3 left-3">
                     <CheckCircle className="w-5 h-5 text-white fill-current" />
