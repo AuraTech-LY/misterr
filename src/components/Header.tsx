@@ -149,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
               {cartItemCount > 0 && (
                 <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
-                  {Math.round(cartTotal)} د.ل
+                  {cartItemCount}
                 </span>
               )}
             </button>
@@ -208,7 +208,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex-shrink-0 w-20 text-right">
                 {cartItemCount > 0 && isOpen && (
                   <span className="text-white text-sm font-bold whitespace-nowrap">
-                    {cartTotal.toFixed(2)} د.ل
+                    {Math.round(cartTotal)} د.ل
                   </span>
                 )}
               </div>
