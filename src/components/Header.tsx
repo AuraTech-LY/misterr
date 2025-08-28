@@ -56,7 +56,11 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="container mx-auto">
             <button
               onClick={onBackClick}
-              className="flex items-center gap-2 text-gray-600 hover:text-[#781220] transition-colors duration-300 py-2"
+              className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
+                selectedRestaurant?.name?.includes('مستر كريسبي') 
+                  ? 'hover:text-[#55421A]' 
+                  : 'hover:text-[#781220]'
+              }`}
             >
               <ArrowRight className="w-5 h-5" />
               <span className="text-sm font-medium">العودة إلى اختيار المطعم</span>
