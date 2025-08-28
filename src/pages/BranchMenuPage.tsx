@@ -102,6 +102,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8">
+      <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
         {/* Add bottom padding for mobile navigation */}
         <div className="pb-20 sm:pb-0">
         <div className="text-center mb-12">
