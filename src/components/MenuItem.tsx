@@ -260,7 +260,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
               }`}
             >
               <Plus className="w-4 h-4" />
-              <span>{isOpen ? `إضافة (${desktopQuantity})` : 'مغلق'}</span>
+              <span>{isOpen ? 'إضافة' : 'مغلق'}</span>
             </button>
           </div>
         </div>
