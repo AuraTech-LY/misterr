@@ -15,6 +15,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
+  const [isHighlighted, setIsHighlighted] = React.useState(false);
 
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
@@ -61,12 +62,26 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
     }
     setDesktopQuantity(1);
   };
+
+  const handleMobileQuickAdd = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddToCart(item);
+    
+    // Trigger highlight effect
+    setIsHighlighted(true);
+    setTimeout(() => setIsHighlighted(false), 800);
+  };
+
   return (
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
       <div 
         className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group w-full ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
+        } ${
+          isHighlighted 
+            ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl scale-[1.02]`
+            : ''
         }`}
         onClick={handleMobileItemClick}
       >
@@ -102,10 +117,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
               className="w-full h-full object-cover rounded-lg group-hover:scale-110 transition-transform duration-500"
             />
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onAddToCart(item);
-              }}
+              onClick={handleMobileQuickAdd}
               disabled={!isOpen}
               className={`absolute bottom-1 left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-300 flex items-center justify-center z-10 ${
                 isOpen 
