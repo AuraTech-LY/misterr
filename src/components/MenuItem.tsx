@@ -242,7 +242,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           </div>
 
           {/* Add Button */}
-          <div className="mt-auto flex items-center justify-center">
+          <div className="mt-auto flex items-center justify-center pb-2">
             <button
               onClick={handleDesktopAddToCart}
               disabled={!isOpen}
