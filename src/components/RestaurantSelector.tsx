@@ -30,35 +30,51 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
       </div>
 
       {/* Restaurant Cards */}
-      <div className="flex-1 px-6 py-4 space-y-4">
+      <div className="flex-1 px-6 py-6 space-y-6">
         {restaurants.map((restaurant) => (
           <button
             key={restaurant.id}
             onClick={() => onSelectRestaurant(restaurant)}
             disabled={!isOpen}
-            className={`w-full p-6 rounded-2xl text-white font-bold text-xl transition-all active:scale-95 ${
+            className={`relative w-full p-8 rounded-3xl text-white font-bold text-xl transition-all duration-300 active:scale-95 overflow-hidden group ${
               restaurant.id === 'mister-crispy' 
-                ? 'bg-[#55421A]' 
-                : 'bg-[#781220]'
-            } ${!isOpen ? 'opacity-50' : 'shadow-lg'}`}
+                ? 'bg-gradient-to-br from-[#55421A] to-[#3d2f12]' 
+                : 'bg-gradient-to-br from-[#781220] to-[#5c0d18]'
+            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl'}`}
           >
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <Store className="w-6 h-6" />
-              <span>{restaurant.name}</span>
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-4 right-4 w-20 h-20 rounded-full border border-white/20"></div>
+              <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full border border-white/10"></div>
             </div>
-            <div className="text-sm opacity-90">
+            
+            {/* Hover glow effect */}
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative flex items-center justify-center gap-4 mb-3">
+              <Store className="w-6 h-6" />
+              <span className="text-2xl font-black tracking-wide">{restaurant.name}</span>
+            </div>
+            <div className="relative text-base opacity-90 font-medium">
               {restaurant.branches.length} {restaurant.branches.length === 1 ? 'فرع' : 'فروع'}
             </div>
             {!isOpen && (
-              <div className="text-sm mt-2 opacity-75">مغلق حالياً</div>
+              <div className="relative text-sm mt-3 opacity-75 bg-black/20 px-3 py-1 rounded-full inline-block">مغلق حالياً</div>
             )}
           </button>
         ))}
       </div>
 
       {/* Simple Status */}
-      <div className="px-6 py-4 text-center text-gray-500 text-sm">
-        {isOpen ? 'مفتوح للطلبات الآن' : 'مغلق • يفتح من 11:00 ص إلى 11:59 م'}
+      <div className="px-6 py-6 text-center">
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+          isOpen 
+            ? 'bg-green-100 text-green-800 border border-green-200' 
+            : 'bg-gray-100 text-gray-600 border border-gray-200'
+        }`}>
+          <div className={`w-2 h-2 rounded-full ${isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+          {isOpen ? 'مفتوح للطلبات الآن' : 'مغلق • يفتح من 11:00 ص إلى 11:59 م'}
+        </div>
       </div>
     </div>
   );
