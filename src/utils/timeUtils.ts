@@ -1,18 +1,38 @@
-// Time utilities for UTC-2 timezone
+// Time utilities for Libya timezone (UTC+2)
 
-export const TIMEZONE_OFFSET = -2; // UTC-2
+export const LIBYA_TIMEZONE = 'Africa/Tripoli';
 export const OPENING_HOUR = 11; // 11:00 AM
 export const CLOSING_HOUR = 23; // 11:00 PM
 export const CLOSING_MINUTE = 59; // 11:59 PM
 
 /**
- * Get current time in UTC-2 timezone
+ * Get current time in Libya timezone (UTC+2)
  */
 export const getCurrentTime = (): Date => {
+  // Create a date object with Libya timezone
   const now = new Date();
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const targetTime = new Date(utc + (TIMEZONE_OFFSET * 3600000));
-  return targetTime;
+  
+  // Use Intl.DateTimeFormat to get Libya time
+  const libyaTime = new Intl.DateTimeFormat('en-US', {
+    timeZone: LIBYA_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).formatToParts(now);
+
+  // Reconstruct the date in Libya timezone
+  const year = parseInt(libyaTime.find(part => part.type === 'year')?.value || '0');
+  const month = parseInt(libyaTime.find(part => part.type === 'month')?.value || '0') - 1; // Month is 0-indexed
+  const day = parseInt(libyaTime.find(part => part.type === 'day')?.value || '0');
+  const hour = parseInt(libyaTime.find(part => part.type === 'hour')?.value || '0');
+  const minute = parseInt(libyaTime.find(part => part.type === 'minute')?.value || '0');
+  const second = parseInt(libyaTime.find(part => part.type === 'second')?.value || '0');
+
+  return new Date(year, month, day, hour, minute, second);
 };
 
 /**
@@ -40,15 +60,16 @@ export const isWithinOperatingHours = (): boolean => {
 };
 
 /**
- * Get formatted current time in UTC-2
+ * Get formatted current time in Libya timezone
  */
 export const getFormattedLibyaTime = (): string => {
-  const currentTime = getCurrentTime();
-  return currentTime.toLocaleString('ar-LY', {
+  const now = new Date();
+  return new Intl.DateTimeFormat('ar-LY', {
+    timeZone: LIBYA_TIMEZONE,
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
-  });
+  }).format(now);
 };
 
 /**
@@ -109,5 +130,37 @@ export const getLibyaTime = (): Date => {
   return getCurrentTime();
 };
 
-// Keep the old constant for backward compatibility
-export const LIBYA_TIMEZONE = 'UTC-2';
+/**
+ * Get current Libya date and time as a formatted string
+ */
+export const getLibyaDateTime = (): string => {
+  const now = new Date();
+  return new Intl.DateTimeFormat('ar-LY', {
+    timeZone: LIBYA_TIMEZONE,
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(now);
+};
+
+/**
+ * Check if a specific time is within operating hours
+ */
+export const isTimeWithinOperatingHours = (hour: number, minute: number = 0): boolean => {
+  if (hour < OPENING_HOUR) {
+    return false;
+  }
+  
+  if (hour > CLOSING_HOUR) {
+    return false;
+  }
+  
+  if (hour === CLOSING_HOUR && minute > CLOSING_MINUTE) {
+    return false;
+  }
+  
+  return true;
+};
