@@ -145,8 +145,8 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
                     !isOpen
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : selectedBranch?.id === branch.id
-                      ? 'bg-[#781220] text-white shadow-lg'
-                      : 'bg-gray-100 text-gray-700 hover:bg-[#781220] hover:text-white'
+                      ? `${branch.name.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white shadow-lg`
+                      : `bg-gray-100 text-gray-700 ${branch.name.includes('مستر كريسبي') ? 'hover:bg-[#55421A]' : 'hover:bg-[#781220]'} hover:text-white`
                   }`}
                 >
                   {!isOpen 
