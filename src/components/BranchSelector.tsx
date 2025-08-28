@@ -43,7 +43,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
         )}
         
         <div className="text-center">
-          <div className="w-12 h-12 bg-[#781220] rounded-xl mx-auto mb-3 flex items-center justify-center">
+          <div className={`w-12 h-12 ${restaurantName?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} rounded-xl mx-auto mb-3 flex items-center justify-center`}>
             <img 
               src="/New Element 88 [8BACFE9].png" 
               alt={restaurantName || "المستر"}
