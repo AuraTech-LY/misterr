@@ -1,11 +1,19 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { BranchesPage } from './pages/BranchesPage';
 import { BranchMenuPage } from './pages/BranchMenuPage';
 import { AdminPage } from './pages/AdminPage';
 
 function App() {
+  const location = useLocation();
+
+  // Dispatch custom event when route changes to update theme color
+  React.useEffect(() => {
+    const event = new CustomEvent('routechange');
+    window.dispatchEvent(event);
+  }, [location.pathname]);
+
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />

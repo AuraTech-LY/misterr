@@ -13,6 +13,57 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     
     <title>المستر - مطعم الوجبات السريعة</title>
+    
+    <!-- Dynamic theme color script -->
+    <script>
+      /**
+       * Sets the browser's theme color using the <meta name="theme-color"> tag.
+       * If the tag does not exist, it will be created and appended to the <head>.
+       * @param {string} color - The hexadecimal color string (e.g., "#RRGGBB").
+       */
+      function setThemeColor(color) {
+        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+
+        if (!metaThemeColor) {
+          // If the meta tag doesn't exist, create it
+          metaThemeColor = document.createElement('meta');
+          metaThemeColor.setAttribute('name', 'theme-color');
+          document.head.appendChild(metaThemeColor);
+        }
+        
+        // Set or update the content attribute with the new color
+        metaThemeColor.setAttribute('content', color);
+        console.log('Browser theme color set to:', color);
+      }
+
+      /**
+       * Determines the appropriate theme color based on the current URL path
+       * and then calls setThemeColor to apply it.
+       */
+      function updateThemeColorBasedOnPath() {
+        const path = window.location.pathname;
+        let colorToSet = '#781220'; // Default Mr. Shish color
+
+        if (path.includes('/shish') || path.includes('airport') || path.includes('balaoun')) {
+          colorToSet = '#781220'; // Mr. Shish brand color
+        } else if (path.includes('/crispy') || path.includes('dollar')) {
+          colorToSet = '#55421A'; // Mr. Crispy brand color
+        }
+
+        setThemeColor(colorToSet);
+      }
+
+      // Run the function when the DOM is fully loaded for the initial page load
+      document.addEventListener('DOMContentLoaded', updateThemeColorBasedOnPath);
+
+      // Listen for the 'popstate' event for browser navigation
+      window.addEventListener('popstate', updateThemeColorBasedOnPath);
+
+      // For React Router, we'll also need to listen for route changes
+      // This will be handled by a custom event we'll dispatch from the React app
+      window.addEventListener('routechange', updateThemeColorBasedOnPath);
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
