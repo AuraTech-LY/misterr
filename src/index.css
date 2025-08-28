@@ -89,22 +89,14 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-color, #781220);
+  background: var(--brand-color, #781220);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-hover-color, #5c0d18);
+  background: var(--brand-color-hover, #5c0d18);
 }
 
-/* Scrollbar colors for مستر كريسبي */
-.mister-crispy ::-webkit-scrollbar-thumb {
-  background: #55421A;
-}
-
-.mister-crispy ::-webkit-scrollbar-thumb:hover {
-  background: #3d2f12;
-}
 
 /* Line clamp utility for mobile descriptions */
 .line-clamp-2 {
