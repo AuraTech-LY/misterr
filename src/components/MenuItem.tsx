@@ -148,8 +148,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-3">{item.name}</h3>
               <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
-                <div className={`text-xl ${
-                  isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+              <div className="mb-4">
                 <div className={`text-2xl ${
                   isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
                 }`}>
@@ -236,7 +235,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
           <p className="text-sm text-gray-600 mb-3 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{item.description}</p>
           
           <div className="mb-3 h-6">
-            <div className={`text-xl ${
+            <div className={\`text-xl ${
               item.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
             }`}>
               <span className="font-black">{Math.round(item.price)}</span>
@@ -250,7 +249,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             <button
               onClick={() => onAddToCart(item)}
               disabled={!isOpen}
-              className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
+              className={\`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
                   ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
