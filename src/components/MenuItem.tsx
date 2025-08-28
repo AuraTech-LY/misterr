@@ -18,6 +18,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [isHighlighted, setIsHighlighted] = React.useState(false);
+  const [isAppearing, setIsAppearing] = React.useState(false);
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -41,11 +42,15 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
     if (!isOpen) return;
     setShowMobilePopup(true);
     setIsClosing(false);
+    setIsAppearing(false);
     setQuantity(1);
+    // Trigger appearing animation after popup is mounted
+    setTimeout(() => setIsAppearing(true), 10);
   };
 
   const handleClosePopup = () => {
     setIsClosing(true);
+    setIsAppearing(false);
     setTimeout(() => {
       setShowMobilePopup(false);
       setIsClosing(false);
@@ -151,11 +156,15 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
 
       {/* Mobile Popup Modal */}
       {showMobilePopup && (
-        <div className={`md:hidden fixed inset-0 bg-black z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+        <div className={`md:hidden fixed inset-0 bg-black z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${
           isClosing ? 'bg-opacity-0' : 'bg-opacity-50'
         }`}>
-          <div className={`bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden transition-all duration-300 transform ${
-            isClosing ? 'translate-y-8 opacity-0' : 'translate-y-0 opacity-100'
+          <div className={`bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden transition-all duration-300 ease-out transform ${
+            isClosing 
+              ? 'translate-y-8 opacity-0' 
+              : isAppearing 
+                ? 'translate-y-0 opacity-100' 
+                : '-translate-y-8 opacity-0'
           }`}>
             {/* Header with close button */}
             <div className="relative">
