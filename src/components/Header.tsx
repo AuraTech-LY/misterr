@@ -121,13 +121,13 @@ export const Header: React.FC<HeaderProps> = ({
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
                 !isOpen
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-white text-[#781220] hover:bg-gray-100 hover:shadow-xl transform hover:scale-105'
+                  : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 bg-[#781220] text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white">
+                <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
                   {cartItemCount}
                 </span>
               )}
@@ -161,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
+                : `${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white hover:shadow-xl`
             }`}
           >
             <div className="flex items-center justify-between w-full">
@@ -280,7 +280,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
                 <div className="text-xs opacity-75">{branch.area}</div>
               </div>
               {selectedBranch.id === branch.id && (
-                <div className="w-2 h-2 bg-[#781220] rounded-full"></div>
+                <div className={`w-2 h-2 ${branch.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} rounded-full`}></div>
               )}
             </button>
           ))}

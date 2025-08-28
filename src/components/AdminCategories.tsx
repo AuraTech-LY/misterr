@@ -148,7 +148,7 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
         <h2 className="text-2xl font-bold text-gray-800">إدارة الفئات</h2>
         <button
           onClick={() => setShowAddForm(true)}
-          className="bg-[#7A1120] hover:bg-[#5c0d18] text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+          className="bg-[#55421A] hover:bg-[#3d2f12] text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
         >
           <Plus className="w-5 h-5" />
           إضافة فئة جديدة
@@ -193,7 +193,7 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
               className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
                 saving || !newCategoryName.trim()
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                  : 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
               }`}
             >
               <Save className="w-4 h-4" />
@@ -223,7 +223,7 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
                     className={`flex-1 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                       saving || !editingCategory.name.trim()
                         ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                        : 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                     }`}
                   >
                     <Save className="w-4 h-4" />

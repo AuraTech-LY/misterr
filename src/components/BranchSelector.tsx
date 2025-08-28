@@ -68,7 +68,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
           {/* Current Time Display */}
           <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
             <span>الوقت الحالي في ليبيا:</span>
-            <span className="font-bold text-[#781220]">{currentTime}</span>
+            <span className={`font-bold ${restaurantName?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>{currentTime}</span>
           </div>
           
           {/* Operating Hours */}
@@ -123,7 +123,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
               {/* Branch Details */}
               <div className="p-4 sm:p-6 space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-[#781220] mt-0.5 flex-shrink-0" />
+                  <MapPin className={`w-5 h-5 ${branch.name.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} mt-0.5 flex-shrink-0`} />
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">العنوان</p>
                     <p className="text-gray-600 leading-relaxed text-sm">{branch.address}</p>
@@ -131,7 +131,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-[#781220]" />
+                  <Phone className={`w-5 h-5 ${branch.name.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`} />
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">الهاتف</p>
                     <p className="text-gray-600 text-sm">{branch.phone}</p>
@@ -166,11 +166,11 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
           <div className="text-center mt-6 sm:mt-12 animate-fadeInUp px-4">
             <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg max-w-md mx-auto">
               <p className="text-gray-600 mb-4 text-base">
-                تم اختيار <span className="font-bold text-[#781220]">{selectedBranch.name}</span>
+                تم اختيار <span className={`font-bold ${selectedBranch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>{selectedBranch.name}</span>
               </p>
               <button
                 onClick={() => onBranchSelect(selectedBranch)}
-                className="block w-full bg-[#781220] hover:bg-[#5c0d18] text-white py-3 rounded-full font-bold text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-center"
+                className={`block w-full ${selectedBranch.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white py-3 rounded-full font-bold text-base transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-center`}
               >
                 تصفح القائمة
               </button>

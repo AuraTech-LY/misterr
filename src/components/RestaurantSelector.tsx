@@ -51,7 +51,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
           {/* Current Time Display */}
           <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
             <span>الوقت الحالي في ليبيا:</span>
-            <span className="font-bold text-[#781220]">{currentTime}</span>
+            <span className="font-bold text-[#55421A]">{currentTime}</span>
           </div>
           
           {/* Operating Hours */}
@@ -91,7 +91,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
               {/* Restaurant Details */}
               <div className="p-6 space-y-4 flex-1 flex flex-col">
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-[#781220]" />
+                  <MapPin className={`w-5 h-5 ${restaurant.id === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#781220]'}`} />
                   <div>
                     <p className="font-semibold text-gray-800">عدد الفروع</p>
                     <p className="text-gray-600">{restaurant.branches.length} فرع</p>
@@ -104,7 +104,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                   <div className="flex flex-wrap gap-2">
                     {restaurant.branches.map((branch) => (
                       <div key={branch.id} className="flex items-center gap-1 text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded-full">
-                        <div className="w-1.5 h-1.5 bg-[#781220] rounded-full"></div>
+                        <div className={`w-1.5 h-1.5 ${restaurant.id === 'mister-crispy' ? 'bg-[#55421A]' : 'bg-[#781220]'} rounded-full`}></div>
                         <span>{branch.area}</span>
                       </div>
                     ))}
@@ -118,7 +118,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                   className={`w-full py-3 rounded-full font-bold text-base transition-all duration-300 ${
                     !isOpen
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-gray-100 text-gray-700 hover:bg-[#781220] hover:text-white'
+                      : `bg-gray-100 text-gray-700 ${restaurant.id === 'mister-crispy' ? 'hover:bg-[#55421A]' : 'hover:bg-[#781220]'} hover:text-white`
                   }`}
                   >
                   {!isOpen ? 'مغلق حالياً' : 'اختر هذا المطعم'}

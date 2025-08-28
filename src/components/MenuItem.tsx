@@ -96,7 +96,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                if (!isOpen) return;
+            <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border-2 border-gray-200 rounded-2xl shadow-2xl z-50 overflow-hidden animate-fadeInUp max-h-60 overflow-y-auto">
                 onAddToCart(item);
               }}
               disabled={!isOpen}
@@ -194,16 +194,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
       )}
 
       {/* Desktop/Tablet Layout - Vertical Cards */}
-      <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group flex flex-col ${
+                  className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#55421A] hover:text-white ${
         isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
-      }`}>
+                      ? 'bg-red-50 text-[#55421A] font-semibold' 
         <div className="relative">
           <img
             src={item.image}
             alt={item.name}
             className="w-full h-32 lg:h-40 object-cover group-hover:scale-110 transition-transform duration-500"
           />
-          {item.popular && (
+                    <div className="mr-auto w-2 h-2 bg-[#55421A] rounded-full"></div>
             <div className="absolute top-2 right-2 lg:top-3 lg:right-3 bg-[#781220] text-white px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-semibold flex items-center gap-1">
               <Star className="w-4 h-4 fill-current" />
               <span>الأكثر طلباً</span>

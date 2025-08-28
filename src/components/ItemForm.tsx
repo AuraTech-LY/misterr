@@ -38,7 +38,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             type="text"
             value={item.name}
             onChange={(e) => onChange({ ...item, name: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
+            className={`w-full p-3 border border-gray-300 rounded-full ${selectedRestaurant === 'mister-crispy' ? 'focus:border-[#55421A]' : 'focus:border-[#7A1120]'} text-right`}
             placeholder="أدخل اسم العنصر"
           />
         </div>
@@ -49,7 +49,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             step="0.01"
             value={item.price}
             onChange={(e) => onChange({ ...item, price: parseFloat(e.target.value) || 0 })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
+            className={`w-full p-3 border border-gray-300 rounded-full ${selectedRestaurant === 'mister-crispy' ? 'focus:border-[#55421A]' : 'focus:border-[#7A1120]'} text-right`}
             placeholder="0.00"
           />
         </div>
@@ -61,7 +61,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
           value={item.description}
           onChange={(e) => onChange({ ...item, description: e.target.value })}
           rows={3}
-          className="w-full p-3 border border-gray-300 rounded-2xl focus:border-[#7A1120] text-right resize-none"
+          className={`w-full p-3 border border-gray-300 rounded-2xl ${selectedRestaurant === 'mister-crispy' ? 'focus:border-[#55421A]' : 'focus:border-[#7A1120]'} text-right resize-none`}
           placeholder="أدخل وصف العنصر"
         />
       </div>
@@ -85,7 +85,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             type="url"
             value={item.image_url}
             onChange={(e) => onChange({ ...item, image_url: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
+            className={`w-full p-3 border border-gray-300 rounded-full ${selectedRestaurant === 'mister-crispy' ? 'focus:border-[#55421A]' : 'focus:border-[#7A1120]'} text-right`}
             placeholder="https://example.com/image.jpg"
           />
         </div>
@@ -98,7 +98,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             id={`popular-${isNew ? 'new' : item.id}`}
             checked={item.is_popular}
             onChange={(e) => onChange({ ...item, is_popular: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className={`w-5 h-5 ${selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#7A1120]'} border-2 border-gray-300 rounded-full focus:ring-2 ${selectedRestaurant === 'mister-crispy' ? 'focus:ring-[#55421A]' : 'focus:ring-[#7A1120]'} focus:ring-offset-2 flex-shrink-0`}
           />
           <label htmlFor={`popular-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             الأكثر طلباً
@@ -110,7 +110,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             id={`available-${isNew ? 'new' : item.id}`}
             checked={item.is_available}
             onChange={(e) => onChange({ ...item, is_available: e.target.checked })}
-            className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+            className={`w-5 h-5 ${selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#7A1120]'} border-2 border-gray-300 rounded-full focus:ring-2 ${selectedRestaurant === 'mister-crispy' ? 'focus:ring-[#55421A]' : 'focus:ring-[#7A1120]'} focus:ring-offset-2 flex-shrink-0`}
           />
           <label htmlFor={`available-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
             متوفر
@@ -126,7 +126,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
                 id={`airport-${isNew ? 'new' : item.id}`}
                 checked={item.available_airport}
                 onChange={(e) => onChange({ ...item, available_airport: e.target.checked })}
-                className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+                className="w-5 h-5 text-[#781220] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 flex-shrink-0"
               />
               <label htmlFor={`airport-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
                 مستر شيش - فرع طريق المطار
@@ -138,7 +138,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
                 id={`balaoun-${isNew ? 'new' : item.id}`}
                 checked={item.available_balaoun}
                 onChange={(e) => onChange({ ...item, available_balaoun: e.target.checked })}
-                className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+                className="w-5 h-5 text-[#781220] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 flex-shrink-0"
               />
               <label htmlFor={`balaoun-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
                 مستر شيش - بلعون
@@ -154,7 +154,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
               id={`dollar-${isNew ? 'new' : item.id}`}
               checked={item.available_dollar}
               onChange={(e) => onChange({ ...item, available_dollar: e.target.checked })}
-              className="w-5 h-5 text-[#7A1120] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#7A1120] focus:ring-offset-2 flex-shrink-0"
+              className="w-5 h-5 text-[#55421A] border-2 border-gray-300 rounded-full focus:ring-2 focus:ring-[#55421A] focus:ring-offset-2 flex-shrink-0"
             />
             <label htmlFor={`dollar-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700 flex-1 min-w-0">
               مستر كريسبي

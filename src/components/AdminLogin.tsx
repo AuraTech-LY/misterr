@@ -49,7 +49,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
         <div className="bg-[#781220] text-white p-8 text-center">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-[#781220]" />
+            <Lock className="w-8 h-8 text-[#55421A]" />
           </div>
           <h1 className="text-2xl font-bold mb-2">لوحة التحكم</h1>
           <p className="text-sm opacity-90">مطعم المستر - إدارة القائمة</p>
@@ -66,7 +66,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 pl-12 border-2 border-gray-200 rounded-full focus:border-[#7A1120] text-right"
+                className="w-full p-4 pl-12 border-2 border-gray-200 rounded-full focus:border-[#55421A] text-right"
                 placeholder="أدخل البريد الإلكتروني"
                 required
               />
@@ -90,7 +90,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 pl-20 border-2 border-gray-200 rounded-full focus:border-[#7A1120] text-right"
+                className="w-full p-4 pl-20 border-2 border-gray-200 rounded-full focus:border-[#55421A] text-right"
                 placeholder="أدخل كلمة المرور"
                 required
               />
@@ -109,7 +109,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
               isLoading
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                : 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
             }`}
             style={{ borderRadius: '9999px' }}
           >

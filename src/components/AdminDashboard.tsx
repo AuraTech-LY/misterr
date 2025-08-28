@@ -315,8 +315,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('menu')}
               className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
                 activeTab === 'menu'
-                  ? 'text-[#781220] border-[#781220] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
               <Menu className="w-5 h-5" />
@@ -326,8 +326,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('categories')}
               className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
                 activeTab === 'categories'
-                  ? 'text-[#781220] border-[#781220] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
               <Tag className="w-5 h-5" />
@@ -360,8 +360,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 onClick={() => setSelectedRestaurant('mister-crispy')}
                 className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
                   selectedRestaurant === 'mister-crispy'
-                    ? 'text-[#781220] border-[#781220] bg-red-50'
-                    : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+                    ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                    : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
                 }`}
               >
                 مستر كريسبي
@@ -413,7 +413,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             </div>
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-[#7A1120] hover:bg-[#5c0d18] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center"
+              className={`${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center`}
             >
               <Plus className="w-5 h-5" />
               إضافة عنصر جديد
@@ -441,7 +441,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
                   saving || !newItem.name || !newItem.description
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full'
+                    : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full`
                 }`}
               >
                 <Save className="w-4 h-4" />
@@ -480,7 +480,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
                         saving
                           ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : 'bg-[#7A1120] hover:bg-[#5c0d18] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                          : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                       }`}
                       style={{ borderRadius: '9999px' }}
                     >
@@ -514,7 +514,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
                         <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                           <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
-                          <span className="font-bold text-[#7A1120] text-sm sm:text-base">{item.price.toFixed(2)} د.ل</span>
+                          <span className={`font-bold ${selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#7A1120]'} text-sm sm:text-base`}>{item.price.toFixed(2)} د.ل</span>
                           {!item.is_available && (
                             <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
                           )}
