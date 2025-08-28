@@ -205,7 +205,7 @@ export const Cart: React.FC<CartProps> = ({
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h3>
-                    <p className={`font-bold text-sm sm:text-base ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>
+                    <p className={`font-bold text-sm sm:text-base ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} whitespace-nowrap`}>
                       {Math.round(item.price * item.quantity)} د.ل
                     </p>
                   </div>

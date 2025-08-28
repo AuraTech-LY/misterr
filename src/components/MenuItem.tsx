@@ -74,9 +74,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
             <span className="text-xl font-black text-[#781220] whitespace-nowrap">
-              {Math.round(item.price)}
+              {Math.round(item.price)} د.ل
             </span>
-            <span className="text-sm text-gray-500">د.ل</span>
           </div>
 
           {/* Content Section - Middle */}
