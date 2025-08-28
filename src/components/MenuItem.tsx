@@ -160,7 +160,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
                   <span className="w-12 text-center font-bold text-lg">{quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(quantity + 1)}
-                    className="w-10 h-10 bg-[#781220] hover:bg-[#5c0d18] text-white rounded-full flex items-center justify-center transition-colors"
+                    className="w-10 h-10 bg-[#55421A] hover:bg-[#3d2f12] text-white rounded-full flex items-center justify-center transition-colors"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
