@@ -216,7 +216,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           <p className="text-sm text-gray-600 mb-3 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{item.description}</p>
           
           <div className="mb-3 h-6">
-            <span className="text-xl font-black text-[#781220]">
+            <span className={`text-xl font-black ${
+              item.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
+            }`}>
               {item.price.toFixed(2)} د.ل
             </span>
           </div>
