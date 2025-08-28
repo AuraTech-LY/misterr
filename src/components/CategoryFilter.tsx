@@ -25,10 +25,12 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             onClick={() => onCategoryChange(category)}
             className={`px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold whitespace-nowrap transition-all duration-300 text-sm sm:text-base ${
               selectedCategory === category
-                ? `text-white shadow-lg transform scale-105`
+                ? 'text-white shadow-lg transform scale-105'
                 : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg hover:scale-105'
             }`}
-            style={selectedCategory === category ? { backgroundColor: brandColor } : {}}
+            style={{
+              backgroundColor: selectedCategory === category ? brandColor : undefined
+            }}
           >
             {category}
           </button>
