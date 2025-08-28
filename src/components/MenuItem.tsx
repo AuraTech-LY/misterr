@@ -193,17 +193,17 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
       )}
 
       {/* Desktop/Tablet Layout - Vertical Cards */}
-      <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group ${
+      <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group h-80 flex flex-col ${
         isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
       }`}>
         <div className="relative">
           <img
             src={item.image}
             alt={item.name}
-            className="w-full h-32 lg:h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500"
           />
           {item.popular && (
-            <div className="absolute top-2 right-2 lg:top-3 lg:right-3 bg-[#781220] text-white px-2 py-1 lg:px-3 lg:py-1 rounded-full text-xs lg:text-sm font-semibold flex items-center gap-1">
+            <div className="absolute top-2 right-2 bg-[#781220] text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
               <Star className="w-4 h-4 fill-current" />
               <span>الأكثر طلباً</span>
             </div>
@@ -211,18 +211,18 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
         </div>
         
-        <div className="p-3 lg:p-4 flex flex-col flex-grow">
-          <h3 className="text-base lg:text-lg font-bold text-gray-800 mb-2">{item.name}</h3>
-          <p className="text-sm text-gray-600 mb-3 leading-relaxed line-clamp-2 flex-grow">{item.description}</p>
+        <div className="p-4 flex flex-col flex-grow">
+          <h3 className="text-lg font-bold text-gray-800 mb-2 h-7 overflow-hidden">{item.name}</h3>
+          <p className="text-sm text-gray-600 mb-3 leading-relaxed h-10 overflow-hidden text-ellipsis line-clamp-2">{item.description}</p>
           
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-lg lg:text-xl font-black text-[#781220]">
+          <div className="mb-3 h-6">
+            <span className="text-xl font-black text-[#781220]">
               {item.price.toFixed(2)} د.ل
             </span>
           </div>
 
           {/* Quantity Selector */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 h-8">
             <span className="text-sm font-semibold text-gray-700">الكمية:</span>
             <div className="flex items-center gap-2">
               <button
@@ -242,7 +242,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           </div>
 
           {/* Total Price and Add Button */}
-          <div className="flex justify-between items-center mb-1">
+          <div className="mt-auto h-10 flex items-center justify-center">
             <button
               onClick={handleDesktopAddToCart}
               disabled={!isOpen}
