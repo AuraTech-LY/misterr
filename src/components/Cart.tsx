@@ -207,7 +207,7 @@ export const Cart: React.FC<CartProps> = ({
                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h3>
                     <div className={`text-sm sm:text-base ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} whitespace-nowrap`}>
                       <span className="font-bold">{Math.round(item.price * item.quantity)}</span>
-                      <span className="font-normal"> د.ل</span>
+                      <span className="font-normal text-xs sm:text-sm opacity-70"> د.ل</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 sm:gap-2">
@@ -243,7 +243,7 @@ export const Cart: React.FC<CartProps> = ({
               <span className="text-base sm:text-lg font-semibold">المجموع الكلي:</span>
               <div className={`text-xl sm:text-2xl ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>
                 <span className="font-black">{Math.round(total)}</span>
-                <span className="font-normal"> د.ل</span>
+                <span className="font-normal text-lg sm:text-xl opacity-70"> د.ل</span>
               </div>
             </div>
             <div className="flex justify-between items-center mb-4 text-sm sm:text-base">

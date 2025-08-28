@@ -209,7 +209,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {cartItemCount > 0 && isOpen && (
                   <div className="text-white text-sm whitespace-nowrap">
                     <span className="font-bold">{Math.round(cartTotal)}</span>
-                    <span className="font-normal"> د.ل</span>
+                    <span className="font-normal text-xs opacity-70"> د.ل</span>
                   </div>
                 )}
               </div>
