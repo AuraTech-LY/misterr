@@ -243,17 +243,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
 
           {/* Total Price and Add Button */}
           <div className="flex justify-between items-center mb-1">
-            <div className="text-center">
-              <div className="text-xs text-gray-500">المجموع</div>
-              <div className="text-lg font-black text-[#781220]">
-                {(item.price * desktopQuantity).toFixed(2)} د.ل
-              </div>
-            </div>
-
             <button
               onClick={handleDesktopAddToCart}
               disabled={!isOpen}
-              className={`px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg text-sm ${
+              className={`w-full px-3 py-2 lg:px-4 lg:py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
                   ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
