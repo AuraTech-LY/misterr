@@ -409,7 +409,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   
                   <button
                     onClick={() => updateFormData('deliveryMethod', 'pickup')}
-                    className={\`p-3 sm:p-4 rounded-full border-2 transition-all ${
+                    className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'pickup'
                         ? 'border-[#55421A] bg-red-50 text-[#55421A]'
                         : 'border-gray-200 hover:border-gray-300'
