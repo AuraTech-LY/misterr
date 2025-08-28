@@ -3,7 +3,6 @@ import { Plus, Star, X, Minus } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
 import { isWithinOperatingHours } from '../utils/timeUtils';
 import { getBranchById } from '../data/restaurantsData';
-import { useCart } from '../hooks/useCart';
 
 interface MenuItemProps {
   item: MenuItemType;
@@ -16,11 +15,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
-  
-  // Get cart items to check if this item is in cart
-  const { cartItems } = useCart(branchId);
-  const itemInCart = cartItems.find(cartItem => cartItem.id === item.id);
-  const isInCart = !!itemInCart;
 
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
@@ -73,21 +67,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
       <div 
         className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group w-full ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
-        } ${
-          isInCart ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} bg-gradient-to-r ${isMisterCrispy ? 'from-[#55421A]/5 to-[#55421A]/10' : 'from-[#781220]/5 to-[#781220]/10'}` : ''
         }`}
         onClick={handleMobileItemClick}
       >
         <div className="flex items-center p-4 gap-4 h-32 min-w-0">
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
-            {isInCart && (
-              <div className={`text-xs font-bold mb-1 ${
-                isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
-              }`}>
-                في السلة ({itemInCart?.quantity})
-              </div>
-            )}
             <div className={`text-xl whitespace-nowrap ${
               isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
             }`}>
@@ -231,8 +216,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
       {/* Desktop/Tablet Layout - Vertical Cards */}
       <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group h-80 flex flex-col ${
         isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
-      } ${
-        isInCart ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} bg-gradient-to-br ${isMisterCrispy ? 'from-[#55421A]/5 to-[#55421A]/10' : 'from-[#781220]/5 to-[#781220]/10'}` : ''
       }`}>
         <div className="relative">
           <img
@@ -240,13 +223,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             alt={item.name}
             className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500"
           />
-          {isInCart && (
-            <div className={`absolute top-2 left-2 ${
-              isMisterCrispy ? 'bg-[#55421A]' : 'bg-[#781220]'
-            } text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1`}>
-              <span>في السلة ({itemInCart?.quantity})</span>
-            </div>
-          )}
           {item.popular && (
             <div className="absolute top-2 right-2 bg-[#781220] text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
               <Star className="w-4 h-4 fill-current" />
@@ -283,7 +259,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {isOpen ? (isInCart ? `إضافة المزيد (${itemInCart?.quantity})` : 'إضافة إلى السلة') : 'مغلق حالياً'}
+              {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
+              <span>{isOpen ? 'إضافة' : 'مغلق'}</span>
             </button>
           </div>
         </div>
