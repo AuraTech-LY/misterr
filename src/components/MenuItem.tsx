@@ -242,11 +242,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           </div>
 
           {/* Add Button */}
-          <div className="mt-auto flex items-center justify-center pb-2">
+          <div className="mt-auto pt-2 pb-4">
             <button
               onClick={handleDesktopAddToCart}
               disabled={!isOpen}
-              className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
+              className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
                   ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
