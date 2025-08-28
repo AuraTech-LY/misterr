@@ -64,31 +64,35 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
             key={branch.id}
             onClick={() => handleBranchSelect(branch)}
             disabled={!isOpen}
-            className={`relative w-full p-8 rounded-3xl text-white font-bold transition-all duration-300 active:scale-95 overflow-hidden group ${
+            className={`relative w-full p-6 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] overflow-hidden group ${
               branch.name?.includes('مستر كريسبي') 
-                ? 'bg-gradient-to-br from-[#55421A] to-[#3d2f12]' 
-                : 'bg-gradient-to-br from-[#781220] to-[#5c0d18]'
+                ? 'bg-gradient-to-r from-[#55421A] to-[#4a3817]' 
+                : 'bg-gradient-to-r from-[#781220] to-[#651018]'
             } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl'}`}
           >
-            {/* Subtle background pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-4 right-4 w-20 h-20 rounded-full border border-white/20"></div>
-              <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full border border-white/10"></div>
-            </div>
+            {/* Clean background overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
-            {/* Hover glow effect */}
-            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            {/* Subtle accent line */}
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/20"></div>
             
-            <div className="relative flex items-center justify-center gap-4 mb-3">
-              <MapPin className="w-5 h-5" />
-              <span className="text-2xl font-black tracking-wide">{branch.name}</span>
+            <div className="relative flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-right">
+                  <div className="text-xl font-bold mb-1">{branch.name}</div>
+                  <div className="text-sm opacity-80 font-normal">{branch.area}</div>
+                </div>
+              </div>
+              
+              {!isOpen && (
+                <div className="bg-black/20 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm">
+                  مغلق حالياً
+                </div>
+              )}
             </div>
-            <div className="relative text-base opacity-90 font-medium mb-2">
-              {branch.area}
-            </div>
-            {!isOpen && (
-              <div className="relative text-sm mt-3 opacity-75 bg-black/20 px-3 py-1 rounded-full inline-block">مغلق حالياً</div>
-            )}
           </button>
         ))}
       </div>
