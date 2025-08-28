@@ -249,9 +249,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId 
             <button
               onClick={() => onAddToCart(item)}
               disabled={!isOpen}
-              className={\`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
+              className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
-                  ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                  ? isMisterCrispy
+                    ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
