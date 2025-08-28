@@ -94,13 +94,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
         <div className="flex items-center p-4 gap-4 h-32 min-w-0">
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
-            {isInCart && (
-              <div className={`text-xs font-bold mb-1 ${
-                isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
-              }`}>
-                في السلة ({cartQuantity})
-              </div>
-            )}
             <div className={`text-xl whitespace-nowrap ${
               isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
             }`}>
@@ -258,11 +251,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
               <span>الأكثر طلباً</span>
             </div>
           )}
-          {isInCart && (
-            <div className={`absolute top-2 left-2 ${isMisterCrispy ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1`}>
-              <span>في السلة ({cartQuantity})</span>
-            </div>
-          )}
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
         </div>
         
@@ -293,7 +281,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {isOpen ? (isInCart ? `إضافة المزيد (${cartQuantity})` : 'إضافة إلى السلة') : 'مغلق حالياً'}
+              {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
             </button>
           </div>
         </div>
