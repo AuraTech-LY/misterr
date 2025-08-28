@@ -317,7 +317,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
             </div>
           </div>
           <div className="mt-2 text-xs sm:text-sm opacity-90 text-white">
-            المجموع: {total.toFixed(2)} د.ل • {itemCount} عنصر
+            <span>المجموع: </span>
+            <span className="font-bold">{Math.round(total)}</span>
+            <span className="font-normal"> د.ل</span>
+            <span> • {itemCount} عنصر</span>
           </div>
         </div>
 
@@ -484,7 +487,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                           ) : deliveryPrice !== null ? (
                             <div className="flex items-center gap-2 text-green-700 text-sm">
                               <span>🚚 سعر التوصيل من {selectedBranch?.name}: </span>
-                              <span className="font-bold">{deliveryPrice} د.ل</span>
+                              <span className="font-bold">{deliveryPrice}</span>
+                              <span className="font-normal"> د.ل</span>
                             </div>
                           ) : (
                             <div className="text-gray-500 text-sm">
