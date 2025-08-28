@@ -380,7 +380,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 disabled={!canProceedToStep2()}
                 className={`w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all ${
                   canProceedToStep2()
-                    ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                    ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
@@ -530,7 +530,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
                         rows={2}
                         className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
-                          errors.area ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-[#781220]'
+                          errors.area ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
                         }`}
                       />
                       {errors.area && (
@@ -550,7 +550,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         value={formData.deliveryInfo?.address || ''}
                         onChange={(e) => handleInputChange('deliveryInfo.address', e.target.value)}
                         rows={2}
-                        className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-[#781220] text-right resize-none"
+                        className={`w-full p-4 border-2 border-gray-200 rounded-xl focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'} text-right resize-none`}
                       />
                     </div>
                   )}
@@ -571,7 +571,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   disabled={!canSubmit() || isValidating}
                   className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
                     canSubmit() && !isValidating
-                      ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                      ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
