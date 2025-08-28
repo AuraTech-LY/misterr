@@ -25,6 +25,11 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  const getTimeUntilOpening = () => {
+    // Add your time calculation logic here
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-3 sm:p-4" dir="rtl">
       <div className="max-w-4xl w-full mx-auto">
@@ -109,7 +114,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                     }`} />
                   </div>
                   <div>
-                    <p className="font-semibold text-white text-sm drop-shadow-md">عدد الفروع</p>
+                    <p className="font-semibold text-gray-800 text-sm">عدد الفروع</p>
                     <p className="text-gray-600 text-sm">{restaurant.branches.length} فرع متاح</p>
                   </div>
                 </div>
@@ -143,49 +148,6 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
           ))}
         </div>
       </div>
-    </div>
-  );
-};
-                  <button
-                    disabled={!isOpen}
-                    className={`w-full py-4 rounded-2xl font-bold text-base transition-all duration-500 transform hover:scale-105 active:scale-95 shadow-xl relative overflow-hidden ${
-                      !isOpen
-                        ? 'bg-gray-500/50 text-gray-300 cursor-not-allowed backdrop-blur-sm'
-                        : `bg-gradient-to-r ${
-                            restaurant.id === 'mister-crispy' 
-                              ? 'from-[#55421A] via-amber-600 to-yellow-500 hover:from-yellow-500 hover:to-[#55421A]' 
-                              : 'from-[#781220] via-red-500 to-pink-500 hover:from-pink-500 hover:to-[#781220]'
-                          } text-white shadow-2xl hover:shadow-3xl border border-white/20`
-                    }`}
-                  >
-                    {/* Button Background Animation */}
-                    {isOpen && (
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                    )}
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      {!isOpen ? (
-                        <>
-                          <span>🔒</span>
-                          مغلق حالياً
-                        </>
-                      ) : (
-                        <>
-                          <span>🚀</span>
-                          اختر هذا المطعم
-                          <span>✨</span>
-                        </>
-                      )}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* Bottom Decoration */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
     </div>
   );
 };
