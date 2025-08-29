@@ -202,7 +202,7 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Item Count - Right Side */}
               <div className="flex-shrink-0 w-16 text-left">
                 {cartItemCount > 0 && (
-                  <span className="text-white text-lg font-bold">
+                  <span className="text-white text-xl font-bold">
                     {cartItemCount}
                   </span>
                 )}
