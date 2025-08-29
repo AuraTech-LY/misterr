@@ -59,7 +59,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       
-      <div className={`max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm border border-white/20 transition-all duration-700 transform ${
+      <div className={`max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm border border-white/20 transition-all duration-700 transform ${
         isAnimated ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-8'
       }`}>
         <div className="bg-gradient-to-r from-[#781220] to-[#8B1538] text-white p-8 text-center relative overflow-hidden">
