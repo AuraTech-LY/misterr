@@ -444,94 +444,122 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
               {/* Progressive Disclosure: Delivery Address */}
               {formData.deliveryMethod === 'delivery' && (
                 <div className="space-y-4 animate-fadeInUp">
-                  {/* Mandatory Location Detection */}
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-red-800 flex items-center gap-2">
-                        <MapPin className="w-5 h-5" />
-                        تحديد الموقع (مطلوب)
-                      </h4>
-                      {customerLocation && (
-                        <div className="flex items-center gap-1 text-green-600 text-sm">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          تم تحديد الموقع
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="mb-3 text-sm text-red-700">
-                      <p>⚠️ تحديد الموقع مطلوب لإتمام عملية التوصيل</p>
-                    </div>
-                    
-                    {!customerLocation && (
-                      <button
-                        type="button"
-                        onClick={handleGetLocation}
-                        disabled={isLocating}
-                        className={`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
-                          isLocating
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
-                        }`}
-                      >
-                        {isLocating ? (
-                          <>
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            جاري تحديد الموقع...
-                          </>
-                        ) : (
-                          <>
-                            <MapPin className="w-4 h-4" />
-                            تحديد موقعي الآن
-                          </>
-                        )}
-                      </button>
-                    )}
-
-                    {customerLocation && (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
-                        <p className="text-green-800 text-sm mb-2">✓ تم تحديد موقعك بنجاح</p>
+                  {/* Location Detection Card */}
+                  {!customerLocation && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                      <div className="text-center">
+                        <MapPin className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                        <h4 className="font-semibold text-blue-800 mb-2">تحديد موقعك للتوصيل</h4>
+                        <p className="text-blue-700 text-sm mb-4">نحتاج لموقعك لحساب سعر التوصيل</p>
                         
-                        {/* Distance Information */}
-                        <div className="mt-2 pt-2 border-t border-green-300">
-                          {isCalculatingDistance ? (
-                            <div className="flex items-center gap-2 text-blue-600 text-sm">
-                              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                              <span>جاري حساب سعر التوصيل...</span>
-                            </div>
-                          ) : deliveryPrice !== null ? (
-                            <div className="flex items-center gap-2 text-green-700 text-sm">
-                              <span>🚚 سعر التوصيل من {selectedBranch?.name}: </span>
-                              <span className="font-bold">{deliveryPrice}</span>
-                              <span className="font-normal text-xs opacity-70"> د.ل</span>
-                            </div>
-                          ) : (
-                            <div className="text-gray-500 text-sm">
-                              <span>⚠️ خدمة حساب سعر التوصيل غير متاحة (يتطلب إعداد GEO_API)</span>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <p className="text-green-600 text-xs">
-                          سيتم إرسال رابط خريطة جوجل مع الطلب لتسهيل الوصول إليك
-                        </p>
-                      </div>
-                    )}
-
-                    {locationError && (
-                      <div className="bg-red-100 border border-red-300 text-red-700 px-3 py-2 rounded-lg text-sm mt-3">
-                        <p className="font-semibold mb-1">خطأ في تحديد الموقع:</p>
-                        <p>{locationError}</p>
                         <button
                           type="button"
                           onClick={handleGetLocation}
-                          className="mt-2 text-blue-600 hover:text-blue-800 text-sm underline"
+                          disabled={isLocating}
+                          className={`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
+                            isLocating
+                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                          }`}
                         >
-                          المحاولة مرة أخرى
+                          {isLocating ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                              جاري تحديد الموقع...
+                            </>
+                          ) : (
+                            <>
+                              <MapPin className="w-4 h-4" />
+                              تحديد موقعي الآن
+                            </>
+                          )}
                         </button>
+                        
+                        {locationError && (
+                          <div className="mt-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg text-sm">
+                            <p className="font-semibold mb-1">خطأ في تحديد الموقع:</p>
+                            <p>{locationError}</p>
+                            <button
+                              type="button"
+                              onClick={handleGetLocation}
+                              className="mt-2 text-blue-600 hover:text-blue-800 text-sm underline"
+                            >
+                              المحاولة مرة أخرى
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+
+                  {/* Order Summary Invoice */}
+                  {customerLocation && (
+                    <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+                      {/* Header */}
+                      <div className={`${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white p-4 text-center`}>
+                        <div className="flex items-center justify-center gap-2 mb-1">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                          <span className="font-bold">تم تحديد الموقع بنجاح</span>
+                        </div>
+                        <p className="text-sm opacity-90">ملخص طلبك</p>
+                      </div>
+                      
+                      {/* Order Items Summary */}
+                      <div className="p-4 border-b border-gray-100">
+                        <div className="flex justify-between items-center text-sm text-gray-600 mb-2">
+                          <span>المنتجات ({itemCount} عنصر)</span>
+                          <div>
+                            <span className="font-bold text-gray-800">{Math.round(total)}</span>
+                            <span className="text-xs opacity-70"> د.ل</span>
+                          </div>
+                        </div>
+                        
+                        {/* Delivery Price - Main Focus */}
+                        <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded-lg border border-green-200">
+                          <div className="flex items-center gap-2">
+                            <Truck className="w-4 h-4 text-green-600" />
+                            <span className="font-semibold text-green-800">سعر التوصيل</span>
+                          </div>
+                          <div className="text-green-800">
+                            {isCalculatingDistance ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-sm">جاري الحساب...</span>
+                              </div>
+                            ) : deliveryPrice !== null ? (
+                              <>
+                                <span className="font-bold text-lg">{deliveryPrice}</span>
+                                <span className="text-sm opacity-70"> د.ل</span>
+                              </>
+                            ) : (
+                              <span className="text-sm text-gray-500">غير محدد</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Total */}
+                      <div className="p-4 bg-gray-50">
+                        <div className="flex justify-between items-center">
+                          <span className="text-lg font-bold text-gray-800">المجموع الكلي</span>
+                          <div className={`text-xl ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>
+                            <span className="font-black">
+                              {deliveryPrice !== null ? Math.round(total + deliveryPrice) : Math.round(total)}
+                            </span>
+                            <span className="text-lg opacity-70"> د.ل</span>
+                          </div>
+                        </div>
+                        
+                        {/* Additional Info */}
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <MapPin className="w-4 h-4" />
+                            <span>سيتم إرسال رابط الموقع مع الطلب</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   {/* Area Input - Required */}
                   
