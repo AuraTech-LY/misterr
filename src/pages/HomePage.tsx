@@ -202,6 +202,8 @@ export const HomePage: React.FC = () => {
             onAddToCart={addToCart}
             branchId={selectedBranch?.id}
             cartItems={cartItems}
+            categories={categories}
+            selectedCategory={selectedCategory}
           />
         )}
         </div>
