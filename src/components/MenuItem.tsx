@@ -22,6 +22,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [showTrashAnimation, setShowTrashAnimation] = React.useState(false);
+  const [isPressing, setIsPressing] = React.useState(false);
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -96,6 +97,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleDesktopAddToCart = () => {
+    // Trigger press animation if item is already in cart
+    if (isInCart) {
+      setIsPressing(true);
+      setTimeout(() => setIsPressing(false), 200);
+    }
+    
     for (let i = 0; i < desktopQuantity; i++) {
       onAddToCart(item);
     }
@@ -104,6 +111,13 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   const handleMobileQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Trigger press animation if item is already in cart
+    if (isInCart) {
+      setIsPressing(true);
+      setTimeout(() => setIsPressing(false), 200);
+    }
+    
     onAddToCart(item);
     
     // Trigger highlight effect
@@ -127,6 +141,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl scale-[1.02]`
             : ''
+        } ${
+          isPressing ? 'scale-95 shadow-inner' : ''
         } ${
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
@@ -300,6 +316,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
           : ''
       } ${
+        isPressing ? 'scale-95 shadow-inner' : ''
+      } ${
         hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`}>
         {/* Trash button for items in cart - Desktop */}
@@ -346,7 +364,14 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           {/* Add Button */}
           <div className="flex items-center justify-between mb-3 h-8">
             <button
-              onClick={() => onAddToCart(item)}
+              onClick={() => {
+                // Trigger press animation if item is already in cart
+                if (isInCart) {
+                  setIsPressing(true);
+                  setTimeout(() => setIsPressing(false), 200);
+                }
+                onAddToCart(item);
+              }}
               disabled={!isOpen}
               className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
                 isOpen
