@@ -120,30 +120,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     
     onAddToCart(item);
     
-    // Trigger highlight effect
-    setIsHighlighted(true);
-    setTimeout(() => setIsHighlighted(false), 800);
   };
 
-  const handleTouchStart = () => {
-    if (isOpen) {
-      setIsPressing(true);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsPressing(false);
-  };
-
-  const handleMouseDown = () => {
-    if (isOpen) {
-      setIsPressing(true);
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsPressing(false);
-  };
 
   const handleRemoveFromCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -169,6 +147,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
         onClick={handleMobileItemClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
       >
         {/* Trash button for items in cart - Mobile */}
         {isInCart && onRemoveFromCart && (
