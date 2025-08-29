@@ -126,7 +126,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleTouchStart = () => {
-    if (!isOpen) return;
     setIsPressing(true);
   };
 
@@ -135,7 +134,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleMouseDown = () => {
-    if (!isOpen) return;
     setIsPressing(true);
   };
 
