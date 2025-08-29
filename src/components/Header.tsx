@@ -246,6 +246,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const [isAnimating, setIsAnimating] = React.useState(false);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -258,16 +259,29 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleToggle = () => {
+    if (isOpen) {
+      // Closing animation
+      setIsAnimating(false);
+      setTimeout(() => setIsOpen(false), 200);
+    } else {
+      // Opening animation
+      setIsOpen(true);
+      setTimeout(() => setIsAnimating(true), 10);
+    }
+  };
+
   const handleSelect = (branch: Branch) => {
+    setIsAnimating(false);
     onBranchSelect(branch);
-    setIsOpen(false);
+    setTimeout(() => setIsOpen(false), 200);
   };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         disabled={isChangingBranch}
         className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
           selectedBranch?.name?.includes('مستر كريسبي')
@@ -293,9 +307,18 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 p-4" onClick={() => setIsOpen(false)}>
+        <div 
+          className={`fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 transition-all duration-200 ease-out ${
+            isAnimating ? 'bg-black bg-opacity-30' : 'bg-black bg-opacity-0'
+          }`} 
+          onClick={handleToggle}
+        >
           <div 
-            className="bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden animate-fadeInUp w-80 max-w-[90vw]"
+            className={`bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] transition-all duration-200 ease-out transform ${
+              isAnimating 
+                ? 'opacity-100 scale-100 translate-y-0' 
+                : 'opacity-0 scale-95 -translate-y-2'
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
           {getAllBranches().map((branch) => (
@@ -312,7 +335,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
                 branch.name?.includes('مستر كريسبي')
                   ? 'hover:bg-[#55421A]'
                   : 'hover:bg-[#7A1120]'
-              } hover:text-white`}
+              } hover:text-white hover:scale-[1.02] active:scale-[0.98]`}
             >
               {isChangingBranch && selectedBranch.id !== branch.id && (
                 <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
