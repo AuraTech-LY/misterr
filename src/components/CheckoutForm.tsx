@@ -377,9 +377,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 
                 {/* Area Field - Always visible */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    المنطقة (مطلوب)
-                  </label>
                   <textarea
                     placeholder="أدخل اسم المنطقة أو الحي (مثل: المدينة القديمة، الحدائق، الجامعة)"
                     value={formData.deliveryInfo?.area || ''}
