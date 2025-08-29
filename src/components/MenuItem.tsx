@@ -169,11 +169,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
         onClick={handleMobileItemClick}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
       >
         {/* Trash button for items in cart - Mobile */}
         {isInCart && onRemoveFromCart && (
