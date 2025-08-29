@@ -114,6 +114,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const handleMobileQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     
+    // Trigger press animation for the whole item
+    setIsPressing(true);
+    setTimeout(() => setIsPressing(false), 150);
+    
     onAddToCart(item);
     
     // Trigger highlight effect
