@@ -496,12 +496,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   {customerLocation && (
                     <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
                       {/* Header */}
-                      <div className={`${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white p-4 text-center`}>
+                      <div className="bg-green-50 border-b border-green-200 p-4 text-center">
                         <div className="flex items-center justify-center gap-2 mb-1">
                           <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                          <span className="font-bold">تم تحديد الموقع بنجاح</span>
+                          <span className="font-bold text-green-800">تم تحديد الموقع بنجاح</span>
                         </div>
-                        <p className="text-sm opacity-90">ملخص طلبك</p>
+                        <p className="text-sm text-green-700">ملخص طلبك</p>
                       </div>
                       
                       {/* Order Items Summary */}
