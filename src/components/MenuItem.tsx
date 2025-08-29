@@ -61,10 +61,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const handleMobileItemClick = () => {
     if (!isOpen) return;
     
-    // Trigger press animation
-    setIsPressing(true);
-    setTimeout(() => setIsPressing(false), 150);
-    
     setShowMobilePopup(true);
     setIsClosing(false);
     setIsAppearing(false);
@@ -118,6 +114,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const handleMobileQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     
+    // Trigger press animation for quick add
+    setIsPressing(true);
+    setTimeout(() => setIsPressing(false), 200);
+    
     onAddToCart(item);
     
     // Trigger highlight effect
@@ -126,19 +126,24 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleTouchStart = () => {
-    setIsPressing(true);
+    if (isOpen) {
+      setIsPressing(true);
+    }
   };
 
   const handleTouchEnd = () => {
-    setIsPressing(false);
+    // Reset press state after a short delay to ensure animation is visible
+    setTimeout(() => setIsPressing(false), 100);
   };
 
   const handleMouseDown = () => {
-    setIsPressing(true);
+    if (isOpen) {
+      setIsPressing(true);
+    }
   };
 
   const handleMouseUp = () => {
-    setIsPressing(false);
+    setTimeout(() => setIsPressing(false), 100);
   };
 
   const handleRemoveFromCart = (e: React.MouseEvent) => {
