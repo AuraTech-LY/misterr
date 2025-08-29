@@ -210,20 +210,17 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6">
-            <p className="text-gray-500">© 2025 المستر. جميع الحقوق محفوظة</p>
-            
             {/* Developer Mark */}
-            <div className="mt-4 pt-4 border-t border-gray-800">
-              <div className="flex items-center justify-center gap-2 text-gray-400 text-base" dir="ltr">
-                <span>Made by</span>
-                <img 
-                  src="/Aura-tech.png" 
-                  alt="Aura Tech" 
-                  className="w-8 h-8 object-contain"
-                />
-                <span>Aura itself</span>
-              </div>
+            <div className="flex items-center justify-center gap-2 text-gray-400 text-base mb-4" dir="ltr">
+              <span>Made by</span>
+              <img 
+                src="/Aura-tech.png" 
+                alt="Aura Tech" 
+                className="w-8 h-8 object-contain"
+              />
+              <span>Aura itself</span>
             </div>
+            <p className="text-gray-500">© 2025 المستر. جميع الحقوق محفوظة</p>
           </div>
         </div>
       </footer>
