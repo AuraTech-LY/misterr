@@ -379,7 +379,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                       value={formData.deliveryInfo?.area || ''}
                       onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
                       rows={2}
-                      className={`w-full p-4 border-2 rounded-2xl text-right resize-none transition-all ${
+                     className={`w-full p-4 border-2 rounded-3xl text-right resize-none transition-all ${
                         errors.area ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
                       }`}
                     />
