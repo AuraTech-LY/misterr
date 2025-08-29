@@ -115,7 +115,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     // Trigger press animation if item is already in cart
     if (isInCart) {
       setIsPressing(true);
-      setTimeout(() => setIsPressing(false), 200);
+      setTimeout(() => setIsPressing(false), 100);
     }
     
     onAddToCart(item);

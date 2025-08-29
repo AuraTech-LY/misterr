@@ -131,3 +131,8 @@ html, body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Custom light gray background for press animation */
+.bg-gray-25 {
+  background-color: #fafafa;
+}
