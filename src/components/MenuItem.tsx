@@ -158,7 +158,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
       <div 
         className={`md:hidden rounded-2xl shadow-lg transition-all duration-150 overflow-hidden group w-full transform ${
           isPressing 
-            ? 'scale-95 bg-gray-100' 
+            ? 'scale-95 shadow-inner bg-gray-50' 
             : 'bg-white'
         } ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
