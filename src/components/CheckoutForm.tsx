@@ -535,21 +535,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   
                   {/* Area Input - Required */}
                   
-                  {/* Address Details - Optional */}
-                  {customerLocation && (
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        تفاصيل العنوان (اختياري)
-                      </label>
-                      <textarea
-                        placeholder="تفاصيل إضافية لتسهيل الوصول إليك (مثل: الطابق، رقم الشقة، معالم مميزة، ملاحظات)"
-                        value={formData.deliveryInfo?.address || ''}
-                        onChange={(e) => handleInputChange('deliveryInfo.address', e.target.value)}
-                        rows={2}
-                        className={`w-full p-4 border-2 border-gray-200 rounded-xl focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'} text-right resize-none`}
-                      />
-                    </div>
-                  )}
                 </div>
               )}
 
