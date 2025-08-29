@@ -215,11 +215,11 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               
               {/* Total Price - Left Side */}
-              <div className="flex-shrink-0 w-20 text-right">
+              <div className="flex-shrink-0 w-24 text-left">
                 {cartItemCount > 0 && isOpen && (
-                  <div className="text-white text-lg whitespace-nowrap">
+                  <div className="text-white text-xl whitespace-nowrap">
                     <span className="font-bold">{Math.round(cartTotal)}</span>
-                    <span className="font-normal text-xs opacity-70"> د.ل</span>
+                    <span className="font-normal text-sm opacity-70"> د.ل</span>
                   </div>
                 )}
               </div>
