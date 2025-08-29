@@ -129,7 +129,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   const handleTouchEnd = () => {
     // Reset press state after a short delay to ensure animation is visible
-    setTimeout(() => setIsPressing(false), 100);
+    setTimeout(() => setIsPressing(false), 150);
   };
 
   const handleMouseDown = () => {
@@ -139,7 +139,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleMouseUp = () => {
-    setTimeout(() => setIsPressing(false), 100);
+    setTimeout(() => setIsPressing(false), 150);
   };
 
   const handleRemoveFromCart = (e: React.MouseEvent) => {
@@ -152,10 +152,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
       <div 
-        className={`md:hidden rounded-2xl shadow-lg transition-all duration-150 overflow-hidden group w-full transform ${
+        className={`md:hidden rounded-2xl shadow-lg overflow-hidden group w-full relative ${
           isPressing 
-            ? 'scale-95 shadow-inner bg-gray-50' 
-            : 'bg-white'
+            ? 'scale-95 shadow-inner bg-gray-50 transition-all duration-100' 
+            : 'bg-white transition-all duration-200 transform'
         } ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
