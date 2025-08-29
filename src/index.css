@@ -68,6 +68,21 @@ html, body {
   }
 }
 
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 @keyframes slideUp {
   0% {
     transform: translateY(30px);
@@ -93,6 +108,10 @@ html, body {
 
 .animate-staggered-fade-in {
   animation: staggeredFadeIn 0.6s ease-out forwards;
+}
+
+.animate-fadeInScale {
+  animation: fadeInScale 0.5s ease-out forwards;
 }
 
 /* Add delay classes for staggered animation */

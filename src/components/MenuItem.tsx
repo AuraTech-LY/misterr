@@ -21,11 +21,21 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
+  const [showTrashAnimation, setShowTrashAnimation] = React.useState(false);
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
   const isInCart = !!cartItem;
   const cartQuantity = cartItem?.quantity || 0;
+
+  // Trigger trash button animation when item is added to cart
+  React.useEffect(() => {
+    if (isInCart && !showTrashAnimation) {
+      setShowTrashAnimation(true);
+    } else if (!isInCart) {
+      setShowTrashAnimation(false);
+    }
+  }, [isInCart, showTrashAnimation]);
 
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
@@ -126,7 +136,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
         {isInCart && onRemoveFromCart && (
           <button
             onClick={handleRemoveFromCart}
-            className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10"
+            className={`absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10 ${
+              showTrashAnimation ? 'animate-fadeInScale' : ''
+            }`}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -294,7 +306,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
         {isInCart && onRemoveFromCart && (
           <button
             onClick={handleRemoveFromCart}
-            className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10"
+            className={`absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10 ${
+              showTrashAnimation ? 'animate-fadeInScale' : ''
+            }`}
           >
             <Trash2 className="w-4 h-4" />
           </button>
