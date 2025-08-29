@@ -151,10 +151,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
       <div 
-        className={`md:hidden rounded-2xl overflow-hidden group w-full relative transition-all duration-150 ${
+        className={`md:hidden bg-white shadow-lg rounded-2xl overflow-hidden group w-full relative transition-all duration-150 transform ${
           isPressing 
             ? 'scale-95' 
-            : 'bg-white shadow-lg transform'
+            : 'scale-100'
         } ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
