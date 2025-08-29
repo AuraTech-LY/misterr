@@ -554,27 +554,24 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-2 sm:gap-3 pt-4">
+              <div className="flex gap-3 pt-6">
                 <button
                   onClick={() => setStep(1)}
-                  className="flex-1 py-3 sm:py-4 border-2 border-gray-300 text-gray-700 rounded-full font-bold hover:bg-gray-50 transition-all text-sm sm:text-base"
+                  className="flex-1 py-3 sm:py-4 border-2 border-gray-300 text-gray-700 rounded-full font-bold hover:bg-gray-50 transition-all duration-300 text-sm sm:text-base"
                 >
                   السابق
                 </button>
-                {/* Area Field - Always visible with fixed spacing */}
-                <div className="mt-6">
-                  <button
-                    onClick={handleSubmit}
-                    disabled={!canSubmit() || isValidating}
-                    className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-lg transition-all ${
-                      canSubmit() && !isValidating
-                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {isValidating ? 'جاري المعالجة...' : 'تأكيد الطلب'}
-                  </button>
-                </div>
+                <button
+                  onClick={handleSubmit}
+                  disabled={!canSubmit() || isValidating}
+                  className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
+                    canSubmit() && !isValidating
+                      ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {isValidating ? 'جاري المعالجة...' : 'تأكيد الطلب'}
+                </button>
               </div>
             </div>
           )}
