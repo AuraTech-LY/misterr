@@ -243,14 +243,13 @@ export const HomePage: React.FC = () => {
           </div>
           <div className="border-t border-gray-800 pt-6">
             {/* Developer Mark */}
-            <div className="flex items-center justify-center gap-2 text-gray-400 text-base mb-4" dir="ltr">
-              <span>Made by</span>
+            <div className="flex flex-col items-center justify-center text-gray-400 text-base mb-4" dir="ltr">
               <img 
                 src="/Aura-tech.png" 
                 alt="Aura Tech" 
-                className="w-8 h-8 object-contain"
+                className="w-8 h-8 object-contain mb-2"
               />
-              <span>Aura itself</span>
+              <span>Made by Aura itself</span>
             </div>
             <p className="text-gray-500">© 2025 {selectedRestaurant.name}. جميع الحقوق محفوظة</p>
           </div>
