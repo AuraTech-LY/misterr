@@ -215,7 +215,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
               <img 
                 src="/Aura-tech.png" 
                 alt="Aura Tech" 
-                className="w-8 h-8 object-contain mb-1"
+                className="w-8 h-8 object-contain"
               />
               <span>Made by Aura itself</span>
             </div>
