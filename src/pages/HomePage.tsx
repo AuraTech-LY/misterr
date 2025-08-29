@@ -244,11 +244,18 @@ export const HomePage: React.FC = () => {
           <div className="border-t border-gray-800 pt-6">
             {/* Developer Mark */}
             <div className="flex flex-col items-center justify-center text-gray-400 text-base mb-4" dir="ltr">
-              <img 
-                src="/Aura-tech.png" 
-                alt="Aura Tech" 
-                className="w-12 h-12 object-contain"
-              />
+              <a 
+                href="https://www.instagram.com/auratech.ly/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:opacity-80 transition-opacity duration-300"
+              >
+                <img 
+                  src="/Aura-tech.png" 
+                  alt="Aura Tech" 
+                  className="w-12 h-12 object-contain"
+                />
+              </a>
               <span>Made by Aura itself</span>
             </div>
             <p className="text-gray-500">© 2025 {selectedRestaurant.name}. جميع الحقوق محفوظة</p>
