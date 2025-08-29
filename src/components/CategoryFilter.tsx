@@ -18,6 +18,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
   // Create ordered category names array, preserving the database order
   const orderedCategoryNames = ['الكل', ...categories.map(cat => cat.name)];
+  
   return (
     <div className="mb-8">
       <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 sm:px-2 py-2">
