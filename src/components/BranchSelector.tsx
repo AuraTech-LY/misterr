@@ -60,17 +60,17 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
       </div>
 
       {/* Branch Buttons */}
-      <div className="flex-1 px-6 py-6 space-y-6">
+      <div className="flex-1 px-6 py-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:max-w-6xl md:mx-auto">
         {branches.map((branch) => (
           <button
             key={branch.id}
             onClick={() => handleBranchSelect(branch)}
             disabled={!isOpen}
-            className={`relative w-full p-6 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] overflow-hidden group ${
+            className={`relative w-full p-6 md:p-8 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] overflow-hidden group ${
               branch.name?.includes('مستر كريسبي') 
                 ? 'bg-gradient-to-r from-[#55421A] to-[#4a3817]' 
                 : 'bg-gradient-to-r from-[#781220] to-[#651018]'
-            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl'}`}
+            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl'} md:min-h-[140px] md:flex md:items-center`}
           >
             {/* Clean background overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -80,17 +80,17 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
             
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                  <MapPin className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
                 </div>
-                <div className="text-right">
-                  <div className="text-xl font-bold mb-1">{branch.name}</div>
-                  <div className="text-sm opacity-80 font-normal">{branch.area}</div>
+                <div className="text-right md:text-center md:flex-1">
+                  <div className="text-xl md:text-2xl font-bold mb-1">{branch.name}</div>
+                  <div className="text-sm md:text-base opacity-80 font-normal">{branch.area}</div>
                 </div>
               </div>
               
               {!isOpen && (
-                <div className="bg-black/20 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm">
+                <div className="bg-black/20 text-white px-3 py-1.5 rounded-full text-sm md:text-base font-medium backdrop-blur-sm">
                   مغلق حالياً
                 </div>
               )}
