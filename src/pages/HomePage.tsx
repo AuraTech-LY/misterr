@@ -177,9 +177,49 @@ export const HomePage: React.FC = () => {
         />
 
         {loading && (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#781220]"></div>
-            <p className="mt-4 text-gray-600">جاري تحميل القائمة...</p>
+          <div className="space-y-12">
+            {/* Skeleton Category Filters */}
+            <div className="mb-8">
+              <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 sm:px-2 py-2">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="bg-gray-200 animate-pulse rounded-full px-6 py-3 sm:px-8 sm:py-4 whitespace-nowrap">
+                    <div className="h-4 w-16 bg-gray-300 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Skeleton Menu Items */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+                  {/* Mobile Layout Skeleton */}
+                  <div className="md:hidden flex items-center p-4 gap-4 h-32">
+                    <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
+                      <div className="h-6 w-12 bg-gray-300 rounded"></div>
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col">
+                      <div className="h-4 bg-gray-300 rounded mb-2 w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-1 w-full"></div>
+                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                    <div className="w-20 h-20 bg-gray-300 rounded-xl flex-shrink-0"></div>
+                  </div>
+                  
+                  {/* Desktop Layout Skeleton */}
+                  <div className="hidden md:block h-80">
+                    <div className="h-32 bg-gray-300"></div>
+                    <div className="p-4 flex flex-col flex-grow">
+                      <div className="h-5 bg-gray-300 rounded mb-2 w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-1 w-full"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-3 w-2/3"></div>
+                      <div className="h-6 bg-gray-300 rounded mb-3 w-1/2"></div>
+                      <div className="h-10 bg-gray-300 rounded-full w-full"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
