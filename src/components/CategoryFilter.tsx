@@ -16,10 +16,12 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const brandColor = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#55421A' : '#781220';
   const brandColorHover = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#3d2f12' : '#5c0d18';
 
+  // Create ordered category names array, preserving the database order
+  const orderedCategoryNames = ['الكل', ...categories.map(cat => cat.name)];
   return (
     <div className="mb-8">
       <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide px-4 sm:px-2 py-2">
-        {['الكل', ...categories.map(cat => cat.name)].map((categoryName) => (
+        {orderedCategoryNames.map((categoryName) => (
           <button
             key={categoryName}
             onClick={() => onCategoryChange(categoryName)}
