@@ -144,6 +144,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
         } ${
           isPressing ? '!scale-95 !shadow-inner !bg-gray-50 !transition-all !duration-150' : ''
         } ${
+        } ${
+          isPressing ? 'scale-98 shadow-sm bg-gray-25' : ''
+        } ${
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
         onClick={handleMobileItemClick}
