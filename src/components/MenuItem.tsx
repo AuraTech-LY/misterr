@@ -23,6 +23,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [showTrashAnimation, setShowTrashAnimation] = React.useState(false);
   const [isPressing, setIsPressing] = React.useState(false);
+  const [isQuickAddPressing, setIsQuickAddPressing] = React.useState(false);
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -113,8 +114,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     e.stopPropagation();
     
     // Trigger press animation
-    setIsPressing(true);
-    setTimeout(() => setIsPressing(false), 150);
+    setIsQuickAddPressing(true);
+    setTimeout(() => setIsQuickAddPressing(false), 150);
     
     onAddToCart(item);
     
@@ -139,8 +140,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl scale-[1.02]`
             : ''
-        } ${
-          isPressing ? 'scale-[0.98] bg-gray-100' : ''
         } ${
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
@@ -192,10 +191,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             <button
               onClick={handleMobileQuickAdd}
               disabled={!isOpen}
-              className={`absolute -bottom-1 -left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-300 flex items-center justify-center z-10 ${
+              className={`absolute -bottom-1 -left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-150 flex items-center justify-center z-10 ${
                 isOpen 
                   ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
                   : 'opacity-50 cursor-not-allowed'
+              } ${
+                isQuickAddPressing ? 'scale-90 bg-gray-100' : ''
               }`}
             >
               <Plus className={`w-4 h-4 ${
