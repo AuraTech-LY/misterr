@@ -375,7 +375,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
                   <div className="mt-4">
                     <textarea
-                      placeholder="أدخل اسم المنطقة أو الحي (مثل: حي السلام، الحدائق، بلعون)"
+                      placeholder="أدخل اسم المنطقة أو الحي (مثل: حي السلام، المساكن، الوكالات)"
                       value={formData.deliveryInfo?.area || ''}
                       onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
                       rows={2}
