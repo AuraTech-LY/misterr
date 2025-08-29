@@ -307,7 +307,7 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 z-50">
+        <div className="absolute top-full left-0 mt-2 z-50" dir="ltr">
           <div 
             className={`bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] transition-all duration-200 ease-out transform origin-top-right ${
               isAnimating 
