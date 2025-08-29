@@ -199,14 +199,16 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         )}
 
         {!loading && !error && (
-          <Menu
-            items={filteredItems}
-            onAddToCart={addToCart}
-            branchId={branchId}
-            cartItems={cartItems}
-            categories={categories}
-            selectedCategory={selectedCategory}
-          />
+          <div className="animate-fadeInUp">
+            <Menu
+              items={filteredItems}
+              onAddToCart={addToCart}
+              branchId={branchId}
+              cartItems={cartItems}
+              categories={categories}
+              selectedCategory={selectedCategory}
+            />
+          </div>
         )}
         </div>
       </main>

@@ -236,14 +236,16 @@ export const HomePage: React.FC = () => {
         )}
 
         {!loading && !error && (
-          <Menu
-            items={filteredItems}
-            onAddToCart={addToCart}
-            branchId={selectedBranch?.id}
-            cartItems={cartItems}
-            categories={categories}
-            selectedCategory={selectedCategory}
-          />
+          <div className="animate-fadeInUp">
+            <Menu
+              items={filteredItems}
+              onAddToCart={addToCart}
+              branchId={selectedBranch?.id}
+              cartItems={cartItems}
+              categories={categories}
+              selectedCategory={selectedCategory}
+            />
+          </div>
         )}
         </div>
       </main>

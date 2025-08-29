@@ -79,6 +79,32 @@ html, body {
   }
 }
 
+/* Staggered animation for menu items */
+@keyframes staggeredFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-staggered-fade-in {
+  animation: staggeredFadeIn 0.6s ease-out forwards;
+}
+
+/* Add delay classes for staggered animation */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+
 /* Line clamp utility for mobile descriptions */
 .line-clamp-2 {
   display: -webkit-box;

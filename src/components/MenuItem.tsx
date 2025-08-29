@@ -19,6 +19,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
+  const [hasAppeared, setHasAppeared] = React.useState(false);
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -28,6 +29,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
   const isMisterCrispy = branchData?.branch?.name?.includes('مستر كريسبي') || false;
+
+  // Trigger appearing animation on mount
+  React.useEffect(() => {
+    const timer = setTimeout(() => setHasAppeared(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -97,12 +104,14 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
       <div 
-        className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group w-full ${
+        className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-500 overflow-hidden group w-full transform ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
           isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl scale-[1.02]`
             : ''
+        } ${
+          hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
         onClick={handleMobileItemClick}
       >
@@ -261,6 +270,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
         isInCart 
           ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
           : ''
+      } ${
+        hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`}>
         <div className="relative">
           <img

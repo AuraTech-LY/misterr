@@ -52,14 +52,14 @@ export const Menu: React.FC<MenuProps> = ({
         if (!categoryItems || categoryItems.length === 0) return null;
 
         return (
-          <div key={category.id} className="space-y-6">
+          <div key={category.id} className="space-y-6 animate-slideUp">
             <div className="text-center">
               <h3 className="text-xl md:text-2xl font-black text-gray-800 mb-2">
                 {category.name}
               </h3>
               <div className="w-16 h-1 bg-gradient-to-r from-[#781220] to-[#55421A] mx-auto rounded-full"></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 animate-fadeIn">
               {categoryItems.map((item) => (
                 <MenuItem
                   key={item.id}
