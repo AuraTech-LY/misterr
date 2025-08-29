@@ -118,15 +118,29 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const handleMobileQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Trigger press animation on main container
-    setIsPressing(true);
-    setTimeout(() => setIsPressing(false), 150);
-    
     onAddToCart(item);
     
     // Trigger highlight effect
     setIsHighlighted(true);
     setTimeout(() => setIsHighlighted(false), 800);
+  };
+
+  const handleTouchStart = () => {
+    if (!isOpen) return;
+    setIsPressing(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsPressing(false);
+  };
+
+  const handleMouseDown = () => {
+    if (!isOpen) return;
+    setIsPressing(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsPressing(false);
   };
 
   const handleRemoveFromCart = (e: React.MouseEvent) => {
@@ -139,7 +153,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
       <div 
-        className={`md:hidden bg-white rounded-2xl shadow-lg transition-all duration-500 overflow-hidden group w-full transform ${
+        className={`md:hidden rounded-2xl shadow-lg transition-all duration-150 overflow-hidden group w-full transform ${
+          isPressing 
+            ? 'scale-95 bg-gray-100' 
+            : 'bg-white'
+        } ${
           isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
           isHighlighted || isInCart
@@ -149,6 +167,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}
         onClick={handleMobileItemClick}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
         {/* Trash button for items in cart - Mobile */}
         {isInCart && onRemoveFromCart && (
