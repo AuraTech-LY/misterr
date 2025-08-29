@@ -80,8 +80,6 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
 
-  // Create categories array with "الكل" option
-  const categoryOptions = ['الكل', ...categories.map(cat => cat.name)];
 
   const handleBackToRestaurants = () => {
     // Clear both restaurant and branch selection
@@ -135,7 +133,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         </div>
 
         <CategoryFilter
-          categories={categoryOptions}
+          categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
           selectedRestaurant={restaurant}

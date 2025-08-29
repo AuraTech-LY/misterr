@@ -124,8 +124,6 @@ export const HomePage: React.FC = () => {
     ? menuItems
     : menuItems.filter(item => item.category === selectedCategory);
 
-  // Create categories array with "الكل" option
-  const categoryOptions = ['الكل', ...categories.map(cat => cat.name)];
 
   return (
     <div 
@@ -173,7 +171,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <CategoryFilter
-          categories={categoryOptions}
+          categories={categories}
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
           selectedRestaurant={selectedRestaurant}

@@ -28,7 +28,8 @@ export const useMenu = (branchId?: string) => {
         const { data: categoriesData, error: categoriesError } = await supabase
           .from('categories')
           .select('*')
-          .order('name');
+          .order('display_order', { ascending: true, nullsLast: true })
+          .order('name', { ascending: true });
 
         if (categoriesError) {
           throw categoriesError;
