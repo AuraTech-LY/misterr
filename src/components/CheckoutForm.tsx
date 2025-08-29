@@ -562,8 +562,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   className="flex-1 py-3 sm:py-4 border-2 border-gray-300 text-gray-700 rounded-full font-bold hover:bg-gray-50 transition-all text-sm sm:text-base"
                 >
                   السابق
-                </button>
-                
+              {/* Area Field - Always visible with fixed spacing */}
+              <div className="mt-6">
                 <button
                   onClick={handleSubmit}
                   disabled={!canSubmit() || isValidating}
