@@ -307,19 +307,13 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div 
-          className={`fixed inset-0 z-50 flex items-start justify-center pt-24 p-4 transition-all duration-200 ease-out ${
-            isAnimating ? 'bg-black bg-opacity-30' : 'bg-black bg-opacity-0'
-          }`} 
-          onClick={handleToggle}
-        >
+        <div className="absolute top-full right-0 mt-2 z-50">
           <div 
-            className={`bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] transition-all duration-200 ease-out transform ${
+            className={`bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] transition-all duration-200 ease-out transform origin-top-right ${
               isAnimating 
                 ? 'opacity-100 scale-100 translate-y-0' 
                 : 'opacity-0 scale-95 -translate-y-2'
             }`}
-            onClick={(e) => e.stopPropagation()}
           >
           {getAllBranches().map((branch) => (
             <button
