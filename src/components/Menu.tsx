@@ -5,6 +5,7 @@ import { MenuItem as MenuItemType } from '../types';
 interface MenuProps {
   items: MenuItemType[];
   onAddToCart: (item: MenuItemType) => void;
+  onRemoveFromCart?: (id: string) => void;
   branchId?: string;
   cartItems?: any[];
   categories?: { id: string; name: string }[];
@@ -14,6 +15,7 @@ interface MenuProps {
 export const Menu: React.FC<MenuProps> = ({ 
   items, 
   onAddToCart, 
+  onRemoveFromCart,
   branchId, 
   cartItems = [], 
   categories = [],
@@ -28,6 +30,7 @@ export const Menu: React.FC<MenuProps> = ({
             key={item.id}
             item={item}
             onAddToCart={onAddToCart}
+            onRemoveFromCart={onRemoveFromCart}
             branchId={branchId}
             cartItems={cartItems}
           />
@@ -65,6 +68,7 @@ export const Menu: React.FC<MenuProps> = ({
                   key={item.id}
                   item={item}
                   onAddToCart={onAddToCart}
+                  onRemoveFromCart={onRemoveFromCart}
                   branchId={branchId}
                   cartItems={cartItems}
                 />

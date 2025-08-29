@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Star, X, Minus } from 'lucide-react';
+import { Plus, Star, X, Minus, Trash2 } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
 import { isWithinOperatingHours } from '../utils/timeUtils';
 import { getBranchById } from '../data/restaurantsData';
@@ -7,11 +7,12 @@ import { getBranchById } from '../data/restaurantsData';
 interface MenuItemProps {
   item: MenuItemType;
   onAddToCart: (item: MenuItemType) => void;
+  onRemoveFromCart?: (id: string) => void;
   branchId?: string;
   cartItems?: any[];
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId, cartItems = [] }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveFromCart, branchId, cartItems = [] }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
@@ -100,6 +101,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
     setTimeout(() => setIsHighlighted(false), 800);
   };
 
+  const handleRemoveFromCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRemoveFromCart) {
+      onRemoveFromCart(item.id);
+    }
+  };
   return (
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
@@ -115,6 +122,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
         }`}
         onClick={handleMobileItemClick}
       >
+        {/* Trash button for items in cart - Mobile */}
+        {isInCart && onRemoveFromCart && (
+          <button
+            onClick={handleRemoveFromCart}
+            className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+
         <div className="flex items-center p-4 gap-4 h-32 min-w-0">
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0">
@@ -273,6 +290,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
       } ${
         hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`}>
+        {/* Trash button for items in cart - Desktop */}
+        {isInCart && onRemoveFromCart && (
+          <button
+            onClick={handleRemoveFromCart}
+            className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        )}
+
         <div className="relative">
           <img
             src={item.image}

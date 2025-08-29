@@ -240,6 +240,7 @@ export const HomePage: React.FC = () => {
             <Menu
               items={filteredItems}
               onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
               branchId={selectedBranch?.id}
               cartItems={cartItems}
               categories={categories}
