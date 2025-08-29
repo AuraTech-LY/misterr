@@ -373,22 +373,20 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     )}
                   </div>
 
-                </div>
-                
-                {/* Area Field - Always visible */}
-                <div>
-                  <textarea
-                    placeholder="أدخل اسم المنطقة أو الحي (مثل: حي السلام، الحدائق، بلعون)"
-                    value={formData.deliveryInfo?.area || ''}
-                    onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
-                    rows={2}
-                    className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
-                      errors.area ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
-                    }`}
-                  />
-                  {errors.area && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
-                  )}
+                  <div className="mt-4">
+                    <textarea
+                      placeholder="أدخل اسم المنطقة أو الحي (مثل: حي السلام، الحدائق، بلعون)"
+                      value={formData.deliveryInfo?.area || ''}
+                      onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
+                      rows={2}
+                      className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
+                        errors.area ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
+                      }`}
+                    />
+                    {errors.area && (
+                      <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
+                    )}
+                  </div>
                 </div>
               </div>
 
