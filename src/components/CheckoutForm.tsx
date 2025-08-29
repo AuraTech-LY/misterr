@@ -494,69 +494,71 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
                   {/* Order Summary Invoice */}
                   {customerLocation && (
-                    <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+                    <div className="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-sm">
                       {/* Header */}
-                      <div className="bg-green-50 border-b border-green-200 p-4 text-center">
-                        <div className="flex items-center justify-center gap-2 mb-1">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                          <span className="font-bold text-green-800">تم تحديد الموقع بنجاح</span>
+                      <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
+                        <div className="text-center">
+                          <h3 className="text-lg font-bold text-gray-800 mb-1">ملخص الطلب</h3>
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span className="text-sm text-green-700 font-medium">تم تحديد الموقع بنجاح</span>
+                          </div>
                         </div>
-                        <p className="text-sm text-green-700">ملخص طلبك</p>
                       </div>
                       
-                      {/* Order Items Summary */}
-                      <div className="p-4 border-b border-gray-100">
-                        <div className="flex justify-between items-center text-sm text-gray-600 mb-2">
-                          <span>المنتجات ({itemCount} عنصر)</span>
-                          <div>
-                            <span className="font-bold text-gray-800">{Math.round(total)}</span>
-                            <span className="text-xs opacity-70"> د.ل</span>
+                      {/* Receipt Body */}
+                      <div className="p-4">
+                        {/* Items Line */}
+                        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-300">
+                          <span className="text-gray-700 font-medium">المنتجات ({itemCount} عنصر)</span>
+                          <div className="text-gray-900">
+                            <span className="text-lg font-bold">{Math.round(total)}</span>
+                            <span className="text-sm text-gray-600"> د.ل</span>
                           </div>
                         </div>
                         
-                        {/* Delivery Price - Main Focus */}
-                        <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded-lg border border-green-200">
-                          <div className="flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-green-600" />
-                            <span className="font-semibold text-green-800">سعر التوصيل</span>
+                        {/* Delivery Line */}
+                        <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-300">
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <Truck className="w-4 h-4 text-gray-500" />
+                            <span className="font-medium">سعر التوصيل</span>
                           </div>
-                          <div className="text-green-800">
+                          <div className="text-gray-900">
                             {isCalculatingDistance ? (
                               <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                                 <span className="text-sm">جاري الحساب...</span>
                               </div>
                             ) : deliveryPrice !== null ? (
                               <>
-                                <span className="font-bold text-lg">{deliveryPrice}</span>
-                                <span className="text-sm opacity-70"> د.ل</span>
+                                <span className="text-lg font-bold">{deliveryPrice}</span>
+                                <span className="text-sm text-gray-600"> د.ل</span>
                               </>
                             ) : (
                               <span className="text-sm text-gray-500">غير محدد</span>
                             )}
                           </div>
                         </div>
-                      </div>
-                      
-                      {/* Total */}
-                      <div className="p-4 bg-gray-50">
-                        <div className="flex justify-between items-center">
-                          <span className="text-lg font-bold text-gray-800">المجموع الكلي</span>
+                        
+                        {/* Total Line */}
+                        <div className="flex justify-between items-center py-3 mt-2">
+                          <span className="text-xl font-bold text-gray-800">المجموع الكلي</span>
                           <div className={`text-xl ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>
                             <span className="font-black">
                               {deliveryPrice !== null ? Math.round(total + deliveryPrice) : Math.round(total)}
                             </span>
-                            <span className="text-lg opacity-70"> د.ل</span>
+                            <span className="text-lg text-gray-600"> د.ل</span>
                           </div>
                         </div>
                         
-                        {/* Additional Info */}
-                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                        {/* Footer Note */}
+                        <div className="mt-4 pt-3 border-t border-dashed border-gray-300">
+                          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
                             <MapPin className="w-4 h-4" />
                             <span>سيتم إرسال رابط الموقع مع الطلب</span>
                           </div>
                         </div>
+                      </div>
                       </div>
                     </div>
                   )}
