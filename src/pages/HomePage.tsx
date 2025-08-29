@@ -138,7 +138,6 @@ export const HomePage: React.FC = () => {
         cartItemCount={getTotalItems()}
         onCartClick={openCart}
         selectedRestaurant={selectedRestaurant}
-        selectedRestaurant={selectedRestaurant}
         selectedBranch={selectedBranch}
         onBranchChange={() => {
           setSelectedBranch(null);
@@ -259,17 +258,7 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-6">
-          {/* Developer Mark */}
-          <div className="mb-4">
-            <div className="flex items-center justify-center gap-2 text-gray-400 text-base" dir="ltr">
-              <span>Made by</span>
-              <img 
-                src="/Aura-tech.png" 
-                alt="Aura Tech" 
-                className="w-8 h-8 object-contain"
-              />
-              <span>Aura itself</span>
-            </div>
-          </div>
-          <p className="text-gray-500">© 2025 {selectedRestaurant.name}. جميع الحقوق محفوظة</p>
+      </footer>
+    </div>
+  );
+};
