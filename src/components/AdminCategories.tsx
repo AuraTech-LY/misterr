@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, GripVertical } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -10,6 +10,7 @@ const supabase = createClient(
 interface Category {
   id: string;
   name: string;
+  display_order?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -26,6 +27,8 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCategories();
@@ -38,6 +41,7 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .order('display_order', { ascending: true, nullsLast: true })
         .order('name', { ascending: true });
 
       if (error) throw error;
@@ -132,6 +136,78 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, categoryId: string) => {
+    setDraggedItem(categoryId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, categoryId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverItem(categoryId);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverItem(null);
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetCategoryId: string) => {
+    e.preventDefault();
+    
+    if (!draggedItem || draggedItem === targetCategoryId) {
+      setDraggedItem(null);
+      setDragOverItem(null);
+      return;
+    }
+
+    try {
+      const draggedIndex = categories.findIndex(cat => cat.id === draggedItem);
+      const targetIndex = categories.findIndex(cat => cat.id === targetCategoryId);
+      
+      if (draggedIndex === -1 || targetIndex === -1) return;
+
+      // Create new array with reordered items
+      const newCategories = [...categories];
+      const [draggedCategory] = newCategories.splice(draggedIndex, 1);
+      newCategories.splice(targetIndex, 0, draggedCategory);
+
+      // Update display_order for all categories
+      const updates = newCategories.map((category, index) => ({
+        id: category.id,
+        display_order: index + 1
+      }));
+
+      // Update in database
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('categories')
+          .update({ display_order: update.display_order })
+          .eq('id', update.id);
+        
+        if (error) throw error;
+      }
+
+      // Update local state
+      setCategories(newCategories.map((cat, index) => ({
+        ...cat,
+        display_order: index + 1
+      })));
+      
+      onCategoriesChange();
+    } catch (error) {
+      console.error('Error reordering categories:', error);
+      setError('حدث خطأ في إعادة ترتيب الفئات');
+    } finally {
+      setDraggedItem(null);
+      setDragOverItem(null);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -206,7 +282,22 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
       {/* Categories List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map((category) => (
-          <div key={category.id} className="bg-white rounded-2xl shadow-lg p-6">
+          <div 
+            key={category.id} 
+            draggable={!editingCategory}
+            onDragStart={(e) => handleDragStart(e, category.id)}
+            onDragOver={(e) => handleDragOver(e, category.id)}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => handleDrop(e, category.id)}
+            onDragEnd={handleDragEnd}
+            className={`bg-white rounded-2xl shadow-lg p-6 transition-all duration-200 ${
+              draggedItem === category.id ? 'opacity-50 scale-95' : ''
+            } ${
+              dragOverItem === category.id ? 'ring-2 ring-[#55421A] ring-opacity-50 transform scale-105' : ''
+            } ${
+              !editingCategory ? 'cursor-move hover:shadow-xl' : ''
+            }`}
+          >
             {editingCategory?.id === category.id ? (
               <div className="space-y-4">
                 <input
@@ -241,8 +332,13 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
                 </div>
               </div>
             ) : (
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-gray-800">{category.name}</h3>
+              <div className="flex justify-between items-center group">
+                <div className="flex items-center gap-3">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <GripVertical className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-800">{category.name}</h3>
+                </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditingCategory(category)}
