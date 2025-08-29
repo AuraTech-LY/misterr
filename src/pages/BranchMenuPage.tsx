@@ -181,7 +181,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         selectedBranch={branch}
       />
 
-      <footer className="bg-black text-white py-12 mt-16 rounded-t-3xl">
+      <footer className="bg-black text-white py-12 mt-16" style={{ borderTopLeftRadius: '3rem', borderTopRightRadius: '3rem' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-8 h-8 flex items-center justify-center">
