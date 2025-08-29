@@ -234,6 +234,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const canProceedToStep2 = () => {
     return formData.customerInfo.name.trim().length >= 2 && 
            /^(091|092|093|094|095)\d{7}$/.test(formData.customerInfo.phone) &&
+           formData.deliveryInfo?.area?.trim() &&
            !errors.name && !errors.phone;
   };
 
@@ -255,8 +256,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
     // Final validation
     validateField('name', formData.customerInfo.name);
     validateField('phone', formData.customerInfo.phone);
+    validateField('area', formData.deliveryInfo?.area || '');
     if (formData.deliveryMethod === 'delivery') {
-      validateField('area', formData.deliveryInfo?.area || '');
     }
 
     setTimeout(() => {
@@ -372,6 +373,25 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     )}
                   </div>
 
+                </div>
+                
+                {/* Area Field - Always visible */}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    المنطقة (مطلوب)
+                  </label>
+                  <textarea
+                    placeholder="أدخل اسم المنطقة أو الحي (مثل: المدينة القديمة، الحدائق، الجامعة)"
+                    value={formData.deliveryInfo?.area || ''}
+                    onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
+                    rows={2}
+                    className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
+                      errors.area ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
+                    }`}
+                  />
+                  {errors.area && (
+                    <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
+                  )}
                 </div>
               </div>
 
@@ -519,25 +539,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   </div>
                   
                   {/* Area Input - Required */}
-                  {customerLocation && (
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        المنطقة (مطلوب)
-                      </label>
-                      <textarea
-                        placeholder="أدخل اسم المنطقة أو الحي (مثل: المدينة القديمة، الحدائق، الجامعة)"
-                        value={formData.deliveryInfo?.area || ''}
-                        onChange={(e) => handleInputChange('deliveryInfo.area', e.target.value)}
-                        rows={2}
-                        className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
-                          errors.area ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
-                        }`}
-                      />
-                      {errors.area && (
-                        <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.area}</p>
-                      )}
-                    </div>
-                  )}
                   
                   {/* Address Details - Optional */}
                   {customerLocation && (
