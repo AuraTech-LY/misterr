@@ -62,25 +62,25 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
       <div className={`max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm border border-white/20 transition-all duration-700 transform ${
         isAnimated ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-8'
       }`}>
-        <div className="bg-gradient-to-r from-[#781220] to-[#8B1538] text-white p-8 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#781220] to-[#8B1538] text-white p-6 text-center relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent"></div>
           <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
           <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
           
           <div className="relative z-10">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg border border-white/30 transform hover:scale-105 transition-transform duration-300">
-              <Lock className="w-10 h-10 text-white drop-shadow-lg" />
+            <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-white/30 transform hover:scale-105 transition-transform duration-300">
+              <Lock className="w-8 h-8 text-white drop-shadow-lg" />
             </div>
-            <h1 className="text-3xl font-black mb-3 drop-shadow-lg">لوحة التحكم</h1>
-            <p className="text-lg opacity-90 font-medium">مطعم المستر - إدارة القائمة</p>
-            <div className="mt-4 w-16 h-1 bg-white/50 rounded-full mx-auto"></div>
+            <h1 className="text-2xl font-black mb-2 drop-shadow-lg">لوحة التحكم</h1>
+            <p className="text-base opacity-90 font-medium">مطعم المستر - إدارة القائمة</p>
+            <div className="mt-3 w-16 h-1 bg-white/50 rounded-full mx-auto"></div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
-            <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+            <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
               <User className="w-5 h-5 text-[#781220]" />
               البريد الإلكتروني
             </label>
@@ -89,7 +89,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-4 pr-4 pl-12 border-2 border-gray-200 rounded-2xl focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
+                className="w-full p-3 pr-4 pl-12 border-2 border-gray-200 rounded-2xl focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
                 placeholder="أدخل البريد الإلكتروني"
                 required
               />
@@ -100,7 +100,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           </div>
 
           <div>
-            <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+            <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
               <Lock className="w-5 h-5 text-[#781220]" />
               كلمة المرور
             </label>
@@ -116,7 +116,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-4 pr-4 pl-20 border-2 border-gray-200 rounded-2xl focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
+                className="w-full p-3 pr-4 pl-20 border-2 border-gray-200 rounded-2xl focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
                 placeholder="أدخل كلمة المرور"
                 required
               />
@@ -127,7 +127,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           </div>
 
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-2xl text-center animate-fadeInUp shadow-sm">
+            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-2xl text-center animate-fadeInUp shadow-sm">
               <div className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">!</span>
@@ -140,7 +140,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 relative overflow-hidden group ${
+            className={`w-full py-3 rounded-2xl font-bold text-base transition-all duration-300 relative overflow-hidden group ${
               isLoading
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-gradient-to-r from-[#781220] to-[#8B1538] hover:from-[#8B1538] hover:to-[#781220] text-white shadow-lg hover:shadow-2xl transform hover:scale-105 active:scale-95'
@@ -164,7 +164,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             </span>
           </button>
           
-          <div className="text-center pt-4">
+          <div className="text-center pt-2">
             <p className="text-sm text-gray-500">
               مرحباً بك في نظام إدارة المطعم
             </p>
