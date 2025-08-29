@@ -54,7 +54,7 @@ export const Menu: React.FC<MenuProps> = ({
         return (
           <div key={category.id} className="space-y-6">
             <div className="text-center">
-              <h3 className="text-2xl md:text-3xl font-black text-gray-800 mb-2">
+              <h3 className="text-xl md:text-2xl font-black text-gray-800 mb-2">
                 {category.name}
               </h3>
               <div className="w-16 h-1 bg-gradient-to-r from-[#781220] to-[#55421A] mx-auto rounded-full"></div>
