@@ -247,7 +247,7 @@ export const HomePage: React.FC = () => {
             
             {/* Developer Mark */}
             <div className="mt-4 pt-4 border-t border-gray-800">
-              <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
+              <div className="flex items-center justify-center gap-2 text-gray-400 text-sm" dir="ltr">
                 <span>Made by</span>
                 <img 
                   src="/Aura-tech.png" 
