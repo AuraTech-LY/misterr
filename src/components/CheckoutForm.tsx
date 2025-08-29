@@ -562,21 +562,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     </div>
                   )}
                   
-                  {/* Area Input - Required */}
-                  <div className="mt-4">
-                    <textarea
-                      placeholder="عنوان مفصل للتوصيل (اسم الشارع، رقم المبنى، معالم مميزة)"
-                      value={formData.deliveryInfo?.address || ''}
-                      onChange={(e) => handleInputChange('deliveryInfo.address', e.target.value)}
-                      rows={3}
-                      className={`w-full p-4 border-2 rounded-xl text-right resize-none transition-all ${
-                        errors.address ? 'border-red-300 bg-red-50' : `border-gray-200 focus:border-${selectedBranch?.name?.includes('مستر كريسبي') ? '[#55421A]' : '[#781220]'}`
-                      }`}
-                    />
-                    {errors.address && (
-                      <p className="text-red-500 text-xs sm:text-sm mt-1 animate-fadeInUp">{errors.address}</p>
-                    )}
-                  </div>
                 </div>
               )}
 
