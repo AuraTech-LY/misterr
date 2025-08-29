@@ -72,7 +72,7 @@ export const Menu: React.FC<MenuProps> = ({
             </div>
           </div>
         );
-      ))}
+      })}
     </div>
   );
 };
