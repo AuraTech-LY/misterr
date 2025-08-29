@@ -18,7 +18,14 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   restaurantName,
   onBackToRestaurants,
 }) => {
+  const [isLoaded, setIsLoaded] = React.useState(false);
   const isOpen = isWithinOperatingHours();
+
+  // Trigger loading animation
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleBranchSelect = (branch: Branch) => {
     // Update browser theme color based on branch
@@ -31,7 +38,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" dir="rtl">
       {/* Simple Header */}
-      <div className="bg-white px-6 py-6">
+      <div className={`bg-white px-6 py-6 transition-all duration-700 ease-out ${
+        isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+      }`}>
         {onBackToRestaurants && (
           <button
             onClick={onBackToRestaurants}
@@ -61,7 +70,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
 
       {/* Branch Buttons */}
       <div className="flex-1 px-6 py-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:max-w-6xl md:mx-auto">
-        {branches.map((branch) => (
+        {branches.map((branch, index) => (
           <button
             key={branch.id}
             onClick={() => handleBranchSelect(branch)}
@@ -70,7 +79,13 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
               branch.name?.includes('مستر كريسبي') 
                 ? 'bg-gradient-to-r from-[#55421A] to-[#4a3817]' 
                 : 'bg-gradient-to-r from-[#781220] to-[#651018]'
-            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[140px] md:flex md:items-center`}
+            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[140px] md:flex md:items-center ${
+              isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+            }`}
+            style={{
+              transitionDelay: isLoaded ? `${index * 120}ms` : '0ms',
+              transitionDuration: '600ms'
+            }}
           >
             {/* Interactive background overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-500 ease-out"></div>
@@ -106,7 +121,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
       </div>
 
       {/* Status */}
-      <div className="px-6 py-6 text-center">
+      <div className={`px-6 py-6 text-center transition-all duration-700 ease-out ${
+        isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`} style={{ transitionDelay: isLoaded ? '250ms' : '0ms' }}>
         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
           isOpen 
             ? 'bg-green-100 text-green-800 border border-green-200' 
