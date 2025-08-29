@@ -247,7 +247,7 @@ export const HomePage: React.FC = () => {
               <img 
                 src="/Aura-tech.png" 
                 alt="Aura Tech" 
-                className="w-8 h-8 object-contain mb-2"
+                className="w-8 h-8 object-contain mb-1"
               />
               <span>Made by Aura itself</span>
             </div>
