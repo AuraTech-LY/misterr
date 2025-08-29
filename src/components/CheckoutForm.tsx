@@ -559,7 +559,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                           </div>
                         </div>
                       </div>
-                      </div>
                     </div>
                   )}
                   
