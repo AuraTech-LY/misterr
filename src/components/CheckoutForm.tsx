@@ -494,7 +494,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
                   {/* Order Summary Invoice */}
                   {customerLocation && (
-                    <div className="bg-white border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+                    <div className="bg-white border border-gray-300 rounded-2xl overflow-hidden shadow-sm">
                       {/* Header */}
                       <div className="bg-gray-50 border-b border-gray-200 px-4 py-3">
                         <div className="text-center">
