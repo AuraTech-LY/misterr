@@ -60,6 +60,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   const handleMobileItemClick = () => {
     if (!isOpen) return;
+    
+    // Trigger press animation
+    setIsPressing(true);
+    setTimeout(() => setIsPressing(false), 150);
+    
     setShowMobilePopup(true);
     setIsClosing(false);
     setIsAppearing(false);
@@ -113,9 +118,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const handleMobileQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Trigger press animation
-    setIsQuickAddPressing(true);
-    setTimeout(() => setIsQuickAddPressing(false), 150);
+    // Trigger press animation on main container
+    setIsPressing(true);
+    setTimeout(() => setIsPressing(false), 150);
     
     onAddToCart(item);
     
@@ -195,8 +200,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 isOpen 
                   ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
                   : 'opacity-50 cursor-not-allowed'
-              } ${
-                isQuickAddPressing ? 'scale-90 bg-gray-100' : ''
               }`}
             >
               <Plus className={`w-4 h-4 ${
