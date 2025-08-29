@@ -140,13 +140,13 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, branchId,
             <button
               onClick={handleMobileQuickAdd}
               disabled={!isOpen}
-              className={`absolute -bottom-1 -left-1 w-7 h-7 bg-white rounded-full shadow-lg transition-all duration-300 flex items-center justify-center z-10 ${
+              className={`absolute -bottom-1 -left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-300 flex items-center justify-center z-10 ${
                 isOpen 
                   ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
                   : 'opacity-50 cursor-not-allowed'
               }`}
             >
-              <Plus className={`w-3.5 h-3.5 ${
+              <Plus className={`w-4 h-4 ${
                 isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
               }`} />
             </button>
