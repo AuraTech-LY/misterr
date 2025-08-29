@@ -353,7 +353,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
                   <div>
                     <div className="relative">
-                      <Phone className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
+                      <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="tel"
                         placeholder="رقم الهاتف (0912345678)"
