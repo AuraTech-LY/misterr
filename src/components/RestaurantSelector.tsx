@@ -81,7 +81,11 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
             
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/20 group-hover:scale-110 group-active:scale-105 group-active:bg-white/30 transition-all duration-300">
+                <div className="relative w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/20 group-hover:scale-110 group-active:scale-105 group-active:bg-white/30 transition-all duration-300">
+                  {/* Item count badge */}
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg z-10">
+                    3
+                  </div>
                   <Store className="w-6 h-6 text-white" />
                 </div>
                 <div className="text-right md:text-center">
