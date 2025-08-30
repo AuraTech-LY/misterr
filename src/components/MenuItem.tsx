@@ -185,7 +185,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           </div>
 
           {/* Image Section - Right */}
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+          <div className="relative w-24 h-24 sm:w-24 sm:h-24 flex-shrink-0">
             <img
               src={item.image}
               alt={item.name}
