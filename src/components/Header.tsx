@@ -6,6 +6,45 @@ import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
 import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
 
+// Custom hook for count-up animation
+const useCountUp = (endValue: number, duration: number = 600) => {
+  const [currentValue, setCurrentValue] = React.useState(endValue);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+  const previousValueRef = React.useRef(endValue);
+
+  React.useEffect(() => {
+    if (endValue !== previousValueRef.current) {
+      setIsAnimating(true);
+      const startValue = previousValueRef.current;
+      const difference = endValue - startValue;
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentAnimatedValue = startValue + (difference * easeOutQuart);
+        
+        setCurrentValue(Math.round(currentAnimatedValue));
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setCurrentValue(endValue);
+          setIsAnimating(false);
+          previousValueRef.current = endValue;
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
+  }, [endValue, duration]);
+
+  return { value: currentValue, isAnimating };
+};
+
 interface HeaderProps {
   cartItemCount: number;
   onCartClick: () => void;
@@ -32,6 +71,9 @@ export const Header: React.FC<HeaderProps> = ({
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
+  
+  // Count-up animation for cart total
+  const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -217,8 +259,10 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Total Price - Left Side */}
               <div className="flex-shrink-0 w-20 text-right">
                 {cartItemCount > 0 && isOpen && (
-                  <div className="text-white text-xl whitespace-nowrap">
-                    <span className="font-bold">{Math.round(cartTotal)}</span>
+                  <div className={`text-white text-xl whitespace-nowrap transition-all duration-200 ${
+                    isAnimating ? 'scale-110 text-yellow-200' : 'scale-100'
+                  }`}>
+                    <span className="font-bold">{animatedTotal}</span>
                     <span className="font-normal text-sm opacity-70"> د.ل</span>
                   </div>
                 )}
