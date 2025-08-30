@@ -57,7 +57,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
           <img 
             src="/Mr-Sheesh.png" 
             alt={restaurantName || "المستر"}
-            className="w-12 h-12 object-contain mx-auto mb-3"
+            className="w-36 h-36 object-contain mx-auto mb-3"
           />
           <h1 className="text-xl font-bold text-gray-800 mb-1">
             {restaurantName || "المستر"}
