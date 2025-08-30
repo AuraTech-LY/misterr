@@ -82,7 +82,15 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
             <div className="relative flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/20 group-hover:scale-110 group-active:scale-105 group-active:bg-white/30 transition-all duration-300">
-                  <Store className="w-6 h-6 text-white" />
+                  {restaurant.id === 'mister-crispy' ? (
+                    <img 
+                      src="/mr-Krispy.png" 
+                      alt="مستر كريسبي" 
+                      className="w-8 h-8 object-contain"
+                    />
+                  ) : (
+                    <Store className="w-6 h-6 text-white" />
+                  )}
                 </div>
                 <div className="text-right md:text-center">
                   <div className="text-xl md:text-2xl font-bold mb-1 group-hover:scale-105 group-active:scale-102 transition-transform duration-300">{restaurant.name}</div>
