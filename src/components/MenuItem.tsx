@@ -293,7 +293,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               <button
                 onClick={handleAddToCart}
                 disabled={!isOpen}
-                className={`w-full px-4 py-2 rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
+                className={`w-full px-4 py-4 rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-base ${
                   isOpen
                     ? isMisterCrispy
                       ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
