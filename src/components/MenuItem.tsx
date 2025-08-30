@@ -324,12 +324,21 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
         {isInCart && onRemoveFromCart && (
           <button
             onClick={handleRemoveFromCart}
-            className={`absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-10 ${
+            className={`absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 active:scale-95 z-20 ${
               showTrashAnimation ? 'animate-fadeInScale' : ''
             }`}
           >
             <Trash2 className="w-4 h-4" />
           </button>
+        )}
+
+        {/* Item count badge - Desktop */}
+        {cartQuantity > 0 && (
+          <div className={`absolute top-2 left-2 w-6 h-6 ${
+            isMisterCrispy ? 'bg-[#55421A]' : 'bg-[#781220]'
+          } text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg z-10`}>
+            {cartQuantity}
+          </div>
         )}
 
         <div className="relative">
