@@ -162,17 +162,17 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
         <div className="flex items-center p-4 gap-4 h-32 min-w-0">
           {/* Price Section - Left */}
-          <div className="flex flex-col items-center justify-center min-w-[70px] flex-shrink-0 -ml-2">
+          <div className="flex flex-col items-center justify-center min-w-[50px] flex-shrink-0 -ml-3">
             <div className={`text-xl whitespace-nowrap ${
               isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
             }`}>
               <span className="font-black">{Math.round(item.price)}</span>
-              <span className="font-normal text-sm opacity-70"> د.ل</span>
+              <span className="font-normal text-xs opacity-70"> د.ل</span>
             </div>
           </div>
 
           {/* Content Section - Middle */}
-          <div className="flex-1 min-w-0 flex flex-col overflow-hidden ml-2">
+          <div className="flex-1 min-w-0 flex flex-col overflow-hidden ml-3">
             <div className="flex items-start justify-between mb-1">
               <h3 className="text-sm font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
               {item.popular && (
