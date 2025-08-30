@@ -74,6 +74,9 @@ export const Header: React.FC<HeaderProps> = ({
   
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
+  
+  // Count-up animation for cart item count
+  const { value: animatedItemCount, isAnimating: isItemCountAnimating } = useCountUp(cartItemCount);
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -244,8 +247,10 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Item Count - Right Side */}
               <div className="flex-shrink-0 w-16 text-left">
                 {cartItemCount > 0 && (
-                  <span className="text-white text-xl font-bold">
-                    {cartItemCount}
+                  <span className={`text-white text-xl font-bold transition-all duration-200 ${
+                    isItemCountAnimating ? 'scale-110 text-yellow-200' : 'scale-100'
+                  }`}>
+                    {animatedItemCount}
                   </span>
                 )}
               </div>
