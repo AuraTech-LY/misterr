@@ -174,7 +174,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           {/* Content Section - Middle */}
           <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
             <div className="flex items-start justify-between mb-1">
-              <h3 className="text-base font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
+              <h3 className="text-sm font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
               {item.popular && (
                 <div className="bg-[#781220] text-white px-2 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1 ml-2 flex-shrink-0">
                   <Star className="w-3 h-3 fill-current" />
