@@ -85,7 +85,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                   <img 
                     src="/mr-Krispy.png" 
                     alt="مستر كريسبي" 
-                    className="w-12 h-12 object-contain"
+                    className="w-16 h-16 object-contain"
                   />
                 ) : (
                   <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/20 group-hover:scale-110 group-active:scale-105 group-active:bg-white/30 transition-all duration-300">
