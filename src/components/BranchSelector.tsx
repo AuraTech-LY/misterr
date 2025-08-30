@@ -54,11 +54,19 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
         )}
         
         <div className="text-center">
-          <img 
-            src="/Mr-Sheesh.png" 
-            alt={restaurantName || "المستر"}
-            className="w-36 h-36 object-contain mx-auto mb-1"
-          />
+          {restaurantName?.includes('مستر كريسبي') ? (
+            <img 
+              src="/mr-Krispy.png" 
+              alt="مستر كريسبي"
+              className="w-36 h-36 object-contain mx-auto mb-1"
+            />
+          ) : (
+            <img 
+              src="/Mr-Sheesh.png" 
+              alt={restaurantName || "المستر"}
+              className="w-36 h-36 object-contain mx-auto mb-1"
+            />
+          )}
           <h1 className="text-xl font-bold text-gray-800 mb-1">
             {restaurantName || "المستر"}
           </h1>
