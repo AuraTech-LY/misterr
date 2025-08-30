@@ -197,7 +197,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             <img
               src={item.image}
               alt={item.name}
-              className="w-24 h-24 object-cover rounded-xl group-hover:scale-110 transition-transform duration-500"
+              className="w-24 h-24 object-cover rounded-xl"
             />
             <button
               onClick={handleMobileQuickAdd}
