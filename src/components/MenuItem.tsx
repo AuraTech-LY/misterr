@@ -301,7 +301,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                {isOpen ? `إضافة إلى السلة (${quantity})` : 'مغلق حالياً'}
+                {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
               </button>
             </div>
           </div>
