@@ -55,11 +55,11 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
             key={restaurant.id}
             onClick={() => handleRestaurantSelect(restaurant)}
             disabled={!isOpen}
-            className={`relative w-full p-6 md:p-8 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] overflow-hidden group shadow-lg hover:shadow-xl transform-gpu ${
+            className={`relative w-full p-4 md:p-6 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] overflow-hidden group shadow-lg hover:shadow-xl transform-gpu ${
               restaurant.id === 'mister-crispy' 
                 ? 'bg-gradient-to-r from-[#55421A] to-[#4a3817]' 
                 : 'bg-gradient-to-r from-[#781220] to-[#651018]'
-            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[120px] md:flex md:items-center ${
+            } ${!isOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[100px] md:flex md:items-center ${
               isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
             }`}
             style={{
