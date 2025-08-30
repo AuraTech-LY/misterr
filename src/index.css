@@ -124,6 +124,23 @@ html, body {
 .delay-700 { animation-delay: 0.7s; }
 .delay-800 { animation-delay: 0.8s; }
 
+/* Money refresh animation */
+@keyframes moneyRefresh {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-money-refresh {
+  animation: moneyRefresh 0.4s ease-out;
+}
+
 /* Line clamp utility for mobile descriptions */
 .line-clamp-2 {
   display: -webkit-box;

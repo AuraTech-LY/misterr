@@ -32,6 +32,17 @@ export const Header: React.FC<HeaderProps> = ({
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
+  const [isMoneyAnimating, setIsMoneyAnimating] = React.useState(false);
+  const [prevCartTotal, setPrevCartTotal] = React.useState(cartTotal);
+
+  // Trigger money animation when cart total changes
+  React.useEffect(() => {
+    if (cartTotal !== prevCartTotal && cartTotal > 0) {
+      setIsMoneyAnimating(true);
+      setTimeout(() => setIsMoneyAnimating(false), 600);
+    }
+    setPrevCartTotal(cartTotal);
+  }, [cartTotal, prevCartTotal]);
 
   // Update operating status every minute
   React.useEffect(() => {
@@ -217,7 +228,9 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Total Price - Left Side */}
               <div className="flex-shrink-0 w-20 text-right">
                 {cartItemCount > 0 && isOpen && (
-                  <div className="text-white text-xl whitespace-nowrap">
+                  <div className={`text-white text-xl whitespace-nowrap transition-all duration-300 ${
+                    isMoneyAnimating ? 'animate-pulse scale-110' : 'scale-100'
+                  }`}>
                     <span className="font-bold">{Math.round(cartTotal)}</span>
                     <span className="font-normal text-sm opacity-70"> د.ل</span>
                   </div>
