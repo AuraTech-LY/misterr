@@ -123,7 +123,7 @@ export const Cart: React.FC<CartProps> = ({
     
     // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/218910054944?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/218${selectedBranch?.phone?.replace(/^0/, '')}?text=${encodedMessage}`;
     
     // Open WhatsApp
     window.open(whatsappUrl, '_blank');
