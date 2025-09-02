@@ -22,7 +22,7 @@ export const restaurants: Restaurant[] = [
         name: 'مستر شيش - بلعون',
         area: 'بلعون',
         address: 'بلعون بجوار جامعة العرب الطبية',
-        phone: '092-0006227',
+        phone: '0919670707',
         deliveryTime: '30-40 دقيقة',
         isOpen: isWithinOperatingHours(),
         latitude: 32.07117769599545,
