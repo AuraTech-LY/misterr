@@ -123,7 +123,13 @@ export const Cart: React.FC<CartProps> = ({
     
     // Encode message for URL
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/218${selectedBranch?.phone?.replace(/^0/, '')}?text=${encodedMessage}`;
+    // Clean phone number: remove spaces, dashes, and leading zero
+    const cleanPhone = selectedBranch?.phone?.replace(/[\s-]/g, '').replace(/^0/, '') || '';
+    const whatsappUrl = `https://wa.me/218${cleanPhone}?text=${encodedMessage}`;
+    
+    console.log('Branch phone:', selectedBranch?.phone);
+    console.log('Clean phone:', cleanPhone);
+    console.log('WhatsApp URL:', whatsappUrl);
     
     // Open WhatsApp
     window.open(whatsappUrl, '_blank');
