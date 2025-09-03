@@ -249,3 +249,6 @@ export const isTimeWithinOperatingHours = (hour: number, minute: number = 0): bo
   
   return true;
 };
+
+// Import the new function in components that need it
+export { isDeliveryAvailable };
