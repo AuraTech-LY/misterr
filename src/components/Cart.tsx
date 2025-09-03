@@ -122,17 +122,56 @@ export const Cart: React.FC<CartProps> = ({
     message += `شكراً لاختياركم ${restaurantName}! 🙏`;
     
     // Encode message for URL
-    const encodedMessage = encodeURIComponent(message);
     // Clean phone number: remove spaces, dashes, and leading zero
     const cleanPhone = selectedBranch?.phone?.replace(/[\s-]/g, '').replace(/^0/, '') || '';
-    const whatsappUrl = `https://wa.me/218${cleanPhone}?text=${encodedMessage}`;
+    const fullPhoneNumber = `218${cleanPhone}`;
     
     console.log('Branch phone:', selectedBranch?.phone);
     console.log('Clean phone:', cleanPhone);
-    console.log('WhatsApp URL:', whatsappUrl);
+    console.log('Full phone number:', fullPhoneNumber);
     
-    // Open WhatsApp
-    window.open(whatsappUrl, '_blank');
+    // Create WhatsApp URLs for different platforms
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappWebUrl = `https://web.whatsapp.com/send?phone=${fullPhoneNumber}&text=${encodedMessage}`;
+    const whatsappAppUrl = `https://wa.me/${fullPhoneNumber}?text=${encodedMessage}`;
+    
+    console.log('WhatsApp Web URL:', whatsappWebUrl);
+    console.log('WhatsApp App URL:', whatsappAppUrl);
+    
+    // Detect device type and use appropriate URL
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    let finalUrl = whatsappAppUrl; // Default to app URL
+    
+    // For iOS devices, try the app URL first, then fallback
+    if (isIOS) {
+      // Try to open WhatsApp app directly
+      const whatsappScheme = `whatsapp://send?phone=${fullPhoneNumber}&text=${encodedMessage}`;
+      
+      // Create a temporary link to test if WhatsApp app is available
+      const tempLink = document.createElement('a');
+      tempLink.href = whatsappScheme;
+      
+      // Try to open WhatsApp app
+      try {
+        window.location.href = whatsappScheme;
+        
+        // Fallback to web version after a short delay if app doesn't open
+        setTimeout(() => {
+          window.open(whatsappWebUrl, '_blank');
+        }, 1000);
+      } catch (error) {
+        // If app scheme fails, use web version
+        window.open(whatsappWebUrl, '_blank');
+      }
+    } else if (isMobile) {
+      // For Android and other mobile devices, use app URL
+      window.open(whatsappAppUrl, '_blank');
+    } else {
+      // For desktop, use web version
+      window.open(whatsappWebUrl, '_blank');
+    }
     
     // Clear cart and close modals
     onClearCart();
