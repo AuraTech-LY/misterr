@@ -1,6 +1,6 @@
 // Time utilities for Libya timezone (UTC+2)
 
-export const LIBYA_TIMEZONE = 'Africa/Tripoli';
+export const LIBYA_TIMEZONE = 'Asia/Tokyo'; // UTC+9
 export const OPENING_HOUR = 11; // 11:00 AM
 export const CLOSING_HOUR = 23; // 11:00 PM
 export const CLOSING_MINUTE = 59; // 11:59 PM
@@ -11,13 +11,13 @@ export const MISTER_CRISPY_DELIVERY_CLOSING_HOUR = 23; // 11:59 PM (delivery sto
 export const MISTER_CRISPY_DELIVERY_CLOSING_MINUTE = 59;
 
 /**
- * Get current time in Libya timezone (UTC+2)
+ * Get current time in UTC+9 timezone
  */
 export const getCurrentTime = (): Date => {
-  // Create a date object with Libya timezone
+  // Create a date object with UTC+9 timezone
   const now = new Date();
   
-  // Use Intl.DateTimeFormat to get Libya time
+  // Use Intl.DateTimeFormat to get UTC+9 time
   const libyaTime = new Intl.DateTimeFormat('en-US', {
     timeZone: LIBYA_TIMEZONE,
     year: 'numeric',
@@ -29,7 +29,7 @@ export const getCurrentTime = (): Date => {
     hour12: false
   }).formatToParts(now);
 
-  // Reconstruct the date in Libya timezone
+  // Reconstruct the date in UTC+9 timezone
   const year = parseInt(libyaTime.find(part => part.type === 'year')?.value || '0');
   const month = parseInt(libyaTime.find(part => part.type === 'month')?.value || '0') - 1; // Month is 0-indexed
   const day = parseInt(libyaTime.find(part => part.type === 'day')?.value || '0');
@@ -101,11 +101,11 @@ export const isDeliveryAvailable = (branchId?: string): boolean => {
 };
 
 /**
- * Get formatted current time in Libya timezone
+ * Get formatted current time in UTC+9 timezone
  */
 export const getFormattedLibyaTime = (): string => {
   const now = new Date();
-  return new Intl.DateTimeFormat('ar-LY', {
+  return new Intl.DateTimeFormat('en-US', {
     timeZone: LIBYA_TIMEZONE,
     hour: '2-digit',
     minute: '2-digit',
@@ -215,18 +215,18 @@ export const getTimeUntilClosing = (branchId?: string): string | null => {
 };
 
 /**
- * Get Libya time (alias for getCurrentTime for backward compatibility)
+ * Get UTC+9 time (alias for getCurrentTime for backward compatibility)
  */
 export const getLibyaTime = (): Date => {
   return getCurrentTime();
 };
 
 /**
- * Get current Libya date and time as a formatted string
+ * Get current UTC+9 date and time as a formatted string
  */
 export const getLibyaDateTime = (): string => {
   const now = new Date();
-  return new Intl.DateTimeFormat('ar-LY', {
+  return new Intl.DateTimeFormat('en-US', {
     timeZone: LIBYA_TIMEZONE,
     year: 'numeric',
     month: 'long',
