@@ -197,6 +197,30 @@ export const getTimeUntilClosing = (branchId?: string): string | null => {
     }
   }
   
+  // Mister Crispy specific logic
+  if (branchId === 'dollar') {
+    // If it's after midnight (0-2 hours), calculate time until 3:00 AM
+    if (currentHour >= 0 && currentHour < MISTER_CRISPY_CLOSING_HOUR) {
+      const hoursUntilClose = MISTER_CRISPY_CLOSING_HOUR - currentHour;
+      const minutesUntilClose = 60 - currentMinute;
+      
+      if (hoursUntilClose === 0) {
+        return `${minutesUntilClose} دقيقة`;
+      } else {
+        return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
+      }
+    }
+    // If it's during regular hours, calculate until 11:59 PM
+    const hoursUntilClose = CLOSING_HOUR - currentHour;
+    const minutesUntilClose = CLOSING_MINUTE - currentMinute;
+    
+    if (hoursUntilClose === 0) {
+      return `${minutesUntilClose} دقيقة`;
+    } else {
+      return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
+    }
+  }
+  
   // Regular branches logic
   const hoursUntilClose = CLOSING_HOUR - currentHour;
   const minutesUntilClose = CLOSING_MINUTE - currentMinute;
