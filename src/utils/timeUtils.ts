@@ -52,10 +52,8 @@ export const isWithinOperatingHours = (branchId?: string): boolean => {
   // Mister Crispy (dollar branch) has extended hours until 3:00 AM
   if (branchId === 'dollar') {
     // Open from 11:00 AM to 3:00 AM next day
-    if (currentHour >= OPENING_HOUR || currentHour < MISTER_CRISPY_CLOSING_HOUR) {
-      return true;
-    }
-    return false;
+    // This means: open if hour is >= 11 OR hour is < 3
+    return (currentHour >= OPENING_HOUR) || (currentHour < MISTER_CRISPY_CLOSING_HOUR);
   }
   
   // Regular branches: 11:00 AM to 11:59 PM
