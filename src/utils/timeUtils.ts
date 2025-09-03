@@ -183,41 +183,25 @@ export const getTimeUntilClosing = (branchId?: string): string | null => {
       if (hoursUntilClose === 0) {
         return `${minutesUntilClose} دقيقة`;
       } else {
-        return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
+        if (minutesUntilClose === 60) {
+          return `${hoursUntilClose} ساعة`;
+        } else {
+          return `${hoursUntilClose - 1} ساعة و ${minutesUntilClose} دقيقة`;
+        }
       }
     }
-    // If it's during regular hours, calculate until 11:59 PM
+    // If it's during regular hours (11 AM - 11:59 PM), calculate until midnight (then continues until 3 AM)
     const hoursUntilClose = CLOSING_HOUR - currentHour;
     const minutesUntilClose = CLOSING_MINUTE - currentMinute;
     
     if (hoursUntilClose === 0) {
       return `${minutesUntilClose} دقيقة`;
     } else {
-      return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
-    }
-  }
-  
-  // Mister Crispy specific logic
-  if (branchId === 'dollar') {
-    // If it's after midnight (0-2 hours), calculate time until 3:00 AM
-    if (currentHour >= 0 && currentHour < MISTER_CRISPY_CLOSING_HOUR) {
-      const hoursUntilClose = MISTER_CRISPY_CLOSING_HOUR - currentHour;
-      const minutesUntilClose = 60 - currentMinute;
-      
-      if (hoursUntilClose === 0) {
-        return `${minutesUntilClose} دقيقة`;
+      if (minutesUntilClose === 59) {
+        return `${hoursUntilClose} ساعة`;
       } else {
-        return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
+        return `${hoursUntilClose} ساعة و ${60 - minutesUntilClose} دقيقة`;
       }
-    }
-    // If it's during regular hours, calculate until 11:59 PM
-    const hoursUntilClose = CLOSING_HOUR - currentHour;
-    const minutesUntilClose = CLOSING_MINUTE - currentMinute;
-    
-    if (hoursUntilClose === 0) {
-      return `${minutesUntilClose} دقيقة`;
-    } else {
-      return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
     }
   }
   
