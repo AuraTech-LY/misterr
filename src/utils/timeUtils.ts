@@ -5,6 +5,11 @@ export const OPENING_HOUR = 11; // 11:00 AM
 export const CLOSING_HOUR = 23; // 11:00 PM
 export const CLOSING_MINUTE = 59; // 11:59 PM
 
+// Mister Crispy specific hours
+export const MISTER_CRISPY_CLOSING_HOUR = 3; // 3:00 AM (next day)
+export const MISTER_CRISPY_DELIVERY_CLOSING_HOUR = 23; // 11:59 PM (delivery stops)
+export const MISTER_CRISPY_DELIVERY_CLOSING_MINUTE = 59;
+
 /**
  * Get current time in Libya timezone (UTC+2)
  */
@@ -36,14 +41,24 @@ export const getCurrentTime = (): Date => {
 };
 
 /**
- * Check if current time is within operating hours (11:00 - 23:59)
+ * Check if current time is within operating hours
+ * @param branchId - Optional branch ID for branch-specific hours
  */
-export const isWithinOperatingHours = (): boolean => {
+export const isWithinOperatingHours = (branchId?: string): boolean => {
   const currentTime = getCurrentTime();
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   
-  // Check if time is between 11:00 and 23:59
+  // Mister Crispy (dollar branch) has extended hours until 3:00 AM
+  if (branchId === 'dollar') {
+    // Open from 11:00 AM to 3:00 AM next day
+    if (currentHour >= OPENING_HOUR || currentHour < MISTER_CRISPY_CLOSING_HOUR) {
+      return true;
+    }
+    return false;
+  }
+  
+  // Regular branches: 11:00 AM to 11:59 PM
   if (currentHour < OPENING_HOUR) {
     return false; // Before opening
   }
@@ -57,6 +72,32 @@ export const isWithinOperatingHours = (): boolean => {
   }
   
   return true;
+};
+/**
+ * Check if delivery is available for the current time and branch
+ * @param branchId - Optional branch ID for branch-specific delivery hours
+ */
+export const isDeliveryAvailable = (branchId?: string): boolean => {
+  const currentTime = getCurrentTime();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  
+  // Mister Crispy (dollar branch) doesn't offer delivery from 12:00 AM to 3:00 AM
+  if (branchId === 'dollar') {
+    // If it's between 12:00 AM (0) and 3:00 AM, no delivery
+    if (currentHour >= 0 && currentHour < MISTER_CRISPY_CLOSING_HOUR) {
+      return false;
+    }
+    // If it's after 11:59 PM, no delivery
+    if (currentHour > MISTER_CRISPY_DELIVERY_CLOSING_HOUR || 
+        (currentHour === MISTER_CRISPY_DELIVERY_CLOSING_HOUR && currentMinute > MISTER_CRISPY_DELIVERY_CLOSING_MINUTE)) {
+      return false;
+    }
+    return true;
+  }
+  
+  // For other branches, delivery is available during regular operating hours
+  return isWithinOperatingHours(branchId);
 };
 
 /**
@@ -74,9 +115,10 @@ export const getFormattedLibyaTime = (): string => {
 
 /**
  * Get time until opening (if closed)
+ * @param branchId - Optional branch ID for branch-specific hours
  */
-export const getTimeUntilOpening = (): string | null => {
-  if (isWithinOperatingHours()) {
+export const getTimeUntilOpening = (branchId?: string): string | null => {
+  if (isWithinOperatingHours(branchId)) {
     return null;
   }
   
@@ -84,6 +126,23 @@ export const getTimeUntilOpening = (): string | null => {
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   
+  // Mister Crispy specific logic
+  if (branchId === 'dollar') {
+    // If it's between 3:00 AM and 11:00 AM, calculate time until 11:00 AM
+    if (currentHour >= MISTER_CRISPY_CLOSING_HOUR && currentHour < OPENING_HOUR) {
+      const hoursUntilOpen = OPENING_HOUR - currentHour;
+      const minutesUntilOpen = 60 - currentMinute;
+      
+      if (minutesUntilOpen === 60) {
+        return `${hoursUntilOpen} ساعة`;
+      } else {
+        return `${hoursUntilOpen - 1} ساعة و ${minutesUntilOpen} دقيقة`;
+      }
+    }
+    return null; // Should be open otherwise
+  }
+  
+  // Regular branches logic
   if (currentHour < OPENING_HOUR) {
     // Before opening today
     const hoursUntilOpen = OPENING_HOUR - currentHour;
@@ -103,9 +162,10 @@ export const getTimeUntilOpening = (): string | null => {
 
 /**
  * Get time until closing (if open)
+ * @param branchId - Optional branch ID for branch-specific hours
  */
-export const getTimeUntilClosing = (): string | null => {
-  if (!isWithinOperatingHours()) {
+export const getTimeUntilClosing = (branchId?: string): string | null => {
+  if (!isWithinOperatingHours(branchId)) {
     return null;
   }
   
@@ -113,6 +173,31 @@ export const getTimeUntilClosing = (): string | null => {
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   
+  // Mister Crispy specific logic
+  if (branchId === 'dollar') {
+    // If it's after midnight (0-2 hours), calculate time until 3:00 AM
+    if (currentHour >= 0 && currentHour < MISTER_CRISPY_CLOSING_HOUR) {
+      const hoursUntilClose = MISTER_CRISPY_CLOSING_HOUR - currentHour;
+      const minutesUntilClose = 60 - currentMinute;
+      
+      if (hoursUntilClose === 0) {
+        return `${minutesUntilClose} دقيقة`;
+      } else {
+        return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
+      }
+    }
+    // If it's during regular hours, calculate until 11:59 PM
+    const hoursUntilClose = CLOSING_HOUR - currentHour;
+    const minutesUntilClose = CLOSING_MINUTE - currentMinute;
+    
+    if (hoursUntilClose === 0) {
+      return `${minutesUntilClose} دقيقة`;
+    } else {
+      return `${hoursUntilClose} ساعة و ${minutesUntilClose} دقيقة`;
+    }
+  }
+  
+  // Regular branches logic
   const hoursUntilClose = CLOSING_HOUR - currentHour;
   const minutesUntilClose = CLOSING_MINUTE - currentMinute;
   

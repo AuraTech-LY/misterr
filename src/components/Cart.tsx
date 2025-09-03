@@ -11,6 +11,7 @@ interface CartProps {
   onRemoveItem: (id: string) => void;
   onClearCart: () => void;
   selectedBranch?: any;
+  isDeliveryAvailable?: boolean;
 }
 
 export const Cart: React.FC<CartProps> = ({
@@ -21,6 +22,7 @@ export const Cart: React.FC<CartProps> = ({
   onRemoveItem,
   onClearCart,
   selectedBranch,
+  isDeliveryAvailable = true,
 }) => {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -201,6 +203,7 @@ export const Cart: React.FC<CartProps> = ({
         onBack={handleBackToCart}
         isTransitioning={isTransitioning}
         selectedBranch={selectedBranch}
+        isDeliveryAvailable={isDeliveryAvailable}
       />
     );
   }
