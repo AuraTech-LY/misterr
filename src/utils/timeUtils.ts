@@ -190,18 +190,16 @@ export const getTimeUntilClosing = (branchId?: string): string | null => {
         }
       }
     }
-    // If it's during regular hours (11 AM - 11:59 PM), calculate until midnight (then continues until 3 AM)
-    const hoursUntilClose = CLOSING_HOUR - currentHour;
-    const minutesUntilClose = CLOSING_MINUTE - currentMinute;
+    // If it's during regular hours (11 AM - 11:59 PM), calculate until 3:00 AM next day
+    const hoursUntilMidnight = 24 - currentHour;
+    const minutesUntilMidnight = 60 - currentMinute;
+    const totalHoursUntilClose = hoursUntilMidnight + MISTER_CRISPY_CLOSING_HOUR;
+    const totalMinutesUntilClose = minutesUntilMidnight;
     
-    if (hoursUntilClose === 0) {
-      return `${minutesUntilClose} دقيقة`;
+    if (totalMinutesUntilClose === 60) {
+      return `${totalHoursUntilClose} ساعة`;
     } else {
-      if (minutesUntilClose === 59) {
-        return `${hoursUntilClose} ساعة`;
-      } else {
-        return `${hoursUntilClose} ساعة و ${60 - minutesUntilClose} دقيقة`;
-      }
+      return `${totalHoursUntilClose - 1} ساعة و ${totalMinutesUntilClose} دقيقة`;
     }
   }
   
