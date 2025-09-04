@@ -89,7 +89,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 pr-4 pl-12 border-2 border-gray-200 rounded-2xl focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
+                className="w-full p-3 pr-4 pl-12 border-2 border-gray-200 rounded-full focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
                 placeholder="أدخل البريد الإلكتروني"
                 required
               />
@@ -116,7 +116,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 pr-4 pl-20 border-2 border-gray-200 rounded-2xl focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
+                className="w-full p-3 pr-4 pl-20 border-2 border-gray-200 rounded-full focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
                 placeholder="أدخل كلمة المرور"
                 required
               />
@@ -127,7 +127,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           </div>
 
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-2xl text-center animate-fadeInUp shadow-sm">
+            <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-full text-center animate-fadeInUp shadow-sm">
               <div className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">!</span>
@@ -145,6 +145,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-gradient-to-r from-[#781220] to-[#8B1538] hover:from-[#8B1538] hover:to-[#781220] text-white shadow-lg hover:shadow-2xl transform hover:scale-105 active:scale-95'
             } shadow-[#781220]/25`}
+            style={{ borderRadius: '9999px' }}
           >
             {!isLoading && (
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
