@@ -96,13 +96,16 @@ export const isBranchOpen = async (branchId: string): Promise<boolean> => {
     let closeTimeInMinutes = closeHour * 60 + closeMinute;
 
     // Handle closing time that goes into next day (e.g., 03:00)
-    if (closeTimeInMinutes < openTimeInMinutes) {
-      // Closing time is next day
+    if (closeHour < openHour || (closeHour <= 6 && openHour >= 10)) {
+      // Closing time is next day (early morning hours like 03:00)
+      // Branch is open if:
+      // 1. Current time is after opening time (same day)
+      // 2. OR current time is before closing time (next day - early morning)
       if (currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes <= closeTimeInMinutes) {
         return true;
       }
     } else {
-      // Same day closing
+      // Same day closing (normal hours like 23:59)
       if (currentTimeInMinutes >= openTimeInMinutes && currentTimeInMinutes <= closeTimeInMinutes) {
         return true;
       }

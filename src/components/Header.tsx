@@ -123,12 +123,11 @@ export const Header: React.FC<HeaderProps> = ({
 
             // Handle closing time that goes into next day (e.g., 03:00)
             const [openHour] = operatingHours.opening_time.split(':').map(Number);
-            const openTimeInMinutes = openHour * 60;
-
-            if (closeTimeInMinutes < openTimeInMinutes) {
-              // Closing time is next day
-              if (currentTimeInMinutes >= openTimeInMinutes) {
-                // We're in the same day, closing is tomorrow
+            
+            if (closeHour < openHour || (closeHour <= 6 && openHour >= 10)) {
+              // Closing time is next day (early morning hours)
+              if (currentTimeInMinutes >= (openHour * 60)) {
+                // We're after opening time, so closing is tomorrow
                 closeTimeInMinutes += 24 * 60; // Add 24 hours
               }
             }
