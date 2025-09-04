@@ -17,7 +17,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours(branchId));
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
@@ -52,11 +52,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours(branchId));
+      setIsOpen(isWithinOperatingHours());
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [branchId]);
+  }, []);
 
   const handleMobileItemClick = () => {
     if (!isOpen) return;

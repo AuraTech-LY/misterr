@@ -17,7 +17,6 @@ interface CheckoutFormProps {
   onBack: () => void;
   isTransitioning?: boolean;
   selectedBranch?: any;
-  isDeliveryAvailable?: boolean;
 }
 
 interface OrderData {
@@ -47,8 +46,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   onSubmit, 
   onBack, 
   isTransitioning = false,
-  selectedBranch,
-  isDeliveryAvailable = true
+  selectedBranch
 }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<OrderData>({
@@ -243,10 +241,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const canSubmit = () => {
     const basicValid = canProceedToStep2();
     if (formData.deliveryMethod === 'delivery') {
-      // Check if delivery is available
-      if (!isDeliveryAvailable) {
-        return false;
-      }
       // Require location to be captured for delivery
       const hasLocation = formData.customerLocation?.latitude && formData.customerLocation?.longitude;
       const hasArea = formData.deliveryInfo?.area?.trim();
@@ -423,22 +417,14 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <button
                     onClick={() => updateFormData('deliveryMethod', 'delivery')}
-                    disabled={!isDeliveryAvailable}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
-                      !isDeliveryAvailable
-                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed opacity-50'
-                        : formData.deliveryMethod === 'delivery'
+                      formData.deliveryMethod === 'delivery'
                         ? 'border-[#55421A] bg-red-50 text-[#55421A]'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <Truck className="w-6 h-6 mx-auto mb-2" />
-                    <div className="font-semibold text-sm sm:text-base">
-                      توصيل
-                      {!isDeliveryAvailable && (
-                        <div className="text-xs text-red-500 mt-1">غير متوفر حالياً</div>
-                      )}
-                    </div>
+                    <div className="font-semibold text-sm sm:text-base">توصيل</div>
                   </button>
                   
                   <button
@@ -453,18 +439,6 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     <div className="font-semibold text-sm sm:text-base">استلام</div>
                   </button>
                 </div>
-                
-                {/* Delivery unavailable message for Mister Crispy */}
-                {!isDeliveryAvailable && selectedBranch?.name?.includes('مستر كريسبي') && (
-                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
-                    <div className="flex items-center gap-2 text-yellow-800">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                      <span className="text-sm font-medium">
-                        التوصيل غير متوفر من 12:00 ص إلى 3:00 ص - الاستلام متوفر فقط
-                      </span>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Progressive Disclosure: Delivery Address */}

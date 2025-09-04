@@ -38,7 +38,6 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     loadBranchCart,
   } = useCart(branchId);
   const [isOpen, setIsOpen] = useState(isWithinOperatingHours());
-  const [isDeliveryOpen, setIsDeliveryOpen] = useState(true);
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
@@ -52,12 +51,11 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   // Update operating status every minute
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours(branchId));
-      setIsDeliveryOpen(isDeliveryAvailable(branchId));
+      setIsOpen(isWithinOperatingHours());
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [branchId]);
+  }, []);
 
   // Redirect to branches page if branch not found
   if (!branch) {
@@ -129,7 +127,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           
           {!isOpen && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
-              {getTimeUntilOpening(branchId) && `سيفتح خلال ${getTimeUntilOpening(branchId)}`}
+              {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
             </div>
           )}
         </div>
@@ -224,7 +222,6 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
         selectedBranch={branch}
-        isDeliveryAvailable={isDeliveryOpen}
       />
 
       <footer className="bg-black text-white py-12 mt-16" style={{ borderTopLeftRadius: '3rem', borderTopRightRadius: '3rem' }}>

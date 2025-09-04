@@ -10,7 +10,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { restaurants, getRestaurantById, getBranchById } from '../data/restaurantsData';
 import { Branch, Restaurant } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening, isDeliveryAvailable } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -46,7 +46,6 @@ export const HomePage: React.FC = () => {
     loadBranchCart,
   } = useCart(selectedBranch?.id);
   const [isOpen, setIsOpen] = useState(isWithinOperatingHours());
-  const [isDeliveryOpen, setIsDeliveryOpen] = useState(true);
 
   // Load branch-specific cart when branch changes
   React.useEffect(() => {
@@ -58,12 +57,11 @@ export const HomePage: React.FC = () => {
   // Update operating status every minute
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours(selectedBranch?.id));
-      setIsDeliveryOpen(isDeliveryAvailable(selectedBranch?.id));
+      setIsOpen(isWithinOperatingHours());
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [selectedBranch?.id]);
+  }, []);
 
   // Handle restaurant selection
   const handleRestaurantSelect = (restaurant: Restaurant) => {
@@ -166,7 +164,7 @@ export const HomePage: React.FC = () => {
           
           {!isOpen && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
-              {getTimeUntilOpening(selectedBranch?.id) && `سيفتح خلال ${getTimeUntilOpening(selectedBranch?.id)}`}
+              {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
             </div>
           )}
         </div>
@@ -261,7 +259,6 @@ export const HomePage: React.FC = () => {
         onRemoveItem={removeFromCart}
         onClearCart={clearCart}
         selectedBranch={selectedBranch}
-        isDeliveryAvailable={isDeliveryOpen}
       />
 
       <footer className="bg-black text-white py-12 mt-16" style={{ borderTopLeftRadius: '3rem', borderTopRightRadius: '3rem' }}>

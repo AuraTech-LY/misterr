@@ -81,12 +81,12 @@ export const Header: React.FC<HeaderProps> = ({
   // Update operating status every minute
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours(selectedBranch?.id));
-      setTimeUntilClosing(getTimeUntilClosing(selectedBranch?.id));
+      setIsOpen(isWithinOperatingHours());
+      setTimeUntilClosing(getTimeUntilClosing());
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [selectedBranch?.id]);
+  }, []);
 
   const handleBranchChange = () => {
     // Always navigate to branches page when button is clicked
