@@ -189,6 +189,8 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
     return true; // Default to available if no branch specified
   }
 
+  console.log(`[DEBUG] Checking delivery availability for branch: ${branchId}`);
+  
   // Try to get from cache first
   let operatingHours = getCachedOperatingHours(branchId);
   
@@ -198,32 +200,57 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
     
     if (!operatingHours) {
       // Fallback to default (delivery available)
+      console.log(`[DEBUG] No operating hours found for ${branchId}, defaulting to available`);
       return true;
     }
   }
 
+  console.log(`[DEBUG] Operating hours for ${branchId}:`, operatingHours);
+  
   // Check if delivery is disabled for this branch
   if (!operatingHours.delivery_available) {
+    console.log(`[DEBUG] Delivery disabled for branch ${branchId}`);
     return false;
   }
 
   // If no specific delivery times are set, delivery follows regular hours
   if (!operatingHours.delivery_start_time || !operatingHours.delivery_end_time) {
+    console.log(`[DEBUG] No specific delivery times set for ${branchId}, following regular hours`);
     return await isWithinOperatingHours(branchId);
   }
 
+  const currentTime = getCurrentTime();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  
+  console.log(`[DEBUG] Current time: ${currentHour}:${currentMinute.toString().padStart(2, '0')}`);
+  console.log(`[DEBUG] Delivery hours: ${operatingHours.delivery_start_time} - ${operatingHours.delivery_end_time}`);
+  
   // Check if current time is within delivery hours
   const [deliveryStartHour, deliveryStartMinute] = operatingHours.delivery_start_time.split(':').map(Number);
   const [deliveryEndHour, deliveryEndMinute] = operatingHours.delivery_end_time.split(':').map(Number);
 
   // First check if restaurant is open
   const isRestaurantOpen = await isWithinOperatingHours(branchId);
+  console.log(`[DEBUG] Restaurant open: ${isRestaurantOpen}`);
+  
   if (!isRestaurantOpen) {
+    console.log(`[DEBUG] Restaurant closed, delivery not available`);
     return false;
   }
 
   // Then check if current time is within delivery hours
-  return isTimeWithinOperatingHours(deliveryStartHour, deliveryStartMinute, deliveryEndHour, deliveryEndMinute);
+  const isWithinDeliveryHours = isTimeWithinOperatingHours(
+    deliveryStartHour, 
+    deliveryStartMinute, 
+    deliveryEndHour, 
+    deliveryEndMinute,
+    currentHour,
+    currentMinute
+  );
+  
+  console.log(`[DEBUG] Within delivery hours: ${isWithinDeliveryHours}`);
+  return isWithinDeliveryHours;
 };
 
 /**

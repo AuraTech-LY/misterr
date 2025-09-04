@@ -71,12 +71,15 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   useEffect(() => {
     const checkDeliveryAvailability = async () => {
       setIsCheckingDelivery(true);
+      console.log(`[CHECKOUT] Checking delivery for branch: ${selectedBranch?.id}`);
       const deliveryAvailable = await isDeliveryAvailable(selectedBranch?.id);
+      console.log(`[CHECKOUT] Delivery available result: ${deliveryAvailable}`);
       setIsDeliveryAvailableNow(deliveryAvailable);
       setIsCheckingDelivery(false);
       
       // If delivery is not available, automatically switch to pickup
       if (!deliveryAvailable && formData.deliveryMethod === 'delivery') {
+        console.log(`[CHECKOUT] Switching to pickup because delivery not available`);
         setFormData(prev => ({ ...prev, deliveryMethod: 'pickup' }));
         // Clear any existing location data when switching to pickup
         setCustomerLocation(null);
