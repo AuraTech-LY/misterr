@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
 import { AdminCategories } from './AdminCategories';
+import { AdminOperatingHours } from './AdminOperatingHours';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -27,7 +28,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'menu' | 'categories'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours'>('menu');
   const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy'>('mister-shish');
 
   const newItemTemplate: MenuItem = {
@@ -333,6 +334,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               <Tag className="w-5 h-5" />
               إدارة الفئات
             </button>
+            <button
+              onClick={() => setActiveTab('hours')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'hours'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              أوقات العمل
+            </button>
           </div>
         </div>
       </div>
@@ -340,6 +354,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       <main className="container mx-auto px-3 sm:px-8 py-4 sm:py-8">
         {activeTab === 'categories' ? (
           <AdminCategories onCategoriesChange={handleCategoriesChange} />
+        ) : activeTab === 'hours' ? (
+          <AdminOperatingHours />
         ) : (
           <>
         {/* Restaurant Sub-tabs */}
