@@ -124,13 +124,13 @@ export const isWithinOperatingHours = async (): Promise<boolean> => {
     // Check if Supabase environment variables are available
     if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
       console.warn('Supabase environment variables not found, using default hours');
-      return isWithinDefaultHours();
+      return isWithinDefaultOperatingHours();
     }
 
     // Check if Supabase environment variables are available
     if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
       console.warn('Supabase environment variables not found, using default hours');
-      return isWithinDefaultHours();
+      return isWithinDefaultOperatingHours();
     }
 
     // Fetch all operating hours from database
@@ -140,7 +140,6 @@ export const isWithinOperatingHours = async (): Promise<boolean> => {
 
     if (error) {
       console.warn('Error fetching operating hours, using default hours:', error);
-      return isWithinDefaultHours();
       return isWithinDefaultOperatingHours();
     }
 
