@@ -173,28 +173,6 @@ export const AdminOperatingHours: React.FC = () => {
           </div>
         </div>
       </div>
-          <button
-            onClick={() => setSelectedRestaurant('mister-shish')}
-            className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-              selectedRestaurant === 'mister-shish'
-                ? 'text-[#781220] border-[#781220] bg-red-50'
-                : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
-            }`}
-          >
-            مستر شيش
-          </button>
-          <button
-            onClick={() => setSelectedRestaurant('mister-crispy')}
-            className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-              selectedRestaurant === 'mister-crispy'
-                ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
-            }`}
-          >
-            مستر كريسبي
-          </button>
-        </div>
-      </div>
 
       {/* Header */}
       <div className="flex justify-between items-center">
