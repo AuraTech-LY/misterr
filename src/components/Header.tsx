@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
-import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilClosing, isWithinOperatingHoursSync } from '../utils/timeUtils';
 
 // Custom hook for count-up animation
 const useCountUp = (endValue: number, duration: number = 600) => {
@@ -69,8 +69,8 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
-  const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHoursSync());
+  const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
   
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
@@ -78,15 +78,22 @@ export const Header: React.FC<HeaderProps> = ({
   // Count-up animation for cart item count
   const { value: animatedItemCount, isAnimating: isItemCountAnimating } = useCountUp(cartItemCount);
 
-  // Update operating status every minute
+  // Update operating status every minute with branch-specific hours
   React.useEffect(() => {
+    const updateStatus = async () => {
+      const branchIsOpen = await isWithinOperatingHours(selectedBranch?.id);
+      const timeUntilClose = await getTimeUntilClosing(selectedBranch?.id);
+      setIsOpen(branchIsOpen);
+      setTimeUntilClosing(timeUntilClose);
+    };
+    
+    updateStatus();
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
-      setTimeUntilClosing(getTimeUntilClosing());
+      updateStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedBranch?.id]);
 
   const handleBranchChange = () => {
     // Always navigate to branches page when button is clicked

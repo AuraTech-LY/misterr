@@ -8,7 +8,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { getBranchById } from '../data/restaurantsData';
 import { Branch } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening, isWithinOperatingHoursSync } from '../utils/timeUtils';
 
 interface BranchMenuPageProps {
   branchId: string;
@@ -37,7 +37,8 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     clearCart,
     loadBranchCart,
   } = useCart(branchId);
-  const [isOpen, setIsOpen] = useState(isWithinOperatingHours());
+  const [isOpen, setIsOpen] = useState(isWithinOperatingHoursSync());
+  const [timeUntilOpening, setTimeUntilOpening] = useState<string | null>(null);
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
@@ -48,14 +49,22 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     }
   }, [branchId, loadBranchCart, branch]);
 
-  // Update operating status every minute
+  // Update operating status every minute with branch-specific hours
   useEffect(() => {
+    const updateStatus = async () => {
+      const branchIsOpen = await isWithinOperatingHours(branchId);
+      const timeUntilOpen = await getTimeUntilOpening(branchId);
+      setIsOpen(branchIsOpen);
+      setTimeUntilOpening(timeUntilOpen);
+    };
+    
+    updateStatus();
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
+      updateStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [branchId]);
 
   // Redirect to branches page if branch not found
   if (!branch) {
@@ -127,7 +136,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           
           {!isOpen && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
-              {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
+              {timeUntilOpening && `سيفتح خلال ${timeUntilOpening}`}
             </div>
           )}
         </div>

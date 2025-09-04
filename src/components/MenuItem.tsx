@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, Star, X, Minus, Trash2 } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
-import { isWithinOperatingHours } from '../utils/timeUtils';
+import { isWithinOperatingHours, isWithinOperatingHoursSync } from '../utils/timeUtils';
 import { getBranchById } from '../data/restaurantsData';
 
 interface MenuItemProps {
@@ -17,7 +17,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHoursSync());
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
@@ -51,12 +51,18 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   // Update operating status every minute
   React.useEffect(() => {
+    const updateStatus = async () => {
+      const branchIsOpen = await isWithinOperatingHours(branchId);
+      setIsOpen(branchIsOpen);
+    };
+    
+    updateStatus();
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
+      updateStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [branchId]);
 
   const handleMobileItemClick = () => {
     if (!isOpen) return;

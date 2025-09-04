@@ -1,7 +1,7 @@
 import React from 'react';
 import { Restaurant } from '../types';
 import { Store } from 'lucide-react';
-import { isWithinOperatingHours } from '../utils/timeUtils';
+import { isWithinOperatingHoursSync } from '../utils/timeUtils';
 
 interface RestaurantSelectorProps {
   restaurants: Restaurant[];
@@ -13,7 +13,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
   onSelectRestaurant,
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const isOpen = isWithinOperatingHours();
+  const isOpen = isWithinOperatingHoursSync();
 
   // Trigger loading animation
   React.useEffect(() => {

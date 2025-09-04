@@ -10,7 +10,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { restaurants, getRestaurantById, getBranchById } from '../data/restaurantsData';
 import { Branch, Restaurant } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening, isWithinOperatingHoursSync } from '../utils/timeUtils';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +45,8 @@ export const HomePage: React.FC = () => {
     clearCart,
     loadBranchCart,
   } = useCart(selectedBranch?.id);
-  const [isOpen, setIsOpen] = useState(isWithinOperatingHours());
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHoursSync());
+  const [timeUntilOpening, setTimeUntilOpening] = React.useState<string | null>(null);
 
   // Load branch-specific cart when branch changes
   React.useEffect(() => {
@@ -54,14 +55,22 @@ export const HomePage: React.FC = () => {
     }
   }, [selectedBranch?.id, loadBranchCart]);
 
-  // Update operating status every minute
+  // Update operating status every minute with branch-specific hours
   useEffect(() => {
+    const updateStatus = async () => {
+      const branchIsOpen = await isWithinOperatingHours(selectedBranch?.id);
+      const timeUntilOpen = await getTimeUntilOpening(selectedBranch?.id);
+      setIsOpen(branchIsOpen);
+      setTimeUntilOpening(timeUntilOpen);
+    };
+    
+    updateStatus();
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
+      updateStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedBranch?.id]);
 
   // Handle restaurant selection
   const handleRestaurantSelect = (restaurant: Restaurant) => {
@@ -164,7 +173,7 @@ export const HomePage: React.FC = () => {
           
           {!isOpen && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
-              {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
+              {timeUntilOpening && `سيفتح خلال ${timeUntilOpening}`}
             </div>
           )}
         </div>

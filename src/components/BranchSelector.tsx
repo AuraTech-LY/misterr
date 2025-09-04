@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapPin, ArrowRight } from 'lucide-react';
 import { Branch } from '../types';
-import { isWithinOperatingHours } from '../utils/timeUtils';
+import { isWithinOperatingHoursSync } from '../utils/timeUtils';
 
 interface BranchSelectorProps {
   branches: Branch[];
@@ -19,7 +19,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   onBackToRestaurants,
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const isOpen = isWithinOperatingHours();
+  const isOpen = isWithinOperatingHoursSync();
 
   // Trigger loading animation
   React.useEffect(() => {
