@@ -42,9 +42,9 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   // Load branch-specific cart when component mounts
   useEffect(() => {
     loadBranchCart(branchId);
-    // Also save the branch to localStorage for consistency
+    // Also save the branch ID to localStorage for consistency
     if (branch) {
-      localStorage.setItem('selectedBranch', JSON.stringify(branch));
+      localStorage.setItem('selectedBranchId', branch.id);
     }
   }, [branchId, loadBranchCart, branch]);
 

@@ -222,7 +222,7 @@ export const Header: React.FC<HeaderProps> = ({
               // Clear both restaurant and branch to go to restaurant selector
               localStorage.removeItem('selectedRestaurantId');
               localStorage.removeItem('selectedBranchId');
-             window.location.href = '/';
+              navigate('/');
             }}
             className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
           >
@@ -256,8 +256,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onBranchSelect={(branch) => {
                     setIsChangingBranch(true);
                     
-                    // Save the selected branch
-                    localStorage.setItem('selectedBranch', JSON.stringify(branch));
+                    // Save the selected branch ID
+                    localStorage.setItem('selectedBranchId', branch.id);
                     
                     const branchRoutes: Record<string, string> = {
                       'airport': '/airport-menu',
@@ -270,9 +270,9 @@ export const Header: React.FC<HeaderProps> = ({
                     // Add smooth transition delay
                     setTimeout(() => {
                       if (targetRoute) {
-                        window.location.href = targetRoute;
+                        navigate(targetRoute);
                       } else {
-                        window.location.href = '/';
+                        navigate('/');
                       }
                     }, 300);
                   }}
