@@ -20,6 +20,12 @@ interface AdminDashboardProps {
   onLogout: () => void;
 }
 
+interface SuccessMessage {
+  id: string;
+  message: string;
+  timestamp: number;
+}
+
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -30,6 +36,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours'>('menu');
   const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy'>('mister-shish');
+  const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
 
   const newItemTemplate: MenuItem = {
     name: '',
@@ -45,6 +52,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   };
 
   const [newItem, setNewItem] = useState(newItemTemplate);
+
+  // Auto-remove success messages after 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setSuccessMessages(prev => prev.filter(msg => now - msg.timestamp < 3000));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const addSuccessMessage = (message: string) => {
+    const newMessage: SuccessMessage = {
+      id: Math.random().toString(36).substr(2, 9),
+      message,
+      timestamp: Date.now()
+    };
+    setSuccessMessages(prev => [...prev, newMessage]);
+  };
 
   useEffect(() => {
     fetchData();
@@ -158,6 +184,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
       setMenuItems(prev => prev.map(i => i.id === itemToSave.id ? itemToSave : i));
       setEditingItem(null);
+      addSuccessMessage('تم حفظ التغييرات بنجاح');
     } catch (error) {
       console.error('Error updating item:', error);
       alert('حدث خطأ في حفظ التغييرات');
@@ -199,6 +226,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       setMenuItems(prev => [...prev, data]);
       setNewItem(newItemTemplate);
       setShowAddForm(false);
+      addSuccessMessage('تم إضافة العنصر بنجاح');
     } catch (error) {
       console.error('Error adding item:', error);
       alert('حدث خطأ في إضافة العنصر');
@@ -242,6 +270,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         if (error) throw error;
 
         setMenuItems(prev => prev.map(item => item.id === id ? updatedItem : item));
+        addSuccessMessage('تم تحديث العنصر بنجاح');
       } catch (error) {
         console.error('Error updating item:', error);
         alert('حدث خطأ في تحديث العنصر');
@@ -259,6 +288,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         if (error) throw error;
 
         setMenuItems(prev => prev.filter(item => item.id !== id));
+        addSuccessMessage('تم حذف العنصر بنجاح');
       } catch (error) {
         console.error('Error deleting item:', error);
         alert('حدث خطأ في حذف العنصر');
@@ -307,6 +337,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           </div>
         </div>
       </header>
+
+      {/* Success Messages */}
+      <div className="fixed top-20 left-4 right-4 z-50 space-y-2 pointer-events-none">
+        {successMessages.map((message) => (
+          <div
+            key={message.id}
+            className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg animate-fadeInUp mx-auto max-w-md text-center font-semibold"
+          >
+            ✓ {message.message}
+          </div>
+        ))}
+      </div>
 
       {/* Tab Navigation */}
       <div className="bg-white shadow-sm border-b">
