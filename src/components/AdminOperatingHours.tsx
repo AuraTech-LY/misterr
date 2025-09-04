@@ -20,7 +20,7 @@ interface OperatingHours {
   delivery_available: boolean;
 }
 
-export const AdminOperatingHours: React.FC = () => {
+const AdminOperatingHours: React.FC = () => {
   const [operatingHours, setOperatingHours] = useState<Record<string, OperatingHours>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<Record<string, boolean>>({});
@@ -370,3 +370,5 @@ export const AdminOperatingHours: React.FC = () => {
     </div>
   );
 };
+
+export { AdminOperatingHours };
