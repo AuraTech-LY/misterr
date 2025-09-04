@@ -1,6 +1,6 @@
 // Time utilities for Libya timezone (UTC+2)
 
-export const LIBYA_TIMEZONE = 'Europe/Moscow'; // UTC+3
+export const LIBYA_TIMEZONE = 'Africa/Tripoli'; // Libya/Tripoli timezone
 
 // Cache configuration
 const CACHE_EXPIRATION_MINUTES = 30; // Cache operating hours for 30 minutes
@@ -18,10 +18,10 @@ interface CachedOperatingHours {
 }
 
 /**
- * Get current time in UTC+3 timezone
+ * Get current time in Libya/Tripoli timezone
  */
 export const getCurrentTime = (): Date => {
-  // Create a date object with UTC+3 timezone
+  // Create a date object with Libya/Tripoli timezone
   const now = new Date();
   
   // Use Intl.DateTimeFormat to get UTC+3 time
@@ -295,7 +295,7 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
 };
 
 /**
- * Get formatted current time in UTC+4 timezone
+ * Get formatted current time in Libya/Tripoli timezone
  */
 export const getFormattedLibyaTime = (): string => {
   const now = new Date();
@@ -430,14 +430,14 @@ export const getTimeUntilClosing = async (branchId?: string): Promise<string | n
 };
 
 /**
- * Get UTC+3 time (alias for getCurrentTime for backward compatibility)
+ * Get Libya/Tripoli time (alias for getCurrentTime for backward compatibility)
  */
 export const getLibyaTime = (): Date => {
   return getCurrentTime();
 };
 
 /**
- * Get current UTC+3 date and time as a formatted string
+ * Get current Libya/Tripoli date and time as a formatted string
  */
 export const getLibyaDateTime = (): string => {
   const now = new Date();
