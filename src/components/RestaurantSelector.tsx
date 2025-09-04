@@ -14,6 +14,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [restaurantStatuses, setRestaurantStatuses] = React.useState<Record<string, boolean>>({});
+  const [isCheckingHours, setIsCheckingHours] = React.useState(true);
 
   // Trigger loading animation
   React.useEffect(() => {
@@ -24,6 +25,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
   // Check if any branch in each restaurant is open
   React.useEffect(() => {
     const checkRestaurantHours = async () => {
+      setIsCheckingHours(true);
       const statuses: Record<string, boolean> = {};
       
       for (const restaurant of restaurants) {
@@ -41,6 +43,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
       }
       
       setRestaurantStatuses(statuses);
+      setIsCheckingHours(false);
     };
 
     checkRestaurantHours();
@@ -58,7 +61,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
     onSelectRestaurant(restaurant);
   };
 
-  const hasAnyOpenRestaurant = Object.values(restaurantStatuses).some(status => status);
+  const hasAnyOpenRestaurant = !isCheckingHours && Object.values(restaurantStatuses).some(status => status);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" dir="rtl">
@@ -82,17 +85,18 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
         {/* Mobile: Vertical stack, Desktop: Horizontal grid */}
         <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-6 md:max-w-4xl md:mx-auto">
         {restaurants.map((restaurant, index) => {
-          const isRestaurantOpen = restaurantStatuses[restaurant.id] ?? false;
+          const isRestaurantOpen = !isCheckingHours && (restaurantStatuses[restaurant.id] ?? false);
+          const showAsDisabled = isCheckingHours || !isRestaurantOpen;
           return (
             <button
               key={restaurant.id}
               onClick={() => handleRestaurantSelect(restaurant)}
-              disabled={!isRestaurantOpen}
+              disabled={showAsDisabled}
               className={`relative w-full p-3 md:p-4 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] overflow-hidden group shadow-lg hover:shadow-xl transform-gpu ${
                 restaurant.id === 'mister-crispy' 
                   ? 'bg-gradient-to-r from-[#55421A] to-[#4a3817]' 
                   : 'bg-gradient-to-r from-[#781220] to-[#651018]'
-              } ${!isRestaurantOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[80px] md:flex md:items-center ${
+              } ${showAsDisabled ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[80px] md:flex md:items-center ${
                 isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
               style={{
@@ -135,7 +139,12 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                   </div>
                 </div>
                 
-                {!isRestaurantOpen && (
+                {isCheckingHours ? (
+                  <div className="bg-black/20 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm flex items-center gap-2">
+                    <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+                    جاري التحقق...
+                  </div>
+                ) : !isRestaurantOpen && (
                   <div className="bg-black/20 text-white px-3 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm">
                     مغلق حالياً
                   </div>
@@ -151,14 +160,21 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
       <div className={`px-6 py-6 text-center transition-all duration-700 ease-out ${
         isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`} style={{ transitionDelay: isLoaded ? '300ms' : '0ms' }}>
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-          hasAnyOpenRestaurant 
-            ? 'bg-green-100 text-green-800 border border-green-200' 
-            : 'bg-gray-100 text-gray-600 border border-gray-200'
-        }`}>
-          <div className={`w-2 h-2 rounded-full ${hasAnyOpenRestaurant ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
-          {hasAnyOpenRestaurant ? 'يوجد مطاعم مفتوحة للطلبات' : 'جميع المطاعم مغلقة حالياً'}
-        </div>
+        {isCheckingHours ? (
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200">
+            <div className="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            جاري التحقق من أوقات العمل...
+          </div>
+        ) : (
+          <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+            hasAnyOpenRestaurant 
+              ? 'bg-green-100 text-green-800 border border-green-200' 
+              : 'bg-gray-100 text-gray-600 border border-gray-200'
+          }`}>
+            <div className={`w-2 h-2 rounded-full ${hasAnyOpenRestaurant ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+            {hasAnyOpenRestaurant ? 'يوجد مطاعم مفتوحة للطلبات' : 'جميع المطاعم مغلقة حالياً'}
+          </div>
+        )}
       </div>
     </div>
   );
