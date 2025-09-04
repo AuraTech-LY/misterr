@@ -13,7 +13,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
   onSelectRestaurant,
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const isOpen = isWithinOperatingHours();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   // Trigger loading animation
   React.useEffect(() => {
@@ -21,6 +21,14 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Check operating status on mount
+  React.useEffect(() => {
+    const checkOperatingStatus = async () => {
+      const status = await isWithinOperatingHours();
+      setIsOpen(status);
+    };
+    checkOperatingStatus();
+  }, []);
   const handleRestaurantSelect = (restaurant: Restaurant) => {
     // Update browser theme color immediately
     if (window.updateThemeColorForRestaurant) {

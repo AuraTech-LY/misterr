@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
+  const [isOpen, setIsOpen] = React.useState(false);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
   
   // Count-up animation for cart total
@@ -78,10 +78,19 @@ export const Header: React.FC<HeaderProps> = ({
   // Count-up animation for cart item count
   const { value: animatedItemCount, isAnimating: isItemCountAnimating } = useCountUp(cartItemCount);
 
-  // Update operating status every minute
+  // Check operating status on mount and update every minute
   React.useEffect(() => {
+    const checkOperatingStatus = async () => {
+      const status = await isWithinOperatingHours();
+      setIsOpen(status);
+    };
+
+    // Check immediately
+    checkOperatingStatus();
+
+    // Then check every minute
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
+      checkOperatingStatus();
       setTimeUntilClosing(getTimeUntilClosing());
     }, 60000);
 

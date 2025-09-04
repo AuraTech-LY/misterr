@@ -17,7 +17,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
+  const [isOpen, setIsOpen] = React.useState(false);
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
@@ -49,10 +49,19 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     return () => clearTimeout(timer);
   }, []);
 
-  // Update operating status every minute
+  // Check operating status on mount and update every minute
   React.useEffect(() => {
+    const checkOperatingStatus = async () => {
+      const status = await isWithinOperatingHours();
+      setIsOpen(status);
+    };
+
+    // Check immediately
+    checkOperatingStatus();
+
+    // Then check every minute
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
+      checkOperatingStatus();
     }, 60000);
 
     return () => clearInterval(interval);

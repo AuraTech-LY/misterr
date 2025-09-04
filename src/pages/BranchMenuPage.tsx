@@ -37,7 +37,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     clearCart,
     loadBranchCart,
   } = useCart(branchId);
-  const [isOpen, setIsOpen] = useState(isWithinOperatingHours());
+  const [isOpen, setIsOpen] = useState(false);
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
@@ -48,10 +48,19 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     }
   }, [branchId, loadBranchCart, branch]);
 
-  // Update operating status every minute
+  // Check operating status on mount and update every minute
   useEffect(() => {
+    const checkOperatingStatus = async () => {
+      const status = await isWithinOperatingHours();
+      setIsOpen(status);
+    };
+
+    // Check immediately
+    checkOperatingStatus();
+
+    // Then check every minute
     const interval = setInterval(() => {
-      setIsOpen(isWithinOperatingHours());
+      checkOperatingStatus();
     }, 60000);
 
     return () => clearInterval(interval);

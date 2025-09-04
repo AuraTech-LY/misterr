@@ -19,7 +19,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   onBackToRestaurants,
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const isOpen = isWithinOperatingHours();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   // Trigger loading animation
   React.useEffect(() => {
@@ -27,6 +27,14 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Check operating status on mount
+  React.useEffect(() => {
+    const checkOperatingStatus = async () => {
+      const status = await isWithinOperatingHours();
+      setIsOpen(status);
+    };
+    checkOperatingStatus();
+  }, []);
   const handleBranchSelect = (branch: Branch) => {
     // Update browser theme color based on branch
     if (window.updateThemeColorForRestaurant) {
