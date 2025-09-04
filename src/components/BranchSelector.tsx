@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapPin, ArrowRight } from 'lucide-react';
 import { Branch } from '../types';
-import { isWithinOperatingHoursSync } from '../utils/timeUtils';
+import { isWithinOperatingHours } from '../utils/timeUtils';
 
 interface BranchSelectorProps {
   branches: Branch[];
@@ -19,7 +19,8 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
   onBackToRestaurants,
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const isOpen = isWithinOperatingHoursSync();
+  const [branchStatuses, setBranchStatuses] = React.useState<Record<string, boolean>>({});
+  const [hasAnyOpenBranch, setHasAnyOpenBranch] = React.useState(false);
 
   // Trigger loading animation
   React.useEffect(() => {
@@ -27,6 +28,28 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Check operating hours for each branch
+  React.useEffect(() => {
+    const checkBranchHours = async () => {
+      const statuses: Record<string, boolean> = {};
+      let anyOpen = false;
+      
+      for (const branch of branches) {
+        const isOpen = await isWithinOperatingHours(branch.id);
+        statuses[branch.id] = isOpen;
+        if (isOpen) anyOpen = true;
+      }
+      
+      setBranchStatuses(statuses);
+      setHasAnyOpenBranch(anyOpen);
+    };
+
+    checkBranchHours();
+    
+    // Update every minute
+    const interval = setInterval(checkBranchHours, 60000);
+    return () => clearInterval(interval);
+  }, [branches]);
   const handleBranchSelect = (branch: Branch) => {
     // Update browser theme color based on branch
     if (window.updateThemeColorForRestaurant) {
@@ -77,6 +100,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
       {/* Branch Buttons */}
       <div className="flex-1 px-6 py-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:max-w-6xl md:mx-auto">
         {branches.map((branch, index) => (
+          const isBranchOpen = branchStatuses[branch.id] ?? false;
           <button
             key={branch.id}
             onClick={() => handleBranchSelect(branch)}
@@ -100,12 +124,12 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full group-active:translate-x-full transition-transform duration-1000 ease-out"></div>
             
             {/* Subtle accent line */}
-            <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/20 group-hover:bg-white/40 group-active:bg-white/60 transition-all duration-300"></div>
+              disabled={!isBranchOpen}
             
             {/* Mobile touch ripple effect */}
             <div className="absolute inset-0 bg-white/0 group-active:bg-white/10 transition-all duration-150 ease-out rounded-2xl"></div>
             
-            <div className="relative flex items-center justify-between">
+              } ${!isBranchOpen ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[140px] md:flex md:items-center ${
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 md:w-14 md:h-14 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:bg-white/20 group-hover:scale-110 group-active:scale-105 group-active:bg-white/30 transition-all duration-300">
                   <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
@@ -115,7 +139,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
                   <div className="text-sm md:text-base opacity-80 font-normal">{branch.area}</div>
                 </div>
               </div>
-              
+                {!isBranchOpen && (
               {!isOpen && (
                 <div className="bg-black/20 text-white px-3 py-1.5 rounded-full text-sm md:text-base font-medium backdrop-blur-sm">
                   مغلق حالياً
@@ -131,12 +155,12 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
         isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`} style={{ transitionDelay: isLoaded ? '250ms' : '0ms' }}>
         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-          isOpen 
+          hasAnyOpenBranch 
             ? 'bg-green-100 text-green-800 border border-green-200' 
             : 'bg-gray-100 text-gray-600 border border-gray-200'
         }`}>
-          <div className={`w-2 h-2 rounded-full ${isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
-          {isOpen ? 'مفتوح للطلبات الآن' : 'مغلق • يفتح من 11:00 ص إلى 11:59 م'}
+          <div className={`w-2 h-2 rounded-full ${hasAnyOpenBranch ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+          {hasAnyOpenBranch ? 'يوجد فروع مفتوحة للطلبات' : 'جميع الفروع مغلقة حالياً'}
         </div>
       </div>
     </div>
