@@ -214,18 +214,31 @@ export const getTimeUntilClosing = async (branchId?: string): Promise<string | n
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   
-  // Handle next-day closing (e.g., closes at 3:00 AM)
+  // Calculate time until closing
   let hoursUntilClose, minutesUntilClose;
   
+  // Handle next-day closing (e.g., closes at 3:00 AM)
   if (closingHour < 12) { // Assuming closing hours before noon are next day
-    // Next day closing
-    const hoursUntilMidnight = 24 - currentHour;
-    hoursUntilClose = hoursUntilMidnight + closingHour;
-    minutesUntilClose = closingMinute - currentMinute;
-    
-    if (minutesUntilClose < 0) {
-      hoursUntilClose -= 1;
-      minutesUntilClose += 60;
+    // Check if we're already past midnight but before closing time
+    if (currentHour < closingHour || (currentHour === closingHour && currentMinute <= closingMinute)) {
+      // We're in the same "day" as closing (after midnight but before closing)
+      hoursUntilClose = closingHour - currentHour;
+      minutesUntilClose = closingMinute - currentMinute;
+      
+      if (minutesUntilClose < 0) {
+        hoursUntilClose -= 1;
+        minutesUntilClose += 60;
+      }
+    } else {
+      // We're before midnight, need to calculate time until next day's closing
+      const hoursUntilMidnight = 24 - currentHour;
+      hoursUntilClose = hoursUntilMidnight + closingHour;
+      minutesUntilClose = closingMinute - currentMinute;
+      
+      if (minutesUntilClose < 0) {
+        hoursUntilClose -= 1;
+        minutesUntilClose += 60;
+      }
     }
   } else {
     // Same day closing
