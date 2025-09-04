@@ -214,8 +214,29 @@ export const getTimeUntilClosing = async (branchId?: string): Promise<string | n
   const currentHour = currentTime.getHours();
   const currentMinute = currentTime.getMinutes();
   
-  const hoursUntilClose = closingHour - currentHour;
-  const minutesUntilClose = closingMinute - currentMinute;
+  // Handle next-day closing (e.g., closes at 3:00 AM)
+  let hoursUntilClose, minutesUntilClose;
+  
+  if (closingHour < 12) { // Assuming closing hours before noon are next day
+    // Next day closing
+    const hoursUntilMidnight = 24 - currentHour;
+    hoursUntilClose = hoursUntilMidnight + closingHour;
+    minutesUntilClose = closingMinute - currentMinute;
+    
+    if (minutesUntilClose < 0) {
+      hoursUntilClose -= 1;
+      minutesUntilClose += 60;
+    }
+  } else {
+    // Same day closing
+    hoursUntilClose = closingHour - currentHour;
+    minutesUntilClose = closingMinute - currentMinute;
+    
+    if (minutesUntilClose < 0) {
+      hoursUntilClose -= 1;
+      minutesUntilClose += 60;
+    }
+  }
   
   if (hoursUntilClose === 0) {
     return `${minutesUntilClose} دقيقة`;
