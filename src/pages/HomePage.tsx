@@ -10,7 +10,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { restaurants, getRestaurantById, getBranchById } from '../data/restaurantsData';
 import { Branch, Restaurant } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening, isBranchOpen } from '../utils/timeUtils';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
