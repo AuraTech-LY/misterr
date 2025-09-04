@@ -216,6 +216,13 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
   const [deliveryStartHour, deliveryStartMinute] = operatingHours.delivery_start_time.split(':').map(Number);
   const [deliveryEndHour, deliveryEndMinute] = operatingHours.delivery_end_time.split(':').map(Number);
 
+  // First check if restaurant is open
+  const isRestaurantOpen = await isWithinOperatingHours(branchId);
+  if (!isRestaurantOpen) {
+    return false;
+  }
+
+  // Then check if current time is within delivery hours
   return isTimeWithinOperatingHours(deliveryStartHour, deliveryStartMinute, deliveryEndHour, deliveryEndMinute);
 };
 

@@ -78,6 +78,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       // If delivery is not available, automatically switch to pickup
       if (!deliveryAvailable && formData.deliveryMethod === 'delivery') {
         setFormData(prev => ({ ...prev, deliveryMethod: 'pickup' }));
+        // Clear any existing location data when switching to pickup
+        setCustomerLocation(null);
+        setDeliveryPrice(null);
+        setLocationError('');
       }
     };
 
@@ -445,7 +449,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     disabled={isCheckingDelivery || !isDeliveryAvailableNow}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'delivery'
-                        ? 'border-[#55421A] bg-red-50 text-[#55421A]'
+                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
                         : isCheckingDelivery || !isDeliveryAvailableNow
                         ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'border-gray-200 hover:border-gray-300'
@@ -461,7 +465,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     onClick={() => updateFormData('deliveryMethod', 'pickup')}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'pickup'
-                        ? 'border-[#55421A] bg-red-50 text-[#55421A]'
+                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -474,7 +478,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 {!isCheckingDelivery && !isDeliveryAvailableNow && (
                   <div className="mt-3 p-3 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl text-sm">
                     <p className="font-semibold mb-1">التوصيل غير متاح حالياً</p>
-                    <p>يمكنك اختيار الاستلام من الفرع</p>
+                    <p>التوصيل متوفر حتى الساعة 12:00 ص فقط. يمكنك اختيار الاستلام من الفرع</p>
                   </div>
                 )}
               </div>
