@@ -38,6 +38,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
     loadBranchCart,
   } = useCart(branchId);
   const [isOpen, setIsOpen] = useState(false);
+  const [branchIsOpen, setBranchIsOpen] = useState(false);
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
@@ -50,21 +51,32 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
   // Check operating status on mount and update every minute
   useEffect(() => {
-    const checkOperatingStatus = async () => {
+    const checkGlobalOperatingStatus = async () => {
       const status = await isWithinOperatingHours();
       setIsOpen(status);
     };
 
+    const checkBranchOperatingStatus = async () => {
+      if (branchId) {
+        const status = await isBranchOpen(branchId);
+        setBranchIsOpen(status);
+      } else {
+        setBranchIsOpen(false);
+      }
+    };
+
     // Check immediately
-    checkOperatingStatus();
+    checkGlobalOperatingStatus();
+    checkBranchOperatingStatus();
 
     // Then check every minute
     const interval = setInterval(() => {
-      checkOperatingStatus();
+      checkGlobalOperatingStatus();
+      checkBranchOperatingStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [branchId]);
 
   // Redirect to branches page if branch not found
   if (!branch) {
@@ -127,14 +139,14 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
           </p>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
             <div className={`w-3 h-3 rounded-full animate-pulse ${
-              isOpen ? 'bg-green-500' : 'bg-red-500'
+              branchIsOpen ? 'bg-green-500' : 'bg-red-500'
             }`}></div>
             <span className="text-sm text-gray-600">
-              {isOpen ? 'متوفر للطلب الآن' : 'مغلق حالياً'}
+              {branchIsOpen ? 'متوفر للطلب الآن' : 'مغلق حالياً'}
             </span>
           </div>
           
-          {!isOpen && (
+          {!branchIsOpen && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
               {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
             </div>
@@ -217,6 +229,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
               cartItems={cartItems}
               categories={categories}
               selectedCategory={selectedCategory}
+              branchIsOpen={branchIsOpen}
             />
           </div>
         )}

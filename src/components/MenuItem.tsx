@@ -10,9 +10,10 @@ interface MenuItemProps {
   onRemoveFromCart?: (id: string) => void;
   branchId?: string;
   cartItems?: any[];
+  branchIsOpen?: boolean;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveFromCart, branchId, cartItems = [] }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveFromCart, branchId, cartItems = [], branchIsOpen: propBranchIsOpen }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
@@ -26,7 +27,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isQuickAddPressing, setIsQuickAddPressing] = React.useState(false);
 
   // Get branch-specific operating status
-  const [branchIsOpen, setBranchIsOpen] = React.useState(false);
+  const [localBranchIsOpen, setLocalBranchIsOpen] = React.useState(false);
+  
+  // Use prop if provided, otherwise use local state
+  const branchIsOpen = propBranchIsOpen !== undefined ? propBranchIsOpen : localBranchIsOpen;
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -48,13 +52,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   // Check branch-specific operating status
   React.useEffect(() => {
+    // Only check if prop is not provided
+    if (propBranchIsOpen !== undefined) return;
+    
     const checkBranchStatus = async () => {
       if (branchId) {
         const status = await isBranchOpen(branchId);
-        setBranchIsOpen(status);
+        setLocalBranchIsOpen(status);
       } else {
         const status = await isWithinOperatingHours();
-        setBranchIsOpen(status);
+        setLocalBranchIsOpen(status);
       }
     };
 
@@ -65,7 +72,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
     const interval = setInterval(checkBranchStatus, 60000);
 
     return () => clearInterval(interval);
-  }, [branchId]);
+  }, [branchId, propBranchIsOpen]);
 
   // Trigger appearing animation on mount
   React.useEffect(() => {

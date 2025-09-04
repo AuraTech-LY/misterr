@@ -46,6 +46,7 @@ export const HomePage: React.FC = () => {
     loadBranchCart,
   } = useCart(selectedBranch?.id);
   const [isOpen, setIsOpen] = useState(false);
+  const [branchIsOpen, setBranchIsOpen] = useState(false);
 
   // Load branch-specific cart when branch changes
   React.useEffect(() => {
@@ -56,21 +57,32 @@ export const HomePage: React.FC = () => {
 
   // Check operating status on mount and update every minute
   useEffect(() => {
-    const checkOperatingStatus = async () => {
+    const checkGlobalOperatingStatus = async () => {
       const status = await isWithinOperatingHours();
       setIsOpen(status);
     };
 
+    const checkBranchOperatingStatus = async () => {
+      if (selectedBranch?.id) {
+        const status = await isBranchOpen(selectedBranch.id);
+        setBranchIsOpen(status);
+      } else {
+        setBranchIsOpen(false);
+      }
+    };
+
     // Check immediately
-    checkOperatingStatus();
+    checkGlobalOperatingStatus();
+    checkBranchOperatingStatus();
 
     // Then check every minute
     const interval = setInterval(() => {
-      checkOperatingStatus();
+      checkGlobalOperatingStatus();
+      checkBranchOperatingStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedBranch?.id]);
 
   // Handle restaurant selection
   const handleRestaurantSelect = (restaurant: Restaurant) => {
@@ -164,14 +176,14 @@ export const HomePage: React.FC = () => {
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
             <div className={`w-3 h-3 rounded-full animate-pulse ${
-              isOpen ? 'bg-green-500' : 'bg-red-500'
+              branchIsOpen ? 'bg-green-500' : 'bg-red-500'
             }`}></div>
             <span className="text-sm text-gray-600">
-              {isOpen ? 'متوفر للطلب الآن' : 'مغلق حالياً'}
+              {branchIsOpen ? 'متوفر للطلب الآن' : 'مغلق حالياً'}
             </span>
           </div>
           
-          {!isOpen && (
+          {!branchIsOpen && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
               {getTimeUntilOpening() && `سيفتح خلال ${getTimeUntilOpening()}`}
             </div>
@@ -254,6 +266,7 @@ export const HomePage: React.FC = () => {
               cartItems={cartItems}
               categories={categories}
               selectedCategory={selectedCategory}
+              branchIsOpen={branchIsOpen}
             />
           </div>
         )}
