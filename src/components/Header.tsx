@@ -4,7 +4,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
-import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
+import { isWithinOperatingHours, isBranchOpen, getCurrentTime } from '../utils/timeUtils';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 // Custom hook for count-up animation
 const useCountUp = (endValue: number, duration: number = 600) => {
@@ -70,7 +76,8 @@ export const Header: React.FC<HeaderProps> = ({
   const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
-  const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
+  const [branchIsOpen, setBranchIsOpen] = React.useState(false);
+  const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
   
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
@@ -80,22 +87,95 @@ export const Header: React.FC<HeaderProps> = ({
 
   // Check operating status on mount and update every minute
   React.useEffect(() => {
-    const checkOperatingStatus = async () => {
+    const checkGlobalOperatingStatus = async () => {
       const status = await isWithinOperatingHours();
       setIsOpen(status);
     };
 
+    const checkBranchOperatingStatus = async () => {
+      if (!selectedBranch?.id) {
+        setBranchIsOpen(false);
+        setTimeUntilClosing(null);
+        return;
+      }
+
+      try {
+        // Check if this specific branch is open
+        const branchOpen = await isBranchOpen(selectedBranch.id);
+        setBranchIsOpen(branchOpen);
+
+        if (branchOpen) {
+          // Get branch-specific operating hours to calculate closing time
+          const { data: operatingHours } = await supabase
+            .from('operating_hours')
+            .select('*')
+            .eq('branch_id', selectedBranch.id)
+            .single();
+
+          if (operatingHours && !operatingHours.is_closed && !operatingHours.is_24_hours) {
+            const currentTime = getCurrentTime();
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+            const [closeHour, closeMinute] = operatingHours.closing_time.split(':').map(Number);
+            let closeTimeInMinutes = closeHour * 60 + closeMinute;
+
+            // Handle closing time that goes into next day (e.g., 03:00)
+            const [openHour] = operatingHours.opening_time.split(':').map(Number);
+            const openTimeInMinutes = openHour * 60;
+
+            if (closeTimeInMinutes < openTimeInMinutes) {
+              // Closing time is next day
+              if (currentTimeInMinutes >= openTimeInMinutes) {
+                // We're in the same day, closing is tomorrow
+                closeTimeInMinutes += 24 * 60; // Add 24 hours
+              }
+            }
+
+            const minutesUntilClose = closeTimeInMinutes - currentTimeInMinutes;
+
+            if (minutesUntilClose > 0) {
+              const hoursUntilClose = Math.floor(minutesUntilClose / 60);
+              const remainingMinutes = minutesUntilClose % 60;
+
+              if (hoursUntilClose === 0) {
+                setTimeUntilClosing(`${remainingMinutes} دقيقة`);
+              } else if (remainingMinutes === 0) {
+                setTimeUntilClosing(`${hoursUntilClose} ساعة`);
+              } else {
+                setTimeUntilClosing(`${hoursUntilClose} ساعة و ${remainingMinutes} دقيقة`);
+              }
+            } else {
+              setTimeUntilClosing(null);
+            }
+          } else if (operatingHours?.is_24_hours) {
+            setTimeUntilClosing('مفتوح 24 ساعة');
+          } else {
+            setTimeUntilClosing(null);
+          }
+        } else {
+          setTimeUntilClosing(null);
+        }
+      } catch (error) {
+        console.error('Error checking branch operating status:', error);
+        setBranchIsOpen(false);
+        setTimeUntilClosing(null);
+      }
+    };
+
     // Check immediately
-    checkOperatingStatus();
+    checkGlobalOperatingStatus();
+    checkBranchOperatingStatus();
 
     // Then check every minute
     const interval = setInterval(() => {
-      checkOperatingStatus();
-      setTimeUntilClosing(getTimeUntilClosing());
+      checkGlobalOperatingStatus();
+      checkBranchOperatingStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedBranch?.id]);
 
   const handleBranchChange = () => {
     // Always navigate to branches page when button is clicked
@@ -157,10 +237,10 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-xl sm:text-3xl font-black">
                 {selectedRestaurant?.name || 'المستر'}
               </h1>
-              {!isOpen && (
+              {!branchIsOpen && selectedBranch && (
                 <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
               )}
-              {isOpen && timeUntilClosing && (
+              {branchIsOpen && timeUntilClosing && selectedBranch && (
                 <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
               )}
             </div>
