@@ -222,6 +222,31 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
     return false;
   }
 
+  // Special handling for مستر كريسبي (dollar branch)
+  if (branchId === 'dollar') {
+    // For مستر كريسبي, if no specific delivery times are set, use default delivery hours
+    if (!operatingHours.delivery_start_time || !operatingHours.delivery_end_time) {
+      // Default delivery hours for مستر كريسبي: 11:00 AM to 12:00 AM (midnight)
+      const currentTime = getCurrentTime();
+      const currentHour = currentTime.getHours();
+      const currentMinute = currentTime.getMinutes();
+      
+      console.log(`[DELIVERY] Using default delivery hours for مستر كريسبي: 11:00-00:00`);
+      console.log(`[DELIVERY] Current time: ${currentHour}:${currentMinute.toString().padStart(2, '0')}`);
+      
+      // Convert to minutes for comparison
+      const currentMinutes = currentHour * 60 + currentMinute;
+      const deliveryStartMinutes = 11 * 60; // 11:00 AM
+      const deliveryEndMinutes = 24 * 60; // 12:00 AM (midnight) = 24:00
+      
+      console.log(`[DELIVERY] Current: ${currentMinutes} minutes, Start: ${deliveryStartMinutes}, End: ${deliveryEndMinutes}`);
+      
+      const isWithinDeliveryHours = currentMinutes >= deliveryStartMinutes && currentMinutes < deliveryEndMinutes;
+      console.log(`[DELIVERY] Within delivery hours: ${isWithinDeliveryHours}`);
+      
+      return isWithinDeliveryHours;
+    }
+  }
   // If no specific delivery times are set, delivery follows regular hours
   if (!operatingHours.delivery_start_time || !operatingHours.delivery_end_time) {
     console.log(`[DEBUG] No specific delivery times set for ${branchId}, following regular hours`);

@@ -72,6 +72,14 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
     const checkDeliveryAvailability = async () => {
       setIsCheckingDelivery(true);
       console.log(`[CHECKOUT] Checking delivery for branch: ${selectedBranch?.id}`);
+      
+      // Force cache refresh for debugging
+      if (selectedBranch?.id === 'dollar') {
+        console.log(`[CHECKOUT] Forcing cache refresh for مستر كريسبي`);
+        const { clearOperatingHoursCache } = await import('../utils/timeUtils');
+        clearOperatingHoursCache();
+      }
+      
       const deliveryAvailable = await isDeliveryAvailable(selectedBranch?.id);
       console.log(`[CHECKOUT] Delivery available result: ${deliveryAvailable}`);
       setIsDeliveryAvailableNow(deliveryAvailable);
