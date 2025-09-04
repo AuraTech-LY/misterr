@@ -232,7 +232,7 @@ export const Cart: React.FC<CartProps> = ({
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 scrollbar-hide">
           {items.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
