@@ -292,6 +292,7 @@ const AdminOperatingHours: React.FC = () => {
                 </div>
                   {!hours.is_closed && !hours.is_24_hours && (
                     <div className="space-y-3 mb-4">
+                      <h4 className="text-sm font-semibold text-gray-700">أوقات العمل</h4>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">
                           وقت الفتح
@@ -307,7 +308,6 @@ const AdminOperatingHours: React.FC = () => {
                       </div>
 
                       <div>
-                    <h4 className="text-sm font-semibold text-gray-700">أوقات العمل</h4>
                         <label className="block text-sm font-semibold text-gray-700 mb-1">
                           وقت الإغلاق
                         </label>
@@ -344,6 +344,23 @@ const AdminOperatingHours: React.FC = () => {
                         } text-right`}
                       />
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-1">
+                        نهاية التوصيل
+                      </label>
+                      <input
+                        type="time"
+                        value={hours.delivery_end_time || ''}
+                        onChange={(e) => updateHours(branch.id, 'delivery_end_time', e.target.value || null)}
+                        className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
+                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
+                        } text-right`}
+                      />
+                    </div>
+                  </div>
+                )}
+
                   {/* Save Button */}
                   <button
                     onClick={() => handleSave(branch.id)}
