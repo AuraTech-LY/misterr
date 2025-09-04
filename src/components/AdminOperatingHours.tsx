@@ -81,12 +81,13 @@ export const AdminOperatingHours: React.FC = () => {
       const { data, error } = await supabase
         .from('operating_hours')
         .upsert({
+         ...(hours.id && { id: hours.id }),
           branch_id: branchId,
           opening_time: hours.opening_time,
           closing_time: hours.closing_time,
           is_24_hours: hours.is_24_hours,
           is_closed: hours.is_closed,
-        })
+        }, { onConflict: 'branch_id' })
         .select()
         .single();
 
