@@ -43,6 +43,68 @@ export const getCurrentTime = (): Date => {
 };
 
 /**
+ * Check if a specific branch is currently open based on database settings
+ */
+export const isBranchOpen = async (branchId: string): Promise<boolean> => {
+  try {
+    // Fetch operating hours for specific branch from database
+    const { data: operatingHours, error } = await supabase
+      .from('operating_hours')
+      .select('*')
+      .eq('branch_id', branchId)
+      .single();
+
+    if (error) {
+      console.error(`Error fetching operating hours for branch ${branchId}:`, error);
+      // Fallback to default hours if database fails
+      return isWithinDefaultOperatingHours();
+    }
+
+    if (!operatingHours) {
+      // No operating hours set, use default
+      return isWithinDefaultOperatingHours();
+    }
+
+    const currentTime = getCurrentTime();
+    const currentHour = currentTime.getHours();
+    const currentMinute = currentTime.getMinutes();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+    // Skip if branch is marked as closed
+    if (operatingHours.is_closed) return false;
+
+    // If branch is 24 hours, it's always open
+    if (operatingHours.is_24_hours) return true;
+
+    // Parse opening and closing times
+    const [openHour, openMinute] = operatingHours.opening_time.split(':').map(Number);
+    const [closeHour, closeMinute] = operatingHours.closing_time.split(':').map(Number);
+    
+    const openTimeInMinutes = openHour * 60 + openMinute;
+    let closeTimeInMinutes = closeHour * 60 + closeMinute;
+
+    // Handle closing time that goes into next day (e.g., 03:00)
+    if (closeTimeInMinutes < openTimeInMinutes) {
+      // Closing time is next day
+      if (currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes <= closeTimeInMinutes) {
+        return true;
+      }
+    } else {
+      // Same day closing
+      if (currentTimeInMinutes >= openTimeInMinutes && currentTimeInMinutes <= closeTimeInMinutes) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch (error) {
+    console.error(`Error checking operating hours for branch ${branchId}:`, error);
+    // Fallback to default hours if there's an error
+    return isWithinDefaultOperatingHours();
+  }
+};
+
+/**
  * Check if any branch is currently open based on database settings
  */
 export const isWithinOperatingHours = async (): Promise<boolean> => {
@@ -63,38 +125,10 @@ export const isWithinOperatingHours = async (): Promise<boolean> => {
       return isWithinDefaultOperatingHours();
     }
 
-    const currentTime = getCurrentTime();
-    const currentHour = currentTime.getHours();
-    const currentMinute = currentTime.getMinutes();
-    const currentTimeInMinutes = currentHour * 60 + currentMinute;
-
     // Check if any branch is open
     for (const hours of operatingHours) {
-      // Skip if branch is marked as closed
-      if (hours.is_closed) continue;
-
-      // If branch is 24 hours, it's always open
-      if (hours.is_24_hours) return true;
-
-      // Parse opening and closing times
-      const [openHour, openMinute] = hours.opening_time.split(':').map(Number);
-      const [closeHour, closeMinute] = hours.closing_time.split(':').map(Number);
-      
-      const openTimeInMinutes = openHour * 60 + openMinute;
-      let closeTimeInMinutes = closeHour * 60 + closeMinute;
-
-      // Handle closing time that goes into next day (e.g., 03:00)
-      if (closeTimeInMinutes < openTimeInMinutes) {
-        // Closing time is next day
-        if (currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes <= closeTimeInMinutes) {
-          return true;
-        }
-      } else {
-        // Same day closing
-        if (currentTimeInMinutes >= openTimeInMinutes && currentTimeInMinutes <= closeTimeInMinutes) {
-          return true;
-        }
-      }
+      const isOpen = await isBranchOpen(hours.branch_id);
+      if (isOpen) return true;
     }
 
     return false;
@@ -104,7 +138,6 @@ export const isWithinOperatingHours = async (): Promise<boolean> => {
     return isWithinDefaultOperatingHours();
   }
 };
-
 /**
  * Fallback function for default operating hours (11:00 - 23:59)
  */
