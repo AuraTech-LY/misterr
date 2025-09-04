@@ -213,23 +213,6 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
     return false;
   }
 
-  // If no specific delivery times are set, delivery follows regular hours
-  if (!operatingHours.delivery_start_time || !operatingHours.delivery_end_time) {
-    console.log(`[DEBUG] No specific delivery times set for ${branchId}, following regular hours`);
-    return await isWithinOperatingHours(branchId);
-  }
-
-  const currentTime = getCurrentTime();
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
-  
-  console.log(`[DEBUG] Current time: ${currentHour}:${currentMinute.toString().padStart(2, '0')}`);
-  console.log(`[DEBUG] Delivery hours: ${operatingHours.delivery_start_time} - ${operatingHours.delivery_end_time}`);
-  
-  // Check if current time is within delivery hours
-  const [deliveryStartHour, deliveryStartMinute] = operatingHours.delivery_start_time.split(':').map(Number);
-  const [deliveryEndHour, deliveryEndMinute] = operatingHours.delivery_end_time.split(':').map(Number);
-
   // First check if restaurant is open
   const isRestaurantOpen = await isWithinOperatingHours(branchId);
   console.log(`[DEBUG] Restaurant open: ${isRestaurantOpen}`);
@@ -239,15 +222,48 @@ export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> =
     return false;
   }
 
-  // Then check if current time is within delivery hours
-  const isWithinDeliveryHours = isTimeWithinOperatingHours(
-    deliveryStartHour, 
-    deliveryStartMinute, 
-    deliveryEndHour, 
-    deliveryEndMinute,
-    currentHour,
-    currentMinute
-  );
+  // If no specific delivery times are set, delivery follows regular hours
+  if (!operatingHours.delivery_start_time || !operatingHours.delivery_end_time) {
+    console.log(`[DEBUG] No specific delivery times set for ${branchId}, following regular hours`);
+    return isRestaurantOpen;
+  }
+
+  const currentTime = getCurrentTime();
+  const currentHour = currentTime.getHours();
+  const currentMinute = currentTime.getMinutes();
+  
+  console.log(`[DEBUG] Current time: ${currentHour}:${currentMinute.toString().padStart(2, '0')}`);
+  console.log(`[DEBUG] Delivery hours: ${operatingHours.delivery_start_time} - ${operatingHours.delivery_end_time}`);
+  
+  // Parse delivery times
+  const [deliveryStartHour, deliveryStartMinute] = operatingHours.delivery_start_time.split(':').map(Number);
+  const [deliveryEndHour, deliveryEndMinute] = operatingHours.delivery_end_time.split(':').map(Number);
+
+  console.log(`[DEBUG] Parsed delivery times: ${deliveryStartHour}:${deliveryStartMinute} - ${deliveryEndHour}:${deliveryEndMinute}`);
+
+  // Check if current time is within delivery hours
+  // Handle same-day delivery (e.g., 11:00 - 24:00) vs next-day delivery (e.g., 11:00 - 03:00)
+  let isWithinDeliveryHours = false;
+  
+  if (deliveryEndHour === 0 && deliveryEndMinute === 0) {
+    // Special case: 00:00 means midnight (24:00)
+    if (currentHour > deliveryStartHour || (currentHour === deliveryStartHour && currentMinute >= deliveryStartMinute)) {
+      isWithinDeliveryHours = true;
+    }
+  } else if (deliveryEndHour < deliveryStartHour) {
+    // Next-day delivery (e.g., 11:00 - 03:00)
+    if (currentHour > deliveryStartHour || (currentHour === deliveryStartHour && currentMinute >= deliveryStartMinute)) {
+      isWithinDeliveryHours = true; // After start time same day
+    } else if (currentHour < deliveryEndHour || (currentHour === deliveryEndHour && currentMinute <= deliveryEndMinute)) {
+      isWithinDeliveryHours = true; // Before end time next day
+    }
+  } else {
+    // Same-day delivery (e.g., 11:00 - 23:00)
+    if ((currentHour > deliveryStartHour || (currentHour === deliveryStartHour && currentMinute >= deliveryStartMinute)) &&
+        (currentHour < deliveryEndHour || (currentHour === deliveryEndHour && currentMinute <= deliveryEndMinute))) {
+      isWithinDeliveryHours = true;
+    }
+  }
   
   console.log(`[DEBUG] Within delivery hours: ${isWithinDeliveryHours}`);
   return isWithinDeliveryHours;
