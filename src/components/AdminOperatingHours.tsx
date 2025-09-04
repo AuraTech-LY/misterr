@@ -263,7 +263,7 @@ export const AdminOperatingHours: React.FC = () => {
                           type="time"
                           value={hours.opening_time}
                           onChange={(e) => updateHours(branch.id, 'opening_time', e.target.value)}
-                          className={`w-full p-2 border border-gray-300 rounded-lg focus:border-${
+                          className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
                             selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
                           } text-right`}
                         />
@@ -277,7 +277,7 @@ export const AdminOperatingHours: React.FC = () => {
                           type="time"
                           value={hours.closing_time}
                           onChange={(e) => updateHours(branch.id, 'closing_time', e.target.value)}
-                          className={`w-full p-2 border border-gray-300 rounded-lg focus:border-${
+                          className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
                             selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
                           } text-right`}
                         />
