@@ -264,9 +264,14 @@ export const isTimeWithinOperatingHours = (
   
   // Handle next day closing (e.g., closes at 3:00 AM)
   if (closeHour < openHour) {
-    // Open time to midnight OR midnight to close time
-    return (checkHour > openHour || (checkHour === openHour && checkMinute >= openMinute)) ||
-           (checkHour < closeHour || (checkHour === closeHour && checkMinute <= closeMinute));
+    // For next-day closing: open from openHour until 23:59, then from 00:00 until closeHour
+    if (checkHour > openHour || (checkHour === openHour && checkMinute >= openMinute)) {
+      return true; // After opening time same day
+    }
+    if (checkHour < closeHour || (checkHour === closeHour && checkMinute <= closeMinute)) {
+      return true; // Before closing time next day
+    }
+    return false;
   }
   
   // Same day closing
