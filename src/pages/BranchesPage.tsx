@@ -10,8 +10,8 @@ export const BranchesPage: React.FC = () => {
 
   const handleBranchSelect = (branch: Branch) => {
     setSelectedBranch(branch);
-    // Store selected branch ID in localStorage for the main app
-    localStorage.setItem('selectedBranchId', branch.id);
+    // Store selected branch in localStorage for the main app
+    localStorage.setItem('selectedBranch', JSON.stringify(branch));
     // Navigate to home page with the selected branch
     navigate('/');
   };

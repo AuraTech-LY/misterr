@@ -10,7 +10,6 @@ interface MenuProps {
   cartItems?: any[];
   categories?: { id: string; name: string }[];
   selectedCategory?: string;
-  branchIsOpen?: boolean;
 }
 
 export const Menu: React.FC<MenuProps> = ({ 
@@ -20,8 +19,7 @@ export const Menu: React.FC<MenuProps> = ({
   branchId, 
   cartItems = [], 
   categories = [],
-  selectedCategory = 'الكل',
-  branchIsOpen = true
+  selectedCategory = 'الكل'
 }) => {
   // If a specific category is selected, show items in grid
   if (selectedCategory !== 'الكل') {
@@ -35,7 +33,6 @@ export const Menu: React.FC<MenuProps> = ({
             onRemoveFromCart={onRemoveFromCart}
             branchId={branchId}
             cartItems={cartItems}
-            branchIsOpen={branchIsOpen}
           />
         ))}
       </div>
@@ -74,7 +71,6 @@ export const Menu: React.FC<MenuProps> = ({
                   onRemoveFromCart={onRemoveFromCart}
                   branchId={branchId}
                   cartItems={cartItems}
-                  branchIsOpen={branchIsOpen}
                 />
               ))}
             </div>

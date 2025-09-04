@@ -4,13 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
-import { isWithinOperatingHours, isBranchOpen, getCurrentTime } from '../utils/timeUtils';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
 
 // Custom hook for count-up animation
 const useCountUp = (endValue: number, duration: number = 600) => {
@@ -75,9 +69,8 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [branchIsOpen, setBranchIsOpen] = React.useState(false);
-  const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
+  const [timeUntilClosing, setTimeUntilClosing] = React.useState(getTimeUntilClosing());
   
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
@@ -85,96 +78,15 @@ export const Header: React.FC<HeaderProps> = ({
   // Count-up animation for cart item count
   const { value: animatedItemCount, isAnimating: isItemCountAnimating } = useCountUp(cartItemCount);
 
-  // Check operating status on mount and update every minute
+  // Update operating status every minute
   React.useEffect(() => {
-    const checkGlobalOperatingStatus = async () => {
-      const status = await isWithinOperatingHours();
-      setIsOpen(status);
-    };
-
-    const checkBranchOperatingStatus = async () => {
-      if (!selectedBranch?.id) {
-        setBranchIsOpen(false);
-        setTimeUntilClosing(null);
-        return;
-      }
-
-      try {
-        // Check if this specific branch is open
-        const branchOpen = await isBranchOpen(selectedBranch.id);
-        setBranchIsOpen(branchOpen);
-
-        if (branchOpen) {
-          // Get branch-specific operating hours to calculate closing time
-          const { data: operatingHours } = await supabase
-            .from('operating_hours')
-            .select('*')
-            .eq('branch_id', selectedBranch.id)
-            .single();
-
-          if (operatingHours && !operatingHours.is_closed && !operatingHours.is_24_hours) {
-            const currentTime = getCurrentTime();
-            const currentHour = currentTime.getHours();
-            const currentMinute = currentTime.getMinutes();
-            const currentTimeInMinutes = currentHour * 60 + currentMinute;
-
-            const [closeHour, closeMinute] = operatingHours.closing_time.split(':').map(Number);
-            let closeTimeInMinutes = closeHour * 60 + closeMinute;
-
-            // Handle closing time that goes into next day (e.g., 03:00)
-            const [openHour] = operatingHours.opening_time.split(':').map(Number);
-            
-            if (closeHour < openHour || (closeHour <= 6 && openHour >= 10)) {
-              // Closing time is next day (early morning hours)
-              if (currentTimeInMinutes >= (openHour * 60)) {
-                // We're after opening time, so closing is tomorrow
-                closeTimeInMinutes += 24 * 60; // Add 24 hours
-              }
-            }
-
-            const minutesUntilClose = closeTimeInMinutes - currentTimeInMinutes;
-
-            if (minutesUntilClose > 0) {
-              const hoursUntilClose = Math.floor(minutesUntilClose / 60);
-              const remainingMinutes = minutesUntilClose % 60;
-
-              if (hoursUntilClose === 0) {
-                setTimeUntilClosing(`${remainingMinutes} دقيقة`);
-              } else if (remainingMinutes === 0) {
-                setTimeUntilClosing(`${hoursUntilClose} ساعة`);
-              } else {
-                setTimeUntilClosing(`${hoursUntilClose} ساعة و ${remainingMinutes} دقيقة`);
-              }
-            } else {
-              setTimeUntilClosing(null);
-            }
-          } else if (operatingHours?.is_24_hours) {
-            setTimeUntilClosing('مفتوح 24 ساعة');
-          } else {
-            setTimeUntilClosing(null);
-          }
-        } else {
-          setTimeUntilClosing(null);
-        }
-      } catch (error) {
-        console.error('Error checking branch operating status:', error);
-        setBranchIsOpen(false);
-        setTimeUntilClosing(null);
-      }
-    };
-
-    // Check immediately
-    checkGlobalOperatingStatus();
-    checkBranchOperatingStatus();
-
-    // Then check every minute
     const interval = setInterval(() => {
-      checkGlobalOperatingStatus();
-      checkBranchOperatingStatus();
+      setIsOpen(isWithinOperatingHours());
+      setTimeUntilClosing(getTimeUntilClosing());
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [selectedBranch?.id]);
+  }, []);
 
   const handleBranchChange = () => {
     // Always navigate to branches page when button is clicked
@@ -221,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
               // Clear both restaurant and branch to go to restaurant selector
               localStorage.removeItem('selectedRestaurantId');
               localStorage.removeItem('selectedBranchId');
-              navigate('/');
+             window.location.href = '/';
             }}
             className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
           >
@@ -236,10 +148,10 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-xl sm:text-3xl font-black">
                 {selectedRestaurant?.name || 'المستر'}
               </h1>
-              {!branchIsOpen && selectedBranch && (
+              {!isOpen && (
                 <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
               )}
-              {branchIsOpen && timeUntilClosing && selectedBranch && (
+              {isOpen && timeUntilClosing && (
                 <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
               )}
             </div>
@@ -255,8 +167,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onBranchSelect={(branch) => {
                     setIsChangingBranch(true);
                     
-                    // Save the selected branch ID
-                    localStorage.setItem('selectedBranchId', branch.id);
+                    // Save the selected branch
+                    localStorage.setItem('selectedBranch', JSON.stringify(branch));
                     
                     const branchRoutes: Record<string, string> = {
                       'airport': '/airport-menu',
@@ -269,9 +181,9 @@ export const Header: React.FC<HeaderProps> = ({
                     // Add smooth transition delay
                     setTimeout(() => {
                       if (targetRoute) {
-                        navigate(targetRoute);
+                        window.location.href = targetRoute;
                       } else {
-                        navigate('/');
+                        window.location.href = '/';
                       }
                     }, 300);
                   }}
@@ -281,15 +193,15 @@ export const Header: React.FC<HeaderProps> = ({
             
             <button
               onClick={onCartClick}
-              disabled={!branchIsOpen}
+              disabled={!isOpen}
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
-                !branchIsOpen
+                !isOpen
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
-              <span className="hidden sm:inline">{!branchIsOpen ? 'مغلق' : 'السلة'}</span>
+              <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
               {cartItemCount > 0 && (
                 <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
                   {cartItemCount}
@@ -320,9 +232,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="px-3 py-2">
           <button
             onClick={onCartClick}
-            disabled={cartItemCount === 0 || !branchIsOpen}
+            disabled={cartItemCount === 0 || !isOpen}
             className={`w-full py-3 rounded-full font-semibold text-base transition-all duration-300 shadow-md flex items-center justify-center gap-2 ${
-              !branchIsOpen
+              !isOpen
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -344,12 +256,12 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Cart Icon and Text - Fixed Center */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <ShoppingBag className="w-5 h-5" />
-                <span>{!branchIsOpen ? 'مغلق حالياً' : 'عرض السلة'}</span>
+                <span>{!isOpen ? 'مغلق حالياً' : 'عرض السلة'}</span>
               </div>
               
               {/* Total Price - Left Side */}
               <div className="flex-shrink-0 w-20 text-right">
-                {cartItemCount > 0 && branchIsOpen && (
+                {cartItemCount > 0 && isOpen && (
                   <div className="text-white text-xl whitespace-nowrap">
                     <span className="font-bold">{animatedTotal}</span>
                     <span className="font-normal text-sm opacity-70"> د.ل</span>

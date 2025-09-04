@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, Star, X, Minus, Trash2 } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
-import { isWithinOperatingHours, isBranchOpen } from '../utils/timeUtils';
+import { isWithinOperatingHours } from '../utils/timeUtils';
 import { getBranchById } from '../data/restaurantsData';
 
 interface MenuItemProps {
@@ -10,27 +10,20 @@ interface MenuItemProps {
   onRemoveFromCart?: (id: string) => void;
   branchId?: string;
   cartItems?: any[];
-  branchIsOpen?: boolean;
 }
 
-export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveFromCart, branchId, cartItems = [], branchIsOpen: propBranchIsOpen }) => {
+export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveFromCart, branchId, cartItems = [] }) => {
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHours());
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
   const [showTrashAnimation, setShowTrashAnimation] = React.useState(false);
   const [isPressing, setIsPressing] = React.useState(false);
   const [isQuickAddPressing, setIsQuickAddPressing] = React.useState(false);
-
-  // Get branch-specific operating status
-  const [localBranchIsOpen, setLocalBranchIsOpen] = React.useState(false);
-  
-  // Use prop if provided, otherwise use local state
-  const branchIsOpen = propBranchIsOpen !== undefined ? propBranchIsOpen : localBranchIsOpen;
 
   // Check if this item is in the cart
   const cartItem = cartItems.find(cartItem => cartItem.id === item.id);
@@ -50,38 +43,23 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const branchData = branchId ? getBranchById(branchId) : null;
   const isMisterCrispy = branchData?.branch?.name?.includes('مستر كريسبي') || false;
 
-  // Check branch-specific operating status
-  React.useEffect(() => {
-    // Only check if prop is not provided
-    if (propBranchIsOpen !== undefined) return;
-    
-    const checkBranchStatus = async () => {
-      if (branchId) {
-        const status = await isBranchOpen(branchId);
-        setLocalBranchIsOpen(status);
-      } else {
-        const status = await isWithinOperatingHours();
-        setLocalBranchIsOpen(status);
-      }
-    };
-
-    // Check immediately
-    checkBranchStatus();
-
-    // Then check every minute
-    const interval = setInterval(checkBranchStatus, 60000);
-
-    return () => clearInterval(interval);
-  }, [branchId, propBranchIsOpen]);
-
   // Trigger appearing animation on mount
   React.useEffect(() => {
     const timer = setTimeout(() => setHasAppeared(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  // Update operating status every minute
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIsOpen(isWithinOperatingHours());
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleMobileItemClick = () => {
-    if (!branchIsOpen) return;
+    if (!isOpen) return;
     
     setShowMobilePopup(true);
     setIsClosing(false);
@@ -160,7 +138,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             ? 'scale-95' 
             : 'scale-100'
         } ${
-          branchIsOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
+          isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
           isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl`
@@ -223,9 +201,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             />
             <button
               onClick={handleMobileQuickAdd}
-              disabled={!branchIsOpen}
+              disabled={!isOpen}
               className={`absolute -bottom-1 -left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-150 flex items-center justify-center z-10 ${
-                branchIsOpen 
+                isOpen 
                   ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
                   : 'opacity-50 cursor-not-allowed'
               }`}
@@ -322,16 +300,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               {/* Add to Cart Button */}
               <button
                 onClick={handleAddToCart}
-                disabled={!branchIsOpen}
+                disabled={!isOpen}
                 className={`w-full px-4 py-4 rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-base ${
-                  branchIsOpen
+                  isOpen
                     ? isMisterCrispy
                       ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                       : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                {branchIsOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
+                {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
               </button>
             </div>
           </div>
@@ -340,7 +318,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
       {/* Desktop/Tablet Layout - Vertical Cards */}
       <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group h-80 flex flex-col ${
-        branchIsOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
+        isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
       } ${
         isInCart 
           ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
@@ -412,16 +390,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 }
                 onAddToCart(item);
               }}
-              disabled={!branchIsOpen}
+              disabled={!isOpen}
               className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
-                branchIsOpen
+                isOpen
                   ? isMisterCrispy
                     ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {branchIsOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
+              {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
             </button>
           </div>
         </div>
