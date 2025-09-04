@@ -3,6 +3,7 @@ import { User, Phone, MapPin, Truck, Store, ArrowRight } from 'lucide-react';
 import { CartItem } from '../types';
 import { CustomSelect } from './CustomSelect';
 import { createClient } from '@supabase/supabase-js';
+import { isDeliveryAvailable } from '../utils/timeUtils';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -63,6 +64,29 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   const [customerLocation, setCustomerLocation] = useState<{latitude: number, longitude: number} | null>(null);
   const [deliveryPrice, setDeliveryPrice] = useState<number | null>(null);
   const [isCalculatingDistance, setIsCalculatingDistance] = useState(false);
+  const [isDeliveryAvailableNow, setIsDeliveryAvailableNow] = useState<boolean | null>(null);
+  const [isCheckingDelivery, setIsCheckingDelivery] = useState(true);
+
+  // Check if delivery is available for this branch
+  useEffect(() => {
+    const checkDeliveryAvailability = async () => {
+      setIsCheckingDelivery(true);
+      const deliveryAvailable = await isDeliveryAvailable(selectedBranch?.id);
+      setIsDeliveryAvailableNow(deliveryAvailable);
+      setIsCheckingDelivery(false);
+      
+      // If delivery is not available, automatically switch to pickup
+      if (!deliveryAvailable && formData.deliveryMethod === 'delivery') {
+        setFormData(prev => ({ ...prev, deliveryMethod: 'pickup' }));
+      }
+    };
+
+    checkDeliveryAvailability();
+    
+    // Update every minute
+    const interval = setInterval(checkDeliveryAvailability, 60000);
+    return () => clearInterval(interval);
+  }, [selectedBranch?.id, formData.deliveryMethod]);
 
   // Smart defaults based on common patterns
   const popularAreas = ['المدينة القديمة', 'الحدائق', 'الجامعة', 'السوق المركزي', 'الكورنيش'];
@@ -418,14 +442,19 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <button
                     onClick={() => updateFormData('deliveryMethod', 'delivery')}
+                    disabled={isCheckingDelivery || !isDeliveryAvailableNow}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'delivery'
                         ? 'border-[#55421A] bg-red-50 text-[#55421A]'
+                        : isCheckingDelivery || !isDeliveryAvailableNow
+                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                    } ${isCheckingDelivery || !isDeliveryAvailableNow ? 'opacity-50' : ''}`}
                   >
                     <Truck className="w-6 h-6 mx-auto mb-2" />
-                    <div className="font-semibold text-sm sm:text-base">توصيل</div>
+                    <div className="font-semibold text-sm sm:text-base">
+                      {isCheckingDelivery ? 'جاري التحقق...' : !isDeliveryAvailableNow ? 'توصيل غير متاح' : 'توصيل'}
+                    </div>
                   </button>
                   
                   <button
@@ -440,6 +469,14 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     <div className="font-semibold text-sm sm:text-base">استلام</div>
                   </button>
                 </div>
+                
+                {/* Delivery unavailable message */}
+                {!isCheckingDelivery && !isDeliveryAvailableNow && (
+                  <div className="mt-3 p-3 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl text-sm">
+                    <p className="font-semibold mb-1">التوصيل غير متاح حالياً</p>
+                    <p>يمكنك اختيار الاستلام من الفرع</p>
+                  </div>
+                )}
               </div>
 
               {/* Progressive Disclosure: Delivery Address */}

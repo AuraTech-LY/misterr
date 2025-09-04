@@ -11,6 +11,9 @@ interface CachedOperatingHours {
   closing_time: string;
   is_24_hours: boolean;
   is_closed: boolean;
+  delivery_start_time?: string | null;
+  delivery_end_time?: string | null;
+  delivery_available: boolean;
   cached_at: number;
 }
 
@@ -112,7 +115,10 @@ const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOper
         opening_time: '11:00',
         closing_time: defaultClosingHour,
         is_24_hours: false,
-        is_closed: false
+        is_closed: false,
+        delivery_start_time: null,
+        delivery_end_time: null,
+        delivery_available: true
       };
       
       // Cache the default data
@@ -124,7 +130,10 @@ const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOper
       opening_time: data.opening_time,
       closing_time: data.closing_time,
       is_24_hours: data.is_24_hours,
-      is_closed: data.is_closed
+      is_closed: data.is_closed,
+      delivery_start_time: data.delivery_start_time,
+      delivery_end_time: data.delivery_end_time,
+      delivery_available: data.delivery_available
     };
 
     // Cache the fetched data
@@ -170,6 +179,44 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
   const [closeHour, closeMinute] = operatingHours.closing_time.split(':').map(Number);
 
   return isTimeWithinOperatingHours(openHour, openMinute, closeHour, closeMinute);
+};
+
+/**
+ * Check if delivery is available for a specific branch at current time
+ */
+export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> => {
+  if (!branchId) {
+    return true; // Default to available if no branch specified
+  }
+
+  // Try to get from cache first
+  let operatingHours = getCachedOperatingHours(branchId);
+  
+  // If not in cache or cache expired, fetch from database
+  if (!operatingHours) {
+    operatingHours = await fetchAndCacheOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      // Fallback to default (delivery available)
+      return true;
+    }
+  }
+
+  // Check if delivery is disabled for this branch
+  if (!operatingHours.delivery_available) {
+    return false;
+  }
+
+  // If no specific delivery times are set, delivery follows regular hours
+  if (!operatingHours.delivery_start_time || !operatingHours.delivery_end_time) {
+    return await isWithinOperatingHours(branchId);
+  }
+
+  // Check if current time is within delivery hours
+  const [deliveryStartHour, deliveryStartMinute] = operatingHours.delivery_start_time.split(':').map(Number);
+  const [deliveryEndHour, deliveryEndMinute] = operatingHours.delivery_end_time.split(':').map(Number);
+
+  return isTimeWithinOperatingHours(deliveryStartHour, deliveryStartMinute, deliveryEndHour, deliveryEndMinute);
 };
 
 /**
