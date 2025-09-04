@@ -1,20 +1,20 @@
-// Time utilities for Libya timezone (UTC+2)
+// Time utilities for UTC+6 timezone
 
-export const LIBYA_TIMEZONE = 'Africa/Tripoli';
+export const UTC_PLUS_6_TIMEZONE = 'Asia/Dhaka'; // UTC+6 timezone
 export const OPENING_HOUR = 11; // 11:00 AM
 export const CLOSING_HOUR = 23; // 11:00 PM
 export const CLOSING_MINUTE = 59; // 11:59 PM
 
 /**
- * Get current time in Libya timezone (UTC+2)
+ * Get current time in UTC+6 timezone
  */
 export const getCurrentTime = (): Date => {
-  // Create a date object with Libya timezone
+  // Create a date object with UTC+6 timezone
   const now = new Date();
   
-  // Use Intl.DateTimeFormat to get Libya time
-  const libyaTime = new Intl.DateTimeFormat('en-US', {
-    timeZone: LIBYA_TIMEZONE,
+  // Use Intl.DateTimeFormat to get UTC+6 time
+  const utcPlus6Time = new Intl.DateTimeFormat('en-US', {
+    timeZone: UTC_PLUS_6_TIMEZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -24,13 +24,13 @@ export const getCurrentTime = (): Date => {
     hour12: false
   }).formatToParts(now);
 
-  // Reconstruct the date in Libya timezone
-  const year = parseInt(libyaTime.find(part => part.type === 'year')?.value || '0');
-  const month = parseInt(libyaTime.find(part => part.type === 'month')?.value || '0') - 1; // Month is 0-indexed
-  const day = parseInt(libyaTime.find(part => part.type === 'day')?.value || '0');
-  const hour = parseInt(libyaTime.find(part => part.type === 'hour')?.value || '0');
-  const minute = parseInt(libyaTime.find(part => part.type === 'minute')?.value || '0');
-  const second = parseInt(libyaTime.find(part => part.type === 'second')?.value || '0');
+  // Reconstruct the date in UTC+6 timezone
+  const year = parseInt(utcPlus6Time.find(part => part.type === 'year')?.value || '0');
+  const month = parseInt(utcPlus6Time.find(part => part.type === 'month')?.value || '0') - 1; // Month is 0-indexed
+  const day = parseInt(utcPlus6Time.find(part => part.type === 'day')?.value || '0');
+  const hour = parseInt(utcPlus6Time.find(part => part.type === 'hour')?.value || '0');
+  const minute = parseInt(utcPlus6Time.find(part => part.type === 'minute')?.value || '0');
+  const second = parseInt(utcPlus6Time.find(part => part.type === 'second')?.value || '0');
 
   return new Date(year, month, day, hour, minute, second);
 };
@@ -60,12 +60,12 @@ export const isWithinOperatingHours = (): boolean => {
 };
 
 /**
- * Get formatted current time in Libya timezone
+ * Get formatted current time in UTC+6 timezone
  */
-export const getFormattedLibyaTime = (): string => {
+export const getFormattedUTCPlus6Time = (): string => {
   const now = new Date();
-  return new Intl.DateTimeFormat('ar-LY', {
-    timeZone: LIBYA_TIMEZONE,
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: UTC_PLUS_6_TIMEZONE,
     hour: '2-digit',
     minute: '2-digit',
     hour12: false
@@ -124,19 +124,19 @@ export const getTimeUntilClosing = (): string | null => {
 };
 
 /**
- * Get Libya time (alias for getCurrentTime for backward compatibility)
+ * Get UTC+6 time (alias for getCurrentTime for backward compatibility)
  */
-export const getLibyaTime = (): Date => {
+export const getUTCPlus6Time = (): Date => {
   return getCurrentTime();
 };
 
 /**
- * Get current Libya date and time as a formatted string
+ * Get current UTC+6 date and time as a formatted string
  */
-export const getLibyaDateTime = (): string => {
+export const getUTCPlus6DateTime = (): string => {
   const now = new Date();
-  return new Intl.DateTimeFormat('ar-LY', {
-    timeZone: LIBYA_TIMEZONE,
+  return new Intl.DateTimeFormat('en-US', {
+    timeZone: UTC_PLUS_6_TIMEZONE,
     year: 'numeric',
     month: 'long',
     day: 'numeric',
