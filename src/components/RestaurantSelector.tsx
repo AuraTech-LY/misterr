@@ -1,7 +1,7 @@
 import React from 'react';
 import { Restaurant } from '../types';
 import { Store } from 'lucide-react';
-import { isWithinOperatingHours } from '../utils/timeUtils';
+import { isWithinOperatingHours, getFormattedUTCPlus5Time } from '../utils/timeUtils';
 
 interface RestaurantSelectorProps {
   restaurants: Restaurant[];
@@ -14,11 +14,21 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(getFormattedUTCPlus5Time());
 
   // Trigger loading animation
   React.useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Update time every second
+  React.useEffect(() => {
+    const timeInterval = setInterval(() => {
+      setCurrentTime(getFormattedUTCPlus5Time());
+    }, 1000);
+
+    return () => clearInterval(timeInterval);
   }, []);
 
   // Check operating status on mount
@@ -52,6 +62,18 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
         </div>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">المستر</h1>
         <p className="text-gray-600">اختر المطعم المناسب لك</p>
+      </div>
+      
+      {/* Server Time Display */}
+      <div className={`px-6 py-2 text-center transition-all duration-700 ease-out ${
+        isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`} style={{ transitionDelay: isLoaded ? '200ms' : '0ms' }}>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200">
+          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+          <span className="text-sm font-medium text-gray-700">
+            الوقت الحالي: {currentTime}
+          </span>
+        </div>
       </div>
 
       {/* Restaurant Cards */}
