@@ -451,7 +451,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     onClick={() => updateFormData('deliveryMethod', 'delivery')}
                     disabled={isCheckingDelivery || !isDeliveryAvailableNow}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
-                      formData.deliveryMethod === 'delivery'
+                      formData.deliveryMethod === 'delivery' && isDeliveryAvailableNow
                         ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
                         : isCheckingDelivery || !isDeliveryAvailableNow
                         ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
@@ -481,7 +481,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 {!isCheckingDelivery && !isDeliveryAvailableNow && (
                   <div className="mt-3 p-3 bg-orange-50 border border-orange-200 text-orange-700 rounded-xl text-sm">
                     <p className="font-semibold mb-1">التوصيل غير متاح حالياً</p>
-                    <p>التوصيل متوفر حتى الساعة 12:00 ص فقط. يمكنك اختيار الاستلام من الفرع</p>
+                    <p>التوصيل غير متاح في هذا الوقت. يمكنك اختيار الاستلام من الفرع</p>
                   </div>
                 )}
               </div>
