@@ -245,7 +245,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       const hasLocation = formData.customerLocation?.latitude && formData.customerLocation?.longitude;
       const hasArea = formData.deliveryInfo?.area?.trim();
       
-      return basicValid && hasLocation && hasArea;
+      // Also require that delivery calculation is complete (not in progress)
+      return basicValid && hasLocation && hasArea && !isCalculatingDistance;
     }
     return basicValid;
   };
@@ -582,7 +583,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  {isValidating ? 'جاري المعالجة...' : 'تأكيد الطلب'}
+                  {isValidating ? 'جاري المعالجة...' : 
+                   isCalculatingDistance ? 'جاري حساب التوصيل...' : 
+                   'تأكيد الطلب'}
                 </button>
               </div>
             </div>
