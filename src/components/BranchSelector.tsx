@@ -46,6 +46,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
     onBranchSelect(branch);
   };
 
+  // Check if any branch is open for the status indicator
+  const anyBranchOpen = Object.values(branchStatuses).some(status => status);
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col" dir="rtl">
       {/* Simple Header */}
@@ -87,8 +90,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
 
       {/* Branch Buttons */}
       <div className="flex-1 px-6 py-6 space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 md:max-w-6xl md:mx-auto">
-        {branches.map((branch, index) => (
+        {branches.map((branch, index) => {
           const isOpen = branchStatuses[branch.id] ?? false;
+          return (
           <button
             key={branch.id}
             onClick={() => handleBranchSelect(branch)}
@@ -135,14 +139,14 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
               )}
             </div>
           </button>
-        ))}
+          );
+        })}
       </div>
 
       {/* Status */}
       <div className={`px-6 py-6 text-center transition-all duration-700 ease-out ${
         isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
       }`} style={{ transitionDelay: isLoaded ? '250ms' : '0ms' }}>
-        const anyBranchOpen = Object.values(branchStatuses).some(status => status);
         <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
           anyBranchOpen 
             ? 'bg-green-100 text-green-800 border border-green-200' 
