@@ -365,7 +365,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 scrollbar-hide">
           {/* Step 1: Customer Info */}
           {step === 1 && (
             <div className="space-y-6 animate-fadeInUp">
