@@ -348,9 +348,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
         {/* Item count badge - Desktop */}
         {cartQuantity > 0 && (
-          <div className={`absolute -top-1 -left-1 w-6 h-6 ${
+          <div className={`absolute top-2 left-2 w-8 h-8 ${
             isMisterCrispy ? 'bg-[#55421A]' : 'bg-[#781220]'
-          } text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg z-10`}>
+          } text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg z-10 transition-all duration-300 transform hover:scale-110`}>
             {cartQuantity}
           </div>
         )}
