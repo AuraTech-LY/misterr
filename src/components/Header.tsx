@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
-import { isWithinOperatingHours, getTimeUntilClosing, isWithinOperatingHoursSync } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
 
 // Custom hook for count-up animation
 const useCountUp = (endValue: number, duration: number = 600) => {
@@ -69,7 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHoursSync());
+  const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
   
   // Count-up animation for cart total
@@ -155,11 +155,14 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-xl sm:text-3xl font-black">
                 {selectedRestaurant?.name || 'المستر'}
               </h1>
-              {!isOpen && (
+              {isOpen === false && (
                 <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
               )}
-              {isOpen && timeUntilClosing && (
+              {isOpen === true && timeUntilClosing && (
                 <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
+              )}
+              {isOpen === null && (
+                <p className="text-xs sm:text-sm opacity-75 text-yellow-200 leading-tight text-right">جاري التحقق...</p>
               )}
             </div>
           </button>
@@ -200,15 +203,15 @@ export const Header: React.FC<HeaderProps> = ({
             
             <button
               onClick={onCartClick}
-              disabled={!isOpen}
+              disabled={isOpen !== true}
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
-                !isOpen
+                isOpen !== true
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
-              <span className="hidden sm:inline">{!isOpen ? 'مغلق' : 'السلة'}</span>
+              <span className="hidden sm:inline">{isOpen === false ? 'مغلق' : isOpen === null ? 'جاري التحقق...' : 'السلة'}</span>
               {cartItemCount > 0 && (
                 <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
                   {cartItemCount}
@@ -239,9 +242,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="px-3 py-2">
           <button
             onClick={onCartClick}
-            disabled={cartItemCount === 0 || !isOpen}
+            disabled={cartItemCount === 0 || isOpen !== true}
             className={`w-full py-3 rounded-full font-semibold text-base transition-all duration-300 shadow-md flex items-center justify-center gap-2 ${
-              !isOpen
+              isOpen !== true
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -263,12 +266,12 @@ export const Header: React.FC<HeaderProps> = ({
               {/* Cart Icon and Text - Fixed Center */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <ShoppingBag className="w-5 h-5" />
-                <span>{!isOpen ? 'مغلق حالياً' : 'عرض السلة'}</span>
+                <span>{isOpen === false ? 'مغلق حالياً' : isOpen === null ? 'جاري التحقق...' : 'عرض السلة'}</span>
               </div>
               
               {/* Total Price - Left Side */}
               <div className="flex-shrink-0 w-20 text-right">
-                {cartItemCount > 0 && isOpen && (
+                {cartItemCount > 0 && isOpen === true && (
                   <div className="text-white text-xl whitespace-nowrap">
                     <span className="font-bold">{animatedTotal}</span>
                     <span className="font-normal text-sm opacity-70"> د.ل</span>

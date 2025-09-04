@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, Star, X, Minus, Trash2 } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
-import { isWithinOperatingHours, isWithinOperatingHoursSync } from '../utils/timeUtils';
+import { isWithinOperatingHours } from '../utils/timeUtils';
 import { getBranchById } from '../data/restaurantsData';
 
 interface MenuItemProps {
@@ -17,7 +17,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
   const [desktopQuantity, setDesktopQuantity] = React.useState(1);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHoursSync());
+  const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [isHighlighted, setIsHighlighted] = React.useState(false);
   const [isAppearing, setIsAppearing] = React.useState(false);
   const [hasAppeared, setHasAppeared] = React.useState(false);
@@ -65,7 +65,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   }, [branchId]);
 
   const handleMobileItemClick = () => {
-    if (!isOpen) return;
+    if (isOpen !== true) return;
     
     setShowMobilePopup(true);
     setIsClosing(false);
@@ -144,7 +144,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             ? 'scale-95' 
             : 'scale-100'
         } ${
-          isOpen ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
+        isOpen === true ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
           isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl`
@@ -207,9 +207,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             />
             <button
               onClick={handleMobileQuickAdd}
-              disabled={!isOpen}
+              disabled={isOpen !== true}
               className={`absolute -bottom-1 -left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-150 flex items-center justify-center z-10 ${
-                isOpen 
+                isOpen === true
                   ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
                   : 'opacity-50 cursor-not-allowed'
               }`}
@@ -324,7 +324,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
       {/* Desktop/Tablet Layout - Vertical Cards */}
       <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group h-80 flex flex-col ${
-        isOpen ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
+        isOpen === true ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
       } ${
         isInCart 
           ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
@@ -396,16 +396,16 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 }
                 onAddToCart(item);
               }}
-              disabled={!isOpen}
+              disabled={isOpen !== true}
               className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
-                isOpen
+                isOpen === true
                   ? isMisterCrispy
                     ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
+              {isOpen === true ? 'إضافة إلى السلة' : isOpen === false ? 'مغلق حالياً' : 'جاري التحقق...'}
             </button>
           </div>
         </div>

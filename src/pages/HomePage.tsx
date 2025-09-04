@@ -10,7 +10,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { restaurants, getRestaurantById, getBranchById } from '../data/restaurantsData';
 import { Branch, Restaurant } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening, isWithinOperatingHoursSync } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export const HomePage: React.FC = () => {
     clearCart,
     loadBranchCart,
   } = useCart(selectedBranch?.id);
-  const [isOpen, setIsOpen] = React.useState(isWithinOperatingHoursSync());
+  const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilOpening, setTimeUntilOpening] = React.useState<string | null>(null);
 
   // Load branch-specific cart when branch changes
@@ -164,14 +164,14 @@ export const HomePage: React.FC = () => {
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
             <div className={`w-3 h-3 rounded-full animate-pulse ${
-              isOpen ? 'bg-green-500' : 'bg-red-500'
+              isOpen === true ? 'bg-green-500' : isOpen === false ? 'bg-red-500' : 'bg-yellow-500'
             }`}></div>
             <span className="text-sm text-gray-600">
-              {isOpen ? 'متوفر للطلب الآن' : 'مغلق حالياً'}
+              {isOpen === true ? 'متوفر للطلب الآن' : isOpen === false ? 'مغلق حالياً' : 'جاري التحقق...'}
             </span>
           </div>
           
-          {!isOpen && (
+          {isOpen === false && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
               {timeUntilOpening && `سيفتح خلال ${timeUntilOpening}`}
             </div>
