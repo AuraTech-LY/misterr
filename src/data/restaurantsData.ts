@@ -1,5 +1,4 @@
 import { Restaurant } from '../types';
-import { isWithinOperatingHoursSync } from '../utils/timeUtils';
 
 export const restaurants: Restaurant[] = [
   {
@@ -13,7 +12,6 @@ export const restaurants: Restaurant[] = [
         address: 'طريق المطار مقابل مدرسة المهاجرين',
         phone: '093-0625795',
         deliveryTime: '25-35 دقيقة',
-        isOpen: isWithinOperatingHoursSync(),
         latitude: 32.10757403424774,
         longitude: 20.125857815186546
       },
@@ -24,7 +22,6 @@ export const restaurants: Restaurant[] = [
         address: 'بلعون بجوار جامعة العرب الطبية',
         phone: '0919670707',
         deliveryTime: '30-40 دقيقة',
-        isOpen: isWithinOperatingHoursSync(),
         latitude: 32.07117769599545,
         longitude: 20.099908835028735
       }
@@ -41,7 +38,6 @@ export const restaurants: Restaurant[] = [
         address: 'بلعون مقابل جامعة العرب الطبية',
         phone: '094-2075555',
         deliveryTime: '20-30 دقيقة',
-        isOpen: isWithinOperatingHoursSync(),
         latitude: 32.073066931955495,
         longitude: 20.09804136668002
       }

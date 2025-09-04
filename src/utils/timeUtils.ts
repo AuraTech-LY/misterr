@@ -2,6 +2,18 @@
 
 export const LIBYA_TIMEZONE = 'Asia/Dubai'; // UTC+4
 
+// Cache configuration
+const CACHE_EXPIRATION_MINUTES = 30; // Cache operating hours for 30 minutes
+const CACHE_KEY_PREFIX = 'operating_hours_';
+
+interface CachedOperatingHours {
+  opening_time: string;
+  closing_time: string;
+  is_24_hours: boolean;
+  is_closed: boolean;
+  cached_at: number;
+}
+
 /**
  * Get current time in UTC+4 timezone
  */
@@ -33,14 +45,53 @@ export const getCurrentTime = (): Date => {
 };
 
 /**
- * Check if current time is within operating hours for a specific branch
+ * Get cached operating hours from localStorage
  */
-export const isWithinOperatingHours = async (branchId?: string): Promise<boolean> => {
-  if (!branchId) {
-    // Default fallback hours if no branch specified
-    return isTimeWithinOperatingHours(11, 0, 23, 59);
+const getCachedOperatingHours = (branchId: string): CachedOperatingHours | null => {
+  try {
+    const cacheKey = `${CACHE_KEY_PREFIX}${branchId}`;
+    const cached = localStorage.getItem(cacheKey);
+    
+    if (!cached) return null;
+    
+    const data: CachedOperatingHours = JSON.parse(cached);
+    const now = Date.now();
+    const cacheAge = (now - data.cached_at) / (1000 * 60); // Age in minutes
+    
+    // Check if cache is still fresh
+    if (cacheAge < CACHE_EXPIRATION_MINUTES) {
+      return data;
+    } else {
+      // Cache expired, remove it
+      localStorage.removeItem(cacheKey);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error reading cached operating hours:', error);
+    return null;
   }
+};
 
+/**
+ * Cache operating hours in localStorage
+ */
+const setCachedOperatingHours = (branchId: string, data: Omit<CachedOperatingHours, 'cached_at'>): void => {
+  try {
+    const cacheKey = `${CACHE_KEY_PREFIX}${branchId}`;
+    const cachedData: CachedOperatingHours = {
+      ...data,
+      cached_at: Date.now()
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(cachedData));
+  } catch (error) {
+    console.error('Error caching operating hours:', error);
+  }
+};
+
+/**
+ * Fetch operating hours from Supabase and cache them
+ */
+const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOperatingHours | null> => {
   try {
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(
@@ -55,52 +106,70 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
       .single();
 
     if (error || !data) {
-      // Fallback to default hours if no data found
-      const defaultClosingHour = branchId === 'dollar' ? 3 : 23;
-      const defaultClosingMinute = branchId === 'dollar' ? 0 : 59;
-      return isTimeWithinOperatingHours(11, 0, defaultClosingHour, defaultClosingMinute);
+      // Use default hours if no data found
+      const defaultClosingHour = branchId === 'dollar' ? '03:00' : '23:59';
+      const defaultData = {
+        opening_time: '11:00',
+        closing_time: defaultClosingHour,
+        is_24_hours: false,
+        is_closed: false
+      };
+      
+      // Cache the default data
+      setCachedOperatingHours(branchId, defaultData);
+      return { ...defaultData, cached_at: Date.now() };
     }
 
-    // Check if branch is closed or 24 hours
-    if (data.is_closed) return false;
-    if (data.is_24_hours) return true;
+    const operatingHours = {
+      opening_time: data.opening_time,
+      closing_time: data.closing_time,
+      is_24_hours: data.is_24_hours,
+      is_closed: data.is_closed
+    };
 
-    // Parse opening and closing times
-    const [openHour, openMinute] = data.opening_time.split(':').map(Number);
-    const [closeHour, closeMinute] = data.closing_time.split(':').map(Number);
-
-    return isTimeWithinOperatingHours(openHour, openMinute, closeHour, closeMinute);
+    // Cache the fetched data
+    setCachedOperatingHours(branchId, operatingHours);
+    
+    return { ...operatingHours, cached_at: Date.now() };
   } catch (error) {
-    console.error('Error checking operating hours:', error);
-    // Fallback to default hours
-    const defaultClosingHour = branchId === 'dollar' ? 3 : 23;
-    const defaultClosingMinute = branchId === 'dollar' ? 0 : 59;
-    return isTimeWithinOperatingHours(11, 0, defaultClosingHour, defaultClosingMinute);
+    console.error('Error fetching operating hours:', error);
+    return null;
   }
 };
 
 /**
- * Check if current time is within operating hours (synchronous version for backward compatibility)
+ * Check if current time is within operating hours for a specific branch
  */
-export const isWithinOperatingHoursSync = (): boolean => {
-  const currentTime = getCurrentTime();
-  const currentHour = currentTime.getHours();
-  const currentMinute = currentTime.getMinutes();
-  
-  // Default hours: 11:00 - 23:59
-  if (currentHour < 11) {
-    return false; // Before opening
+export const isWithinOperatingHours = async (branchId?: string): Promise<boolean> => {
+  if (!branchId) {
+    // Default fallback hours if no branch specified
+    return isTimeWithinOperatingHours(11, 0, 23, 59);
   }
+
+  // Try to get from cache first
+  let operatingHours = getCachedOperatingHours(branchId);
   
-  if (currentHour > 23) {
-    return false; // After closing
+  // If not in cache or cache expired, fetch from database
+  if (!operatingHours) {
+    operatingHours = await fetchAndCacheOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      // Fallback to default hours if fetch failed
+      const defaultClosingHour = branchId === 'dollar' ? 3 : 23;
+      const defaultClosingMinute = branchId === 'dollar' ? 0 : 59;
+      return isTimeWithinOperatingHours(11, 0, defaultClosingHour, defaultClosingMinute);
+    }
   }
-  
-  if (currentHour === 23 && currentMinute > 59) {
-    return false; // After 23:59
-  }
-  
-  return true;
+
+  // Check if branch is closed or 24 hours
+  if (operatingHours.is_closed) return false;
+  if (operatingHours.is_24_hours) return true;
+
+  // Parse opening and closing times
+  const [openHour, openMinute] = operatingHours.opening_time.split(':').map(Number);
+  const [closeHour, closeMinute] = operatingHours.closing_time.split(':').map(Number);
+
+  return isTimeWithinOperatingHours(openHour, openMinute, closeHour, closeMinute);
 };
 
 /**
@@ -127,27 +196,17 @@ export const getTimeUntilOpening = async (branchId?: string): Promise<string | n
   let openingHour = 11;
   let closingHour = 23;
   
-  // Get branch-specific hours
+  // Get branch-specific hours from cache or database
   if (branchId) {
-    try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY
-      );
-
-      const { data } = await supabase
-        .from('operating_hours')
-        .select('*')
-        .eq('branch_id', branchId)
-        .single();
-
-      if (data && !data.is_closed && !data.is_24_hours) {
-        openingHour = parseInt(data.opening_time.split(':')[0]);
-        closingHour = parseInt(data.closing_time.split(':')[0]);
-      }
-    } catch (error) {
-      console.error('Error getting branch hours:', error);
+    let operatingHours = getCachedOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      operatingHours = await fetchAndCacheOperatingHours(branchId);
+    }
+    
+    if (operatingHours && !operatingHours.is_closed && !operatingHours.is_24_hours) {
+      openingHour = parseInt(operatingHours.opening_time.split(':')[0]);
+      closingHour = parseInt(operatingHours.closing_time.split(':')[0]);
     }
   }
   
@@ -183,30 +242,20 @@ export const getTimeUntilClosing = async (branchId?: string): Promise<string | n
   let closingHour = 23;
   let closingMinute = 59;
   
-  // Get branch-specific hours
+  // Get branch-specific hours from cache or database
   if (branchId) {
-    try {
-      const { createClient } = await import('@supabase/supabase-js');
-      const supabase = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY
-      );
-
-      const { data } = await supabase
-        .from('operating_hours')
-        .select('*')
-        .eq('branch_id', branchId)
-        .single();
-
-      if (data && !data.is_closed && !data.is_24_hours) {
-        const [closeHour, closeMin] = data.closing_time.split(':').map(Number);
-        closingHour = closeHour;
-        closingMinute = closeMin;
-      } else if (data && data.is_24_hours) {
-        return null; // 24 hours, never closes
-      }
-    } catch (error) {
-      console.error('Error getting branch hours:', error);
+    let operatingHours = getCachedOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      operatingHours = await fetchAndCacheOperatingHours(branchId);
+    }
+    
+    if (operatingHours && !operatingHours.is_closed && !operatingHours.is_24_hours) {
+      const [closeHour, closeMin] = operatingHours.closing_time.split(':').map(Number);
+      closingHour = closeHour;
+      closingMinute = closeMin;
+    } else if (operatingHours && operatingHours.is_24_hours) {
+      return null; // 24 hours, never closes
     }
   }
   
@@ -318,4 +367,20 @@ export const isTimeWithinOperatingHours = (
   }
   
   return true;
+};
+
+/**
+ * Clear all cached operating hours (useful for debugging or manual cache invalidation)
+ */
+export const clearOperatingHoursCache = (): void => {
+  try {
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith(CACHE_KEY_PREFIX)) {
+        localStorage.removeItem(key);
+      }
+    });
+  } catch (error) {
+    console.error('Error clearing operating hours cache:', error);
+  }
 };
