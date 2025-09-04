@@ -164,3 +164,8 @@ export const isTimeWithinOperatingHours = (hour: number, minute: number = 0): bo
   
   return true;
 };
+
+/**
+ * Alias for isWithinOperatingHours for branch-specific checks
+ */
+export const isBranchOpen = isWithinOperatingHours;
