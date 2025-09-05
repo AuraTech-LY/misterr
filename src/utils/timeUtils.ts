@@ -94,13 +94,7 @@ const setCachedOperatingHours = (branchId: string, data: Omit<CachedOperatingHou
 /**
  * Fetch operating hours from Supabase and cache them
  */
-const fetchOperatingHoursFromDB = async (branchId: string): Promise<CachedOperatingHours | null> => {
-  // Check if branchId is empty or undefined
-  if (!branchId || branchId.trim() === '') {
-    console.log('Empty or invalid branch ID provided, returning null');
-    return null;
-  }
-
+const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOperatingHours | null> => {
   try {
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(
@@ -115,8 +109,21 @@ const fetchOperatingHoursFromDB = async (branchId: string): Promise<CachedOperat
       .single();
 
     if (error || !data) {
-      console.log(`No operating hours found for branch ${branchId}`);
-      return null;
+      // Use default hours if no data found
+      const defaultClosingHour = branchId === 'dollar' ? '03:00' : '23:59';
+      const defaultData = {
+        opening_time: '11:00',
+        closing_time: defaultClosingHour,
+        is_24_hours: false,
+        is_closed: false,
+        delivery_start_time: null,
+        delivery_end_time: null,
+        delivery_available: true
+      };
+      
+      // Cache the default data
+      setCachedOperatingHours(branchId, defaultData);
+      return { ...defaultData, cached_at: Date.now() };
     }
 
     const operatingHours = {
@@ -129,6 +136,9 @@ const fetchOperatingHoursFromDB = async (branchId: string): Promise<CachedOperat
       delivery_available: data.delivery_available
     };
 
+    // Cache the fetched data
+    setCachedOperatingHours(branchId, operatingHours);
+    
     return { ...operatingHours, cached_at: Date.now() };
   } catch (error) {
     console.error('Error fetching operating hours:', error);
@@ -141,19 +151,24 @@ const fetchOperatingHoursFromDB = async (branchId: string): Promise<CachedOperat
  */
 export const isWithinOperatingHours = async (branchId?: string): Promise<boolean> => {
   if (!branchId) {
-    console.log('No branch ID provided, defaulting to closed');
-    return false;
+    // Default fallback hours if no branch specified
+    return isTimeWithinOperatingHours(11, 0, 23, 59);
   }
 
-  // Always fetch fresh data from database
-  const operatingHours = await fetchOperatingHoursFromDB(branchId);
+  // Try to get from cache first
+  let operatingHours = getCachedOperatingHours(branchId);
   
+  // If not in cache or cache expired, fetch from database
   if (!operatingHours) {
-    console.log(`No operating hours found for branch ${branchId}, defaulting to closed`);
-    return false;
+    operatingHours = await fetchAndCacheOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      // Fallback to default hours if fetch failed
+      const defaultClosingHour = branchId === 'dollar' ? 3 : 23;
+      const defaultClosingMinute = branchId === 'dollar' ? 0 : 59;
+      return isTimeWithinOperatingHours(11, 0, defaultClosingHour, defaultClosingMinute);
+    }
   }
-
-  console.log(`Operating hours for ${branchId}:`, operatingHours);
 
   // Check if branch is closed or 24 hours
   if (operatingHours.is_closed) return false;
@@ -171,17 +186,23 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
  */
 export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> => {
   if (!branchId) {
-    return false; // Default to unavailable if no branch specified
+    return true; // Default to available if no branch specified
   }
 
   console.log(`[DEBUG] Checking delivery availability for branch: ${branchId}`);
   
-  // Always fetch fresh data from database
-  const operatingHours = await fetchOperatingHoursFromDB(branchId);
+  // Try to get from cache first
+  let operatingHours = getCachedOperatingHours(branchId);
   
+  // If not in cache or cache expired, fetch from database
   if (!operatingHours) {
-    console.log(`[DEBUG] No operating hours found for ${branchId}, defaulting to unavailable`);
-    return false;
+    operatingHours = await fetchAndCacheOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      // Fallback to default (delivery available)
+      console.log(`[DEBUG] No operating hours found for ${branchId}, defaulting to available`);
+      return true;
+    }
   }
 
   console.log(`[DEBUG] Operating hours for ${branchId}:`, operatingHours);
@@ -294,19 +315,22 @@ export const getTimeUntilOpening = async (branchId?: string): Promise<string | n
     return null;
   }
   
-  // Fetch operating hours from database
-  const operatingHours = await fetchOperatingHoursFromDB(branchId || '');
+  let openingHour = 11;
+  let closingHour = 23;
   
-  if (!operatingHours || operatingHours.is_closed) {
-    return 'مغلق';
+  // Get branch-specific hours from cache or database
+  if (branchId) {
+    let operatingHours = getCachedOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      operatingHours = await fetchAndCacheOperatingHours(branchId);
+    }
+    
+    if (operatingHours && !operatingHours.is_closed && !operatingHours.is_24_hours) {
+      openingHour = parseInt(operatingHours.opening_time.split(':')[0]);
+      closingHour = parseInt(operatingHours.closing_time.split(':')[0]);
+    }
   }
-  
-  if (operatingHours.is_24_hours) {
-    return null; // 24 hours, never closed
-  }
-  
-  const openingHour = parseInt(operatingHours.opening_time.split(':')[0]);
-  const closingHour = parseInt(operatingHours.closing_time.split(':')[0]);
   
   const currentTime = getCurrentTime();
   const currentHour = currentTime.getHours();
@@ -337,18 +361,25 @@ export const getTimeUntilClosing = async (branchId?: string): Promise<string | n
     return null;
   }
   
-  // Fetch operating hours from database
-  const operatingHours = await fetchOperatingHoursFromDB(branchId || '');
+  let closingHour = 23;
+  let closingMinute = 59;
   
-  if (!operatingHours || operatingHours.is_closed) {
-    return null;
+  // Get branch-specific hours from cache or database
+  if (branchId) {
+    let operatingHours = getCachedOperatingHours(branchId);
+    
+    if (!operatingHours) {
+      operatingHours = await fetchAndCacheOperatingHours(branchId);
+    }
+    
+    if (operatingHours && !operatingHours.is_closed && !operatingHours.is_24_hours) {
+      const [closeHour, closeMin] = operatingHours.closing_time.split(':').map(Number);
+      closingHour = closeHour;
+      closingMinute = closeMin;
+    } else if (operatingHours && operatingHours.is_24_hours) {
+      return null; // 24 hours, never closes
+    }
   }
-  
-  if (operatingHours.is_24_hours) {
-    return null; // 24 hours, never closes
-  }
-  
-  const [closingHour, closingMinute] = operatingHours.closing_time.split(':').map(Number);
   
   const currentTime = getCurrentTime();
   const currentHour = currentTime.getHours();

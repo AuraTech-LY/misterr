@@ -173,7 +173,7 @@ export const HomePage: React.FC = () => {
           
           {isOpen === false && (
             <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-full text-sm max-w-md mx-auto">
-              {timeUntilOpening === 'مغلق' ? 'مغلق' : timeUntilOpening ? `سيفتح خلال ${timeUntilOpening}` : 'مغلق'}
+              {timeUntilOpening && `سيفتح خلال ${timeUntilOpening}`}
             </div>
           )}
         </div>
