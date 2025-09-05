@@ -95,6 +95,12 @@ const setCachedOperatingHours = (branchId: string, data: Omit<CachedOperatingHou
  * Fetch operating hours from Supabase and cache them
  */
 const fetchOperatingHoursFromDB = async (branchId: string): Promise<CachedOperatingHours | null> => {
+  // Check if branchId is empty or undefined
+  if (!branchId || branchId.trim() === '') {
+    console.log('Empty or invalid branch ID provided, returning null');
+    return null;
+  }
+
   try {
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(
