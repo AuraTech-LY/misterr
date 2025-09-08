@@ -156,20 +156,26 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
     return isTimeWithinOperatingHours(11, 0, 23, 59);
   }
 
+  console.log(`[DEBUG] Checking operating hours for branch: ${branchId}`);
+
   // Try to get from cache first
   let operatingHours = getCachedOperatingHours(branchId);
   
   // If not in cache or cache expired, fetch from database
   if (!operatingHours) {
+    console.log(`[DEBUG] Cache miss for ${branchId}, fetching from database`);
     operatingHours = await fetchAndCacheOperatingHours(branchId);
     
     if (!operatingHours) {
       // Fallback to default hours if fetch failed
-      const defaultClosingHour = branchId === 'dollar' ? 3 : 23;
-      const defaultClosingMinute = branchId === 'dollar' ? 0 : 59;
+      const defaultClosingHour = branchId === 'dollar' ? 3 : branchId === 'burgerito-airport' ? 23 : 23;
+      const defaultClosingMinute = branchId === 'dollar' ? 0 : branchId === 'burgerito-airport' ? 59 : 59;
+      console.log(`[DEBUG] Using default hours for ${branchId}: 11:00 - ${defaultClosingHour}:${defaultClosingMinute.toString().padStart(2, '0')}`);
       return isTimeWithinOperatingHours(11, 0, defaultClosingHour, defaultClosingMinute);
     }
   }
+
+  console.log(`[DEBUG] Operating hours for ${branchId}:`, operatingHours);
 
   // Check if branch is closed or 24 hours
   if (operatingHours.is_closed) return false;
@@ -178,6 +184,8 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
   // Parse opening and closing times
   const [openHour, openMinute] = operatingHours.opening_time.split(':').map(Number);
   const [closeHour, closeMinute] = operatingHours.closing_time.split(':').map(Number);
+
+  console.log(`[DEBUG] Parsed times for ${branchId}: ${openHour}:${openMinute} - ${closeHour}:${closeMinute}`);
 
   return isTimeWithinOperatingHours(openHour, openMinute, closeHour, closeMinute);
 };
@@ -317,7 +325,7 @@ export const getTimeUntilOpening = async (branchId?: string): Promise<string | n
   }
   
   let openingHour = 11;
-  let closingHour = 23;
+  let closingHour = branchId === 'burgerito-airport' ? 23 : 23;
   
   // Get branch-specific hours from cache or database
   if (branchId) {

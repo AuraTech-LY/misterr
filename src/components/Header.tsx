@@ -81,6 +81,12 @@ export const Header: React.FC<HeaderProps> = ({
   // Update operating status every minute with branch-specific hours
   React.useEffect(() => {
     const updateStatus = async () => {
+      // Clear cache for debugging - remove this in production
+      if (selectedBranch?.id === 'burgerito-airport') {
+        const { clearOperatingHoursCache } = await import('../utils/timeUtils');
+        clearOperatingHoursCache();
+      }
+      
       const branchIsOpen = await isWithinOperatingHours(selectedBranch?.id);
       const timeUntilClose = await getTimeUntilClosing(selectedBranch?.id);
       setIsOpen(branchIsOpen);
