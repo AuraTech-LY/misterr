@@ -285,7 +285,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                     className={`w-10 h-10 ${
                       isMisterCrispy
                         ? 'bg-[#55421A] hover:bg-[#3d2f12]'
-                        : 'bg-[#781220] hover:bg-[#5c0d18]'
+                        : isMisterBurgerito
+                          ? 'bg-[#E59F49] hover:bg-[#cc8a3d]'
+                          : 'bg-[#781220] hover:bg-[#5c0d18]'
                     } text-white rounded-full flex items-center justify-center transition-colors`}
                   >
                     <Plus className="w-5 h-5" />
