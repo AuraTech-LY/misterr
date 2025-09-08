@@ -251,7 +251,9 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : selectedRestaurant?.name?.includes('مستر كريسبي') 
                   ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl'
-                  : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
+                  : selectedRestaurant?.name?.includes('مستر برجريتو')
+                    ? 'bg-[#E59F49] hover:bg-[#cc8a3d] text-white hover:shadow-xl'
+                    : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
             }`}
           >
             <div className="flex items-center justify-between w-full">
