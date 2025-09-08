@@ -21,6 +21,7 @@ function App() {
       <Route path="/airport-menu" element={<BranchMenuPage branchId="airport" />} />
       <Route path="/dollar-menu" element={<BranchMenuPage branchId="dollar" />} />
       <Route path="/balaoun-menu" element={<BranchMenuPage branchId="balaoun" />} />
+      <Route path="/burgerito-airport-menu" element={<BranchMenuPage branchId="burgerito-airport" />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

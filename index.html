@@ -48,6 +48,8 @@
           colorToSet = '#781220'; // مستر شيش brand color
         } else if (path.includes('/crispy') || path.includes('dollar')) {
           colorToSet = '#55421A'; // مستر كريسبي brand color
+        } else if (path.includes('/burgerito')) {
+          colorToSet = '#E59F49'; // مستر برجريتو brand color
         }
 
         setThemeColor(colorToSet);
@@ -62,6 +64,8 @@
         
         if (restaurantName && restaurantName.includes('مستر كريسبي')) {
           colorToSet = '#55421A'; // مستر كريسبي brand color
+        } else if (restaurantName && restaurantName.includes('مستر برجريتو')) {
+          colorToSet = '#E59F49'; // مستر برجريتو brand color
         } else {
           colorToSet = '#781220'; // مستر شيش brand color
         }

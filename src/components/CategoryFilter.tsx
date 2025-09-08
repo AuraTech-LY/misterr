@@ -13,8 +13,8 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategoryChange,
   selectedRestaurant,
 }) => {
-  const brandColor = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#55421A' : '#781220';
-  const brandColorHover = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#3d2f12' : '#5c0d18';
+  const brandColor = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#55421A' : selectedRestaurant?.name?.includes('مستر برجريتو') ? '#E59F49' : '#781220';
+  const brandColorHover = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#3d2f12' : selectedRestaurant?.name?.includes('مستر برجريتو') ? '#cc8a3d' : '#5c0d18';
 
   // Create ordered category names array, preserving the database order
   const orderedCategoryNames = ['الكل', ...categories.map(cat => cat.name)];

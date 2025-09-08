@@ -43,6 +43,22 @@ export const restaurants: Restaurant[] = [
       }
     ]
   }
+  },
+  {
+    id: 'mister-burgerito',
+    name: 'مستر برجريتو',
+    branches: [
+      {
+        id: 'burgerito-airport',
+        name: 'مستر برجريتو - طريق المطار',
+        area: 'طريق المطار',
+        address: 'طريق المطار',
+        phone: '0946375518',
+        deliveryTime: '25-35 دقيقة',
+        latitude: 32.1057120,
+        longitude: 20.1391424
+      }
+    ]
 ];
 
 // Helper functions

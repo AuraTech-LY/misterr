@@ -102,8 +102,8 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
       className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100" 
       dir="rtl"
       style={{
-        '--brand-color': branch?.name?.includes('مستر كريسبي') ? '#55421A' : '#781220',
-        '--brand-color-hover': branch?.name?.includes('مستر كريسبي') ? '#3d2f12' : '#5c0d18'
+        '--brand-color': branch?.name?.includes('مستر كريسبي') ? '#55421A' : branch?.name?.includes('مستر برجريتو') ? '#E59F49' : '#781220',
+        '--brand-color-hover': branch?.name?.includes('مستر كريسبي') ? '#3d2f12' : branch?.name?.includes('مستر برجريتو') ? '#cc8a3d' : '#5c0d18'
       } as React.CSSProperties}
     >
       <Header

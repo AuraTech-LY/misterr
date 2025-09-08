@@ -42,6 +42,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
   const isMisterCrispy = branchData?.branch?.name?.includes('مستر كريسبي') || false;
+  const isMisterBurgerito = branchData?.branch?.name?.includes('مستر برجريتو') || false;
 
   // Trigger appearing animation on mount
   React.useEffect(() => {
@@ -170,7 +171,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           {/* Price Section - Left */}
           <div className="flex flex-col items-center justify-center min-w-[50px] flex-shrink-0 -ml-3">
             <div className={`text-xl whitespace-nowrap ${
-              isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+              isMisterCrispy ? 'text-[#55421A]' : isMisterBurgerito ? 'text-[#E59F49]' : 'text-[#781220]'
             }`}>
               <span className="font-black">{Math.round(item.price)}</span>
               <span className="font-normal text-xs opacity-70"> د.ل</span>
@@ -215,7 +216,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               }`}
             >
               <Plus className={`w-4 h-4 ${
-                isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+                isMisterCrispy ? 'text-[#55421A]' : isMisterBurgerito ? 'text-[#E59F49]' : 'text-[#781220]'
               }`} />
             </button>
           </div>
@@ -261,7 +262,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               <p className="text-gray-600 mb-4 leading-relaxed">{item.description}</p>
               <div className="mb-4">
                 <div className={`text-2xl ${
-                  isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+                  isMisterCrispy ? 'text-[#55421A]' : isMisterBurgerito ? 'text-[#E59F49]' : 'text-[#781220]'
                 }`}>
                   <span className="font-black">{Math.round(item.price)}</span>
                   <span className="font-normal text-lg opacity-70"> د.ل</span>
@@ -311,7 +312,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                   isOpen
                     ? isMisterCrispy
                       ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
-                      : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                      : isMisterBurgerito
+                        ? 'bg-[#E59F49] hover:bg-[#cc8a3d] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                        : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                        ? 'bg-[#E59F49] hover:bg-[#cc8a3d] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                        : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
@@ -377,7 +382,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           
           <div className="mb-3 h-6">
             <div className={`text-xl ${
-              isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+              isMisterCrispy ? 'text-[#55421A]' : isMisterBurgerito ? 'text-[#E59F49]' : 'text-[#781220]'
             }`}>
               <span className="font-black">{Math.round(item.price)}</span>
               <span className="font-normal text-base opacity-70"> د.ل</span>

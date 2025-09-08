@@ -183,7 +183,8 @@ export const Header: React.FC<HeaderProps> = ({
                     const branchRoutes: Record<string, string> = {
                       'airport': '/airport-menu',
                       'dollar': '/dollar-menu',
-                      'balaoun': '/balaoun-menu'
+                      'balaoun': '/balaoun-menu',
+                      'burgerito-airport': '/burgerito-airport-menu'
                     };
                     
                     const targetRoute = branchRoutes[branch.id];

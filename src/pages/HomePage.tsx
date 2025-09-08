@@ -139,8 +139,8 @@ export const HomePage: React.FC = () => {
       className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100" 
       dir="rtl"
       style={{
-        '--brand-color': selectedRestaurant?.name?.includes('مستر كريسبي') ? '#55421A' : '#781220',
-        '--brand-color-hover': selectedRestaurant?.name?.includes('مستر كريسبي') ? '#3d2f12' : '#5c0d18'
+        '--brand-color': selectedRestaurant?.name?.includes('مستر كريسبي') ? '#55421A' : selectedRestaurant?.name?.includes('مستر برجريتو') ? '#E59F49' : '#781220',
+        '--brand-color-hover': selectedRestaurant?.name?.includes('مستر كريسبي') ? '#3d2f12' : selectedRestaurant?.name?.includes('مستر برجريتو') ? '#cc8a3d' : '#5c0d18'
       } as React.CSSProperties}
     >
       <Header
