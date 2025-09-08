@@ -441,250 +441,250 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminOperatingHours />
         ) : (
           <>
-        {/* Restaurant Sub-tabs */}
-        <div className="bg-white shadow-sm border-b mb-6">
-          <div className="container mx-auto px-3 sm:px-8">
-            <div className="flex gap-1">
-              <button
-                onClick={() => setSelectedRestaurant('mister-shish')}
-                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                  selectedRestaurant === 'mister-shish'
-                    ? 'text-[#781220] border-[#781220] bg-red-50'
-                    : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
-                }`}
-              >
-                مستر شيش
-              </button>
-              <button
-                onClick={() => setSelectedRestaurant('mister-crispy')}
-                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                  selectedRestaurant === 'mister-crispy'
-                    ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                    : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
-                }`}
-              >
-                مستر كريسبي
-              </button>
-              <button
-                onClick={() => setSelectedRestaurant('mister-burgerito')}
-                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                  selectedRestaurant === 'mister-burgerito'
-                    ? 'text-[#E59F49] border-[#E59F49] bg-red-50'
-                    : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
-                }`}
-              >
-                مستر برجريتو
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Controls */}
-        <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                تصفية حسب الفرع
-              </label>
-              <CustomSelect
-                value={selectedBranch}
-                onChange={setSelectedBranch}
-                options={selectedRestaurant === 'mister-shish' ? [
-                  { 
-                    value: 'all', 
-                    label: 'جميع الفروع',
-                    icon: <MapPin className="w-4 h-4 text-gray-500" />
-                  },
-                  { 
-                    value: 'airport', 
-                    label: 'مستر شيش - فرع طريق المطار',
-                    icon: <MapPin className="w-4 h-4 text-blue-500" />
-                  },
-                  { 
-                    value: 'balaoun', 
-                    label: 'مستر شيش - بلعون',
-                    icon: <MapPin className="w-4 h-4 text-purple-500" />
-                  }
-                ] : selectedRestaurant === 'mister-crispy' ? [
-                  { 
-                    value: 'all', 
-                    label: 'جميع الفروع',
-                    icon: <MapPin className="w-4 h-4 text-gray-500" />
-                  },
-                  { 
-                    value: 'dollar', 
-                    label: 'مستر كريسبي',
-                    icon: <MapPin className="w-4 h-4 text-green-500" />
-                  }
-                ] : [
-                  { 
-                    value: 'all', 
-                    label: 'جميع الفروع',
-                    icon: <MapPin className="w-4 h-4 text-gray-500" />
-                  },
-                  { 
-                    value: 'burgerito-airport', 
-                    label: 'مستر برجريتو - طريق المطار',
-                    icon: <MapPin className="w-4 h-4 text-orange-500" />
-                  }
-                ]}
-                placeholder="اختر الفرع"
-              />
-            </div>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className={`${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center`}
-            >
-              <Plus className="w-5 h-5" />
-              إضافة عنصر جديد
-            </button>
-          </div>
-        </div>
-
-        {/* Add New Item Form */}
-        {showAddForm && (
-          <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-800">إضافة عنصر جديد</h2>
-              <button
-                onClick={() => setShowAddForm(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <ItemForm item={newItem} onChange={setNewItem} categories={categories} selectedRestaurant={selectedRestaurant} />
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
-              <button
-                onClick={handleAddItem}
-                disabled={saving || !newItem.name || !newItem.description}
-                className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
-                  saving || !newItem.name || !newItem.description
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full`
-                }`}
-              >
-                <Save className="w-4 h-4" />
-                {saving ? 'جاري الحفظ...' : 'حفظ العنصر'}
-              </button>
-              <button
-                onClick={() => setShowAddForm(false)}
-                className="px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
-              >
-                إلغاء
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Menu Items */}
-        <div className="space-y-6">
-          {filteredItems.map((item) => (
-            <div key={item.id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              {editingItem?.id === item.id ? (
-                <div className="p-4 sm:p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-base sm:text-lg font-bold text-gray-800">تعديل العنصر</h3>
-                    <button
-                      onClick={() => setEditingItem(null)}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                  <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} />
-                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
-                    <button
-                      onClick={() => handleSaveItem(editingItem)}
-                      disabled={saving}
-                      className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
-                        saving
-                          ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
-                      }`}
-                      style={{ borderRadius: '9999px' }}
-                    >
-                      <Save className="w-4 h-4" />
-                      {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-                    </button>
-                    <button
-                      onClick={() => setEditingItem(null)}
-                      className="px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
-                    >
-                      إلغاء
-                    </button>
-                  </div>
+            {/* Restaurant Sub-tabs */}
+            <div className="bg-white shadow-sm border-b mb-6">
+              <div className="container mx-auto px-3 sm:px-8">
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setSelectedRestaurant('mister-shish')}
+                    className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                      selectedRestaurant === 'mister-shish'
+                        ? 'text-[#781220] border-[#781220] bg-red-50'
+                        : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
+                    }`}
+                  >
+                    مستر شيش
+                  </button>
+                  <button
+                    onClick={() => setSelectedRestaurant('mister-crispy')}
+                    className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                      selectedRestaurant === 'mister-crispy'
+                        ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                        : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                    }`}
+                  >
+                    مستر كريسبي
+                  </button>
+                  <button
+                    onClick={() => setSelectedRestaurant('mister-burgerito')}
+                    className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                      selectedRestaurant === 'mister-burgerito'
+                        ? 'text-[#E59F49] border-[#E59F49] bg-red-50'
+                        : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
+                    }`}
+                  >
+                    مستر برجريتو
+                  </button>
                 </div>
-              ) : (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 p-4 sm:p-6">
-                  <img
-                    src={item.image_url}
-                    alt={item.name}
-                    className="w-full h-32 sm:w-24 sm:h-24 object-cover rounded-lg"
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    تصفية حسب الفرع
+                  </label>
+                  <CustomSelect
+                    value={selectedBranch}
+                    onChange={setSelectedBranch}
+                    options={selectedRestaurant === 'mister-shish' ? [
+                      { 
+                        value: 'all', 
+                        label: 'جميع الفروع',
+                        icon: <MapPin className="w-4 h-4 text-gray-500" />
+                      },
+                      { 
+                        value: 'airport', 
+                        label: 'مستر شيش - فرع طريق المطار',
+                        icon: <MapPin className="w-4 h-4 text-blue-500" />
+                      },
+                      { 
+                        value: 'balaoun', 
+                        label: 'مستر شيش - بلعون',
+                        icon: <MapPin className="w-4 h-4 text-purple-500" />
+                      }
+                    ] : selectedRestaurant === 'mister-crispy' ? [
+                      { 
+                        value: 'all', 
+                        label: 'جميع الفروع',
+                        icon: <MapPin className="w-4 h-4 text-gray-500" />
+                      },
+                      { 
+                        value: 'dollar', 
+                        label: 'مستر كريسبي',
+                        icon: <MapPin className="w-4 h-4 text-green-500" />
+                      }
+                    ] : [
+                      { 
+                        value: 'all', 
+                        label: 'جميع الفروع',
+                        icon: <MapPin className="w-4 h-4 text-gray-500" />
+                      },
+                      { 
+                        value: 'burgerito-airport', 
+                        label: 'مستر برجريتو - طريق المطار',
+                        icon: <MapPin className="w-4 h-4 text-orange-500" />
+                      }
+                    ]}
+                    placeholder="اختر الفرع"
                   />
-                  <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg sm:text-xl font-bold text-gray-800">{item.name}</h3>
-                          {item.is_popular && (
-                            <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs sm:text-sm">الأكثر طلباً</span>
-                          )}
-                        </div>
-                        <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
-                          <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
-                          <span className={`font-bold ${selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#7A1120]'} text-sm sm:text-base`}>{item.price.toFixed(2)} د.ل</span>
-                          {!item.is_available && (
-                            <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
-                          {selectedRestaurant === 'mister-shish' && (
-                            <>
-                              {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">مستر شيش - فرع طريق المطار</span>}
-                              {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">مستر شيش - بلعون</span>}
-                            </>
-                          )}
-                          {selectedRestaurant === 'mister-crispy' && (
-                            <>
-                              {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
-                            </>
-                          )}
-                          {selectedRestaurant === 'mister-burgerito' && (
-                            <>
-                              {item.available_burgerito_airport && <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full">مستر برجريتو - طريق المطار</span>}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 self-end sm:self-start">
+                </div>
+                <button
+                  onClick={() => setShowAddForm(true)}
+                  className={`${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center`}
+                >
+                  <Plus className="w-5 h-5" />
+                  إضافة عنصر جديد
+                </button>
+              </div>
+            </div>
+
+            {/* Add New Item Form */}
+            {showAddForm && (
+              <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800">إضافة عنصر جديد</h2>
+                  <button
+                    onClick={() => setShowAddForm(false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <ItemForm item={newItem} onChange={setNewItem} categories={categories} selectedRestaurant={selectedRestaurant} />
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
+                  <button
+                    onClick={handleAddItem}
+                    disabled={saving || !newItem.name || !newItem.description}
+                    className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
+                      saving || !newItem.name || !newItem.description
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full`
+                    }`}
+                  >
+                    <Save className="w-4 h-4" />
+                    {saving ? 'جاري الحفظ...' : 'حفظ العنصر'}
+                  </button>
+                  <button
+                    onClick={() => setShowAddForm(false)}
+                    className="px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+                  >
+                    إلغاء
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Menu Items */}
+            <div className="space-y-6">
+              {filteredItems.map((item) => (
+                <div key={item.id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                  {editingItem?.id === item.id ? (
+                    <div className="p-4 sm:p-6">
+                      <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-base sm:text-lg font-bold text-gray-800">تعديل العنصر</h3>
                         <button
-                          onClick={() => setEditingItem(item)}
-                          className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                          onClick={() => setEditingItem(null)}
+                          className="text-gray-500 hover:text-gray-700"
                         >
-                          <Edit className="w-5 h-5" />
+                          <X className="w-6 h-6" />
+                        </button>
+                      </div>
+                      <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} selectedRestaurant={selectedRestaurant} />
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
+                        <button
+                          onClick={() => handleSaveItem(editingItem)}
+                          disabled={saving}
+                          className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
+                            saving
+                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                              : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                          }`}
+                          style={{ borderRadius: '9999px' }}
+                        >
+                          <Save className="w-4 h-4" />
+                          {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
                         </button>
                         <button
-                          onClick={() => handleDeleteItem(item.id)}
-                          className="p-3 text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                          onClick={() => setEditingItem(null)}
+                          className="px-4 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-50 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          إلغاء
                         </button>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 p-4 sm:p-6">
+                      <img
+                        src={item.image_url}
+                        alt={item.name}
+                        className="w-full h-32 sm:w-24 sm:h-24 object-cover rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-lg sm:text-xl font-bold text-gray-800">{item.name}</h3>
+                              {item.is_popular && (
+                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs sm:text-sm">الأكثر طلباً</span>
+                              )}
+                            </div>
+                            <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
+                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
+                              <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
+                              <span className={`font-bold ${selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'text-[#E59F49]' : 'text-[#7A1120]'} text-sm sm:text-base`}>{item.price.toFixed(2)} د.ل</span>
+                              {!item.is_available && (
+                                <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
+                              {selectedRestaurant === 'mister-shish' && (
+                                <>
+                                  {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">مستر شيش - فرع طريق المطار</span>}
+                                  {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">مستر شيش - بلعون</span>}
+                                </>
+                              )}
+                              {selectedRestaurant === 'mister-crispy' && (
+                                <>
+                                  {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
+                                </>
+                              )}
+                              {selectedRestaurant === 'mister-burgerito' && (
+                                <>
+                                  {item.available_burgerito_airport && <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full">مستر برجريتو - طريق المطار</span>}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 self-end sm:self-start">
+                            <button
+                              onClick={() => setEditingItem(item)}
+                              className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                            >
+                              <Edit className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(item.id)}
+                              className="p-3 text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
 
-        {filteredItems.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-base sm:text-lg">لا توجد عناصر في هذا الفرع</div>
-          </div>
-        )}
+            {filteredItems.length === 0 && (
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-base sm:text-lg">لا توجد عناصر في هذا الفرع</div>
+              </div>
+            )}
           </>
         )}
       </main>
