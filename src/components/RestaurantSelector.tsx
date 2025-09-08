@@ -126,6 +126,12 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
                       alt="مستر كريسبي" 
                       className="w-20 h-20 object-contain"
                     />
+                  ) : restaurant.id === 'mister-burgerito' ? (
+                    <img 
+                      src="/mr-burgerito.png" 
+                      alt="مستر برجريتو" 
+                      className="w-20 h-20 object-contain"
+                    />
                   ) : (
                     <img 
                       src="/Mr-Sheesh.png" 
