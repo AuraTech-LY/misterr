@@ -406,7 +406,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 isOpen === true
                   ? isMisterCrispy
                     ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
-                    : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    : isMisterBurgerito
+                      ? 'bg-[#E59F49] hover:bg-[#cc8a3d] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                      : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
