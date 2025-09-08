@@ -114,6 +114,8 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
             className={`relative w-full p-6 md:p-8 rounded-2xl text-white font-semibold transition-all duration-300 active:scale-[0.98] md:hover:scale-[1.02] overflow-hidden group transform-gpu ${
               branch.name?.includes('مستر كريسبي') 
                 ? 'bg-gradient-to-r from-[#55421A] to-[#4a3817]' 
+                : branch.name?.includes('مستر برجريتو')
+                  ? 'bg-gradient-to-r from-[#E59F49] to-[#cc8a3d]'
                 : 'bg-gradient-to-r from-[#781220] to-[#651018]'
             } ${showAsDisabled ? 'opacity-50' : 'shadow-2xl hover:shadow-3xl hover:brightness-110 active:brightness-125 active:shadow-inner'} md:min-h-[140px] md:flex md:items-center ${
               isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
