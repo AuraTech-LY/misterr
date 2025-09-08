@@ -148,7 +148,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
         isOpen === true ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
           isHighlighted || isInCart
-            ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl`
+            ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : isMisterBurgerito ? 'ring-[#E59F49]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : isMisterBurgerito ? 'bg-gradient-to-r from-[#E59F49]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl`
             : ''
         } ${
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
@@ -332,7 +332,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
         isOpen === true ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
       } ${
         isInCart 
-          ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
+          ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : isMisterBurgerito ? 'ring-[#E59F49]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : isMisterBurgerito ? 'bg-gradient-to-b from-[#E59F49]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
           : ''
       } ${
         isPressing ? 'scale-95 shadow-inner bg-gray-50' : ''
