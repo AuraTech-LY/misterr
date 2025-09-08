@@ -265,7 +265,7 @@ export const Cart: React.FC<CartProps> = ({
                     <span className="w-6 sm:w-8 text-center font-semibold text-sm sm:text-base">{item.quantity}</span>
                     <button
                       onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                     className={`w-7 h-7 sm:w-8 sm:h-8 ${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white rounded-full flex items-center justify-center transition-colors`}
+                     className={`w-7 h-7 sm:w-8 sm:h-8 ${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white rounded-full flex items-center justify-center transition-colors`}
                     >
                       <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
