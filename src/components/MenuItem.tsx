@@ -299,7 +299,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               <div className="flex justify-between items-center mb-6 p-4 bg-gray-50 rounded-xl">
                 <span className="text-lg font-semibold text-gray-800">المجموع:</span>
                 <div className={`text-xl ${
-                  isMisterCrispy ? 'text-[#55421A]' : 'text-[#781220]'
+                  isMisterCrispy ? 'text-[#55421A]' : isMisterBurgerito ? 'text-[#E59F49]' : 'text-[#781220]'
                 }`}>
                   <span className="font-black">{Math.round(item.price * quantity)}</span>
                   <span className="font-normal text-lg opacity-70"> د.ل</span>
