@@ -89,7 +89,7 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
             />
           ) : restaurantName?.includes('مستر برجريتو') ? (
             <img 
-              src="/mr-burgerito.png" 
+               src="https://arabic-fast-food-res-p61a.bolt.host/mr-burgerito.png" 
               alt="مستر برجريتو"
               className="w-36 h-36 object-contain mx-auto mb-1"
             />
