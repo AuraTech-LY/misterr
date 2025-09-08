@@ -24,7 +24,7 @@ const AdminOperatingHours: React.FC = () => {
   const [operatingHours, setOperatingHours] = useState<Record<string, OperatingHours>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<Record<string, boolean>>({});
-  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy'>('mister-shish');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy' | 'mister-burgerito'>('mister-shish');
   const [error, setError] = useState<string | null>(null);
 
   const allBranches = getAllBranches();
@@ -129,8 +129,10 @@ const AdminOperatingHours: React.FC = () => {
   const getFilteredBranches = () => {
     if (selectedRestaurant === 'mister-shish') {
       return allBranches.filter(branch => branch.id === 'airport' || branch.id === 'balaoun');
-    } else {
+    } else if (selectedRestaurant === 'mister-crispy') {
       return allBranches.filter(branch => branch.id === 'dollar');
+    } else {
+      return allBranches.filter(branch => branch.id === 'burgerito-airport');
     }
   };
 
@@ -187,6 +189,16 @@ const AdminOperatingHours: React.FC = () => {
             >
               مستر كريسبي
             </button>
+            <button
+              onClick={() => setSelectedRestaurant('mister-burgerito')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                selectedRestaurant === 'mister-burgerito'
+                  ? 'text-[#E59F49] border-[#E59F49] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
+              }`}
+            >
+              مستر برجريتو
+            </button>
           </div>
         </div>
       </div>
@@ -214,7 +226,7 @@ const AdminOperatingHours: React.FC = () => {
               {/* Branch Header */}
               <div className="flex items-center gap-3 mb-4">
                 <div className={`w-12 h-12 ${
-                  selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A]' : 'bg-[#781220]'
+                  selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49]' : 'bg-[#781220]'
                 } rounded-xl flex items-center justify-center`}>
                   <MapPin className="w-6 h-6 text-white" />
                 </div>
@@ -260,7 +272,7 @@ const AdminOperatingHours: React.FC = () => {
                         onChange={(e) => updateHours(branch.id, 'is_24_hours', e.target.checked)}
                         disabled={hours.is_closed}
                         className={`w-5 h-5 ${
-                          selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#781220]'
+                          selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'text-[#E59F49]' : 'text-[#781220]'
                         } border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 disabled:opacity-50`}
                       />
                       <label htmlFor={`24hours-${branch.id}`} className="text-sm font-medium text-gray-700">
@@ -282,7 +294,7 @@ const AdminOperatingHours: React.FC = () => {
                       onChange={(e) => updateHours(branch.id, 'delivery_available', e.target.checked)}
                       disabled={hours.is_closed}
                       className={`w-5 h-5 ${
-                        selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#781220]'
+                        selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'text-[#E59F49]' : 'text-[#781220]'
                       } border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 disabled:opacity-50`}
                     />
                     <label htmlFor={`delivery-available-${branch.id}`} className="text-sm font-medium text-gray-700">
@@ -302,7 +314,7 @@ const AdminOperatingHours: React.FC = () => {
                           value={hours.opening_time}
                           onChange={(e) => updateHours(branch.id, 'opening_time', e.target.value)}
                           className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                            selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
+                            selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
                           } text-right`}
                         />
                       </div>
@@ -316,7 +328,7 @@ const AdminOperatingHours: React.FC = () => {
                           value={hours.closing_time}
                           onChange={(e) => updateHours(branch.id, 'closing_time', e.target.value)}
                           className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                            selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
+                            selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
                           } text-right`}
                         />
                       </div>
@@ -340,7 +352,7 @@ const AdminOperatingHours: React.FC = () => {
                         value={hours.delivery_start_time || ''}
                         onChange={(e) => updateHours(branch.id, 'delivery_start_time', e.target.value || null)}
                         className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
+                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
                         } text-right`}
                       />
                     </div>
@@ -354,7 +366,7 @@ const AdminOperatingHours: React.FC = () => {
                         value={hours.delivery_end_time || ''}
                         onChange={(e) => updateHours(branch.id, 'delivery_end_time', e.target.value || null)}
                         className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : '[#781220]'
+                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
                         } text-right`}
                       />
                     </div>
@@ -371,7 +383,9 @@ const AdminOperatingHours: React.FC = () => {
                         : `${
                             selectedRestaurant === 'mister-crispy' 
                               ? 'bg-[#55421A] hover:bg-[#3d2f12]' 
-                              : 'bg-[#781220] hover:bg-[#5c0d18]'
+                              : selectedRestaurant === 'mister-burgerito'
+                                ? 'bg-[#E59F49] hover:bg-[#cc8a3d]'
+                                : 'bg-[#781220] hover:bg-[#5c0d18]'
                           } text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                     }`}
                   >
