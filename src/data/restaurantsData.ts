@@ -42,7 +42,6 @@ export const restaurants: Restaurant[] = [
         longitude: 20.09804136668002
       }
     ]
-  }
   },
   {
     id: 'mister-burgerito',
@@ -59,6 +58,7 @@ export const restaurants: Restaurant[] = [
         longitude: 20.1391424
       }
     ]
+  }
 ];
 
 // Helper functions
