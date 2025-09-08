@@ -340,7 +340,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
       }`}>
         {/* Progress Indicator */}
         <div className={`p-3 sm:p-4 flex-shrink-0 ${
-          selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+          selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
         }`}>
           <div className="flex items-center justify-between text-white">
             <div className="flex items-center gap-3">
