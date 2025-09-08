@@ -435,7 +435,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 disabled={!canProceedToStep2()}
                 className={`w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all ${
                   canProceedToStep2()
-                    ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                    ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
               >
