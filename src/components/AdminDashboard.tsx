@@ -236,7 +236,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         itemToAdd.available_balaoun = false;
         itemToAdd.available_dollar = false;
         // Ensure burgerito-airport is true
-        itemToAdd.available_burgerito_airport = itemToAdd.available_burgerito_airport;
+        itemToAdd.available_burgerito_airport = true;
       }
       
       const { data, error } = await supabase
