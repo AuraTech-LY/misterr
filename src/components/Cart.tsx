@@ -296,7 +296,7 @@ export const Cart: React.FC<CartProps> = ({
             </div>
             <button 
               onClick={handleCheckout}
-             className={`w-full ${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
+             className={`w-full ${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
             >
               المتابعة للدفع
             </button>
