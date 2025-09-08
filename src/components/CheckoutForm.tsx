@@ -460,7 +460,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     disabled={isCheckingDelivery || !isDeliveryAvailableNow}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'delivery' && isDeliveryAvailableNow
-                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
+                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'border-[#E59F49] bg-red-50 text-[#E59F49]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
                         : isCheckingDelivery || !isDeliveryAvailableNow
                         ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'border-gray-200 hover:border-gray-300'
@@ -476,7 +476,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     onClick={() => updateFormData('deliveryMethod', 'pickup')}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'pickup'
-                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
+                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'border-[#E59F49] bg-red-50 text-[#E59F49]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
