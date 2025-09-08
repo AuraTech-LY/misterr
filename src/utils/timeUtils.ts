@@ -106,9 +106,9 @@ const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOper
       .from('operating_hours')
       .select('*')
       .eq('branch_id', branchId)
-      .single();
+      .limit(1);
 
-    if (error || !data) {
+    if (error || !data || data.length === 0) {
       // Use default hours if no data found
       const defaultClosingHour = branchId === 'dollar' ? '03:00' : '23:59';
       const defaultData = {
@@ -126,14 +126,15 @@ const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOper
       return { ...defaultData, cached_at: Date.now() };
     }
 
+    const operatingHoursData = data[0];
     const operatingHours = {
-      opening_time: data.opening_time,
-      closing_time: data.closing_time,
-      is_24_hours: data.is_24_hours,
-      is_closed: data.is_closed,
-      delivery_start_time: data.delivery_start_time,
-      delivery_end_time: data.delivery_end_time,
-      delivery_available: data.delivery_available
+      opening_time: operatingHoursData.opening_time,
+      closing_time: operatingHoursData.closing_time,
+      is_24_hours: operatingHoursData.is_24_hours,
+      is_closed: operatingHoursData.is_closed,
+      delivery_start_time: operatingHoursData.delivery_start_time,
+      delivery_end_time: operatingHoursData.delivery_end_time,
+      delivery_available: operatingHoursData.delivery_available
     };
 
     // Cache the fetched data

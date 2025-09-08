@@ -35,7 +35,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours'>('menu');
-  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy'>('mister-shish');
+  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy' | 'mister-burgerito'>('mister-shish');
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
 
   const newItemTemplate: MenuItem = {
@@ -49,6 +49,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     available_airport: false,
     available_dollar: false,
     available_balaoun: false,
+    available_burgerito_airport: false,
   };
 
   const [newItem, setNewItem] = useState(newItemTemplate);
@@ -129,6 +130,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       filtered = menuItems.filter(item => 
         item.available_dollar
       );
+    } else if (selectedRestaurant === 'mister-burgerito') {
+      filtered = menuItems.filter(item => 
+        item['available_burgerito-airport']
+      );
     }
     
     // Further filter by specific branch if selected
@@ -156,12 +161,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       if (selectedRestaurant === 'mister-shish') {
         // For Mister Shish, ensure dollar is false
         itemToSave.available_dollar = false;
+        itemToSave['available_burgerito-airport'] = false;
       } else if (selectedRestaurant === 'mister-crispy') {
         // For Mister Crispy, ensure airport and balaoun are false
         itemToSave.available_airport = false;
         itemToSave.available_balaoun = false;
         // Ensure dollar is true
         itemToSave.available_dollar = true;
+        itemToSave['available_burgerito-airport'] = false;
+      } else if (selectedRestaurant === 'mister-burgerito') {
+        // For Mister Burgerito, ensure other branches are false
+        itemToSave.available_airport = false;
+        itemToSave.available_balaoun = false;
+        itemToSave.available_dollar = false;
+        // Ensure burgerito-airport is true
+        itemToSave['available_burgerito-airport'] = true;
       }
       
       const { error } = await supabase
@@ -177,6 +191,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           available_airport: itemToSave.available_airport,
           available_dollar: itemToSave.available_dollar,
           available_balaoun: itemToSave.available_balaoun,
+          'available_burgerito-airport': itemToSave['available_burgerito-airport'],
         })
         .eq('id', itemToSave.id);
 
@@ -202,6 +217,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       if (selectedRestaurant === 'mister-shish') {
         // For Mister Shish, ensure dollar is false
         itemToAdd.available_dollar = false;
+        itemToAdd['available_burgerito-airport'] = false;
         // If no branches selected, default to both Mister Shish branches
         if (!itemToAdd.available_airport && !itemToAdd.available_balaoun) {
           itemToAdd.available_airport = true;
@@ -213,11 +229,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         itemToAdd.available_balaoun = false;
         // Ensure dollar is true
         itemToAdd.available_dollar = true;
+        itemToAdd['available_burgerito-airport'] = false;
+      } else if (selectedRestaurant === 'mister-burgerito') {
+        // For Mister Burgerito, ensure other branches are false
+        itemToAdd.available_airport = false;
+        itemToAdd.available_balaoun = false;
+        itemToAdd.available_dollar = false;
+        // Ensure burgerito-airport is true
+        itemToAdd['available_burgerito-airport'] = itemToAdd.available_burgerito_airport;
       }
       
       const { data, error } = await supabase
         .from('menu_items')
-        .insert([itemToAdd])
+        .insert([{
+          name: itemToAdd.name,
+          description: itemToAdd.description,
+          price: itemToAdd.price,
+          image_url: itemToAdd.image_url,
+          category: itemToAdd.category,
+          is_popular: itemToAdd.is_popular,
+          is_available: itemToAdd.is_available,
+          available_airport: itemToAdd.available_airport,
+          available_dollar: itemToAdd.available_dollar,
+          available_balaoun: itemToAdd.available_balaoun,
+          'available_burgerito-airport': itemToAdd['available_burgerito-airport'],
+        }])
         .select()
         .single();
 
@@ -243,11 +279,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     // Check if item exists in other restaurants
     const existsInOtherRestaurants = 
       (selectedRestaurant === 'mister-shish' && itemToDelete.available_dollar) ||
-      (selectedRestaurant === 'mister-crispy' && (itemToDelete.available_airport || itemToDelete.available_balaoun));
+      (selectedRestaurant === 'mister-crispy' && (itemToDelete.available_airport || itemToDelete.available_balaoun)) ||
+      (selectedRestaurant === 'mister-burgerito' && (itemToDelete.available_airport || itemToDelete.available_balaoun || itemToDelete.available_dollar));
     
     if (existsInOtherRestaurants) {
       // If item exists in other restaurants, just disable it for current restaurant
-      if (!confirm('هذا العنصر موجود في مطاعم أخرى. هل تريد إزالته من ' + (selectedRestaurant === 'mister-shish' ? 'مستر شيش' : 'مستر كريسبي') + ' فقط؟')) return;
+      const restaurantName = selectedRestaurant === 'mister-shish' ? 'مستر شيش' : selectedRestaurant === 'mister-crispy' ? 'مستر كريسبي' : 'مستر برجريتو';
+      if (!confirm('هذا العنصر موجود في مطاعم أخرى. هل تريد إزالته من ' + restaurantName + ' فقط؟')) return;
       
       try {
         const updatedItem = { ...itemToDelete };
@@ -256,6 +294,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           updatedItem.available_balaoun = false;
         } else if (selectedRestaurant === 'mister-crispy') {
           updatedItem.available_dollar = false;
+        } else if (selectedRestaurant === 'mister-burgerito') {
+          updatedItem['available_burgerito-airport'] = false;
         }
         
         const { error } = await supabase
@@ -264,6 +304,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             available_airport: updatedItem.available_airport,
             available_dollar: updatedItem.available_dollar,
             available_balaoun: updatedItem.available_balaoun,
+            'available_burgerito-airport': updatedItem['available_burgerito-airport'],
           })
           .eq('id', id);
 
@@ -424,6 +465,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               >
                 مستر كريسبي
               </button>
+              <button
+                onClick={() => setSelectedRestaurant('mister-burgerito')}
+                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                  selectedRestaurant === 'mister-burgerito'
+                    ? 'text-[#E59F49] border-[#E59F49] bg-red-50'
+                    : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
+                }`}
+              >
+                مستر برجريتو
+              </button>
             </div>
           </div>
         </div>
@@ -454,7 +505,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     label: 'مستر شيش - بلعون',
                     icon: <MapPin className="w-4 h-4 text-purple-500" />
                   }
-                ] : [
+                ] : selectedRestaurant === 'mister-crispy' ? [
                   { 
                     value: 'all', 
                     label: 'جميع الفروع',
@@ -465,13 +516,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     label: 'مستر كريسبي',
                     icon: <MapPin className="w-4 h-4 text-green-500" />
                   }
+                ] : [
+                  { 
+                    value: 'all', 
+                    label: 'جميع الفروع',
+                    icon: <MapPin className="w-4 h-4 text-gray-500" />
+                  },
+                  { 
+                    value: 'burgerito-airport', 
+                    label: 'مستر برجريتو - طريق المطار',
+                    icon: <MapPin className="w-4 h-4 text-orange-500" />
+                  }
                 ]}
                 placeholder="اختر الفرع"
               />
             </div>
             <button
               onClick={() => setShowAddForm(true)}
-              className={`${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center`}
+              className={`${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center`}
             >
               <Plus className="w-5 h-5" />
               إضافة عنصر جديد
@@ -499,7 +561,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
                   saving || !newItem.name || !newItem.description
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full`
+                    : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full`
                 }`}
               >
                 <Save className="w-4 h-4" />
@@ -538,7 +600,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
                         saving
                           ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                          : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                          : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                       }`}
                       style={{ borderRadius: '9999px' }}
                     >
@@ -587,6 +649,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           {selectedRestaurant === 'mister-crispy' && (
                             <>
                               {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
+                            </>
+                          )}
+                          {selectedRestaurant === 'mister-burgerito' && (
+                            <>
+                              {item['available_burgerito-airport'] && <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full">مستر برجريتو - طريق المطار</span>}
                             </>
                           )}
                         </div>
