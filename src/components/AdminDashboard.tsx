@@ -132,7 +132,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       );
     } else if (selectedRestaurant === 'mister-burgerito') {
       filtered = menuItems.filter(item => 
-        item['available_burgerito-airport']
+        item.available_burgerito_airport
       );
     }
     
@@ -161,21 +161,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       if (selectedRestaurant === 'mister-shish') {
         // For Mister Shish, ensure dollar is false
         itemToSave.available_dollar = false;
-        itemToSave['available_burgerito-airport'] = false;
+        itemToSave.available_burgerito_airport = false;
       } else if (selectedRestaurant === 'mister-crispy') {
         // For Mister Crispy, ensure airport and balaoun are false
         itemToSave.available_airport = false;
         itemToSave.available_balaoun = false;
         // Ensure dollar is true
         itemToSave.available_dollar = true;
-        itemToSave['available_burgerito-airport'] = false;
+        itemToSave.available_burgerito_airport = false;
       } else if (selectedRestaurant === 'mister-burgerito') {
         // For Mister Burgerito, ensure other branches are false
         itemToSave.available_airport = false;
         itemToSave.available_balaoun = false;
         itemToSave.available_dollar = false;
         // Ensure burgerito-airport is true
-        itemToSave['available_burgerito-airport'] = true;
+        itemToSave.available_burgerito_airport = true;
       }
       
       const { error } = await supabase
@@ -191,7 +191,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           available_airport: itemToSave.available_airport,
           available_dollar: itemToSave.available_dollar,
           available_balaoun: itemToSave.available_balaoun,
-          'available_burgerito-airport': itemToSave['available_burgerito-airport'],
+          available_burgerito_airport: itemToSave.available_burgerito_airport,
         })
         .eq('id', itemToSave.id);
 
@@ -217,7 +217,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       if (selectedRestaurant === 'mister-shish') {
         // For Mister Shish, ensure dollar is false
         itemToAdd.available_dollar = false;
-        itemToAdd['available_burgerito-airport'] = false;
+        itemToAdd.available_burgerito_airport = false;
         // If no branches selected, default to both Mister Shish branches
         if (!itemToAdd.available_airport && !itemToAdd.available_balaoun) {
           itemToAdd.available_airport = true;
@@ -229,14 +229,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         itemToAdd.available_balaoun = false;
         // Ensure dollar is true
         itemToAdd.available_dollar = true;
-        itemToAdd['available_burgerito-airport'] = false;
+        itemToAdd.available_burgerito_airport = false;
       } else if (selectedRestaurant === 'mister-burgerito') {
         // For Mister Burgerito, ensure other branches are false
         itemToAdd.available_airport = false;
         itemToAdd.available_balaoun = false;
         itemToAdd.available_dollar = false;
         // Ensure burgerito-airport is true
-        itemToAdd['available_burgerito-airport'] = itemToAdd.available_burgerito_airport;
+        itemToAdd.available_burgerito_airport = itemToAdd.available_burgerito_airport;
       }
       
       const { data, error } = await supabase
@@ -252,7 +252,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           available_airport: itemToAdd.available_airport,
           available_dollar: itemToAdd.available_dollar,
           available_balaoun: itemToAdd.available_balaoun,
-          'available_burgerito-airport': itemToAdd['available_burgerito-airport'],
+          available_burgerito_airport: itemToAdd.available_burgerito_airport,
         }])
         .select()
         .single();
@@ -295,7 +295,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         } else if (selectedRestaurant === 'mister-crispy') {
           updatedItem.available_dollar = false;
         } else if (selectedRestaurant === 'mister-burgerito') {
-          updatedItem['available_burgerito-airport'] = false;
+          updatedItem.available_burgerito_airport = false;
         }
         
         const { error } = await supabase
@@ -304,7 +304,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             available_airport: updatedItem.available_airport,
             available_dollar: updatedItem.available_dollar,
             available_balaoun: updatedItem.available_balaoun,
-            'available_burgerito-airport': updatedItem['available_burgerito-airport'],
+            available_burgerito_airport: updatedItem.available_burgerito_airport,
           })
           .eq('id', id);
 
@@ -653,7 +653,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           )}
                           {selectedRestaurant === 'mister-burgerito' && (
                             <>
-                              {item['available_burgerito-airport'] && <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full">مستر برجريتو - طريق المطار</span>}
+                              {item.available_burgerito_airport && <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full">مستر برجريتو - طريق المطار</span>}
                             </>
                           )}
                         </div>

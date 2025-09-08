@@ -45,7 +45,10 @@ export const useMenu = (branchId?: string) => {
 
         // Filter by branch availability
         if (branchId) {
-          const branchColumn = `available_${branchId}`;
+          // Map branch IDs to correct database column names
+          const branchColumn = branchId === 'burgerito-airport' 
+            ? 'available_burgerito_airport' 
+            : `available_${branchId}`;
           query = query.eq(branchColumn, true);
         }
 
