@@ -734,6 +734,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                                   }`}
                                 />
                               </div>
+
+                              {/* Reset Button */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updatedItem = { ...item, image_brightness: 1.2, image_contrast: 1.1 };
+                                  setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                  handleSaveItem(updatedItem);
+                                }}
+                                className="text-xs text-gray-600 hover:text-gray-800 underline"
+                              >
+                                إعادة تعيين
+                              </button>
+                            </div>
                           </div>
                           <div className="flex gap-2 self-end sm:self-start">
                             <button
@@ -757,19 +771,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               ))}
             </div>
 
-                              {/* Reset Button */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const updatedItem = { ...item, image_brightness: 1.2, image_contrast: 1.1 };
-                                  setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
-                                  handleSaveItem(updatedItem);
-                                }}
-                                className="text-xs text-gray-600 hover:text-gray-800 underline"
-                              >
-                                إعادة تعيين
-                              </button>
-                            </div>
             {filteredItems.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-gray-400 text-base sm:text-lg">لا توجد عناصر في هذا الفرع</div>
