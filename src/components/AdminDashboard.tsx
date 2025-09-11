@@ -666,6 +666,74 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                                 </>
                               )}
                             </div>
+                            
+                            {/* Image Controls */}
+                            <div className="mt-4 space-y-3 bg-gray-50 p-3 rounded-lg">
+                              <h4 className="text-sm font-semibold text-gray-700">إعدادات الصورة</h4>
+                              
+                              {/* Brightness Control */}
+                              <div className="space-y-1">
+                                <div className="flex justify-between items-center">
+                                  <label className="text-xs font-medium text-gray-600">السطوع</label>
+                                  <span className="text-xs text-gray-500">{(item.image_brightness || 1.2).toFixed(1)}</span>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="0.5"
+                                  max="2.0"
+                                  step="0.1"
+                                  value={item.image_brightness || 1.2}
+                                  onChange={(e) => {
+                                    const newBrightness = parseFloat(e.target.value);
+                                    const updatedItem = { ...item, image_brightness: newBrightness };
+                                    setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                    // Auto-save after a short delay
+                                    clearTimeout((window as any)[`brightness_timeout_${item.id}`]);
+                                    (window as any)[`brightness_timeout_${item.id}`] = setTimeout(() => {
+                                      handleSaveItem(updatedItem);
+                                    }, 1000);
+                                  }}
+                                  className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer ${
+                                    selectedRestaurant === 'mister-crispy' 
+                                      ? 'bg-gray-200 slider-thumb-[#55421A]' 
+                                      : selectedRestaurant === 'mister-burgerito'
+                                        ? 'bg-gray-200 slider-thumb-[#E59F49]'
+                                        : 'bg-gray-200 slider-thumb-[#7A1120]'
+                                  }`}
+                                />
+                              </div>
+
+                              {/* Contrast Control */}
+                              <div className="space-y-1">
+                                <div className="flex justify-between items-center">
+                                  <label className="text-xs font-medium text-gray-600">التباين</label>
+                                  <span className="text-xs text-gray-500">{(item.image_contrast || 1.1).toFixed(1)}</span>
+                                </div>
+                                <input
+                                  type="range"
+                                  min="0.5"
+                                  max="2.0"
+                                  step="0.1"
+                                  value={item.image_contrast || 1.1}
+                                  onChange={(e) => {
+                                    const newContrast = parseFloat(e.target.value);
+                                    const updatedItem = { ...item, image_contrast: newContrast };
+                                    setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                    // Auto-save after a short delay
+                                    clearTimeout((window as any)[`contrast_timeout_${item.id}`]);
+                                    (window as any)[`contrast_timeout_${item.id}`] = setTimeout(() => {
+                                      handleSaveItem(updatedItem);
+                                    }, 1000);
+                                  }}
+                                  className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer ${
+                                    selectedRestaurant === 'mister-crispy' 
+                                      ? 'bg-gray-200 slider-thumb-[#55421A]' 
+                                      : selectedRestaurant === 'mister-burgerito'
+                                        ? 'bg-gray-200 slider-thumb-[#E59F49]'
+                                        : 'bg-gray-200 slider-thumb-[#7A1120]'
+                                  }`}
+                                />
+                              </div>
                           </div>
                           <div className="flex gap-2 self-end sm:self-start">
                             <button
@@ -689,6 +757,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               ))}
             </div>
 
+                              {/* Reset Button */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updatedItem = { ...item, image_brightness: 1.2, image_contrast: 1.1 };
+                                  setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                  handleSaveItem(updatedItem);
+                                }}
+                                className="text-xs text-gray-600 hover:text-gray-800 underline"
+                              >
+                                إعادة تعيين
+                              </button>
+                            </div>
             {filteredItems.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-gray-400 text-base sm:text-lg">لا توجد عناصر في هذا الفرع</div>
