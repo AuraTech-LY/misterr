@@ -6,6 +6,8 @@ export interface MenuItem {
   image: string;
   category: string;
   popular?: boolean;
+  image_brightness?: number;
+  image_contrast?: number;
 }
 
 export interface CartItem extends MenuItem {

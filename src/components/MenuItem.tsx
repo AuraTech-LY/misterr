@@ -206,7 +206,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               alt={item.name}
              className="w-24 h-24 object-cover rounded-xl"
              style={{
-               filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+               filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
              }}
             />
             <button
@@ -245,7 +245,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 alt={item.name}
                className="w-full h-48 object-cover"
                 style={{
-                  filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+                  filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
                 }}
               />
               <button
@@ -375,7 +375,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
            className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500"
             style={{ 
               minHeight: '128px',
-              filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+              filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
             }}
           />
           {item.popular && (

@@ -69,7 +69,9 @@ export const useMenu = (branchId?: string) => {
           price: parseFloat(item.price),
           image: item.image_url,
           category: item.category,
-          popular: item.is_popular || false
+          popular: item.is_popular || false,
+          image_brightness: item.image_brightness || 1.2,
+          image_contrast: item.image_contrast || 1.1
         }));
 
         setMenuItems(transformedItems);

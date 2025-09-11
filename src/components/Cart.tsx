@@ -248,7 +248,7 @@ export const Cart: React.FC<CartProps> = ({
                     alt={item.name}
                    className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
                    style={{
-                     filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+                     filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
                    }}
                   />
                   <div className="flex-1">
