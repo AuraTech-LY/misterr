@@ -241,6 +241,9 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 src={item.image}
                 alt={item.name}
                 className="w-full h-48 object-cover"
+                style={{
+                  filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+                }}
               />
               <button
                 onClick={handleClosePopup}
