@@ -14,6 +14,8 @@ export interface MenuItem {
   available_dollar: boolean;
   available_balaoun: boolean;
   available_burgerito_airport: boolean;
+  image_brightness?: number;
+  image_contrast?: number;
 }
 
 interface Category {
@@ -30,6 +32,18 @@ interface ItemFormProps {
 }
 
 export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, isNew = false, selectedRestaurant = 'mister-shish' }) => {
+  const [previewBrightness, setPreviewBrightness] = React.useState(item.image_brightness || 1.2);
+  const [previewContrast, setPreviewContrast] = React.useState(item.image_contrast || 1.1);
+
+  // Update item when sliders change
+  React.useEffect(() => {
+    onChange({ 
+      ...item, 
+      image_brightness: previewBrightness,
+      image_contrast: previewContrast 
+    });
+  }, [previewBrightness, previewContrast]);
+
   return (
     <div className="bg-gray-50 p-6 rounded-xl space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -91,6 +105,94 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
           />
         </div>
       </div>
+
+      {/* Image Preview and Controls */}
+      {item.image_url && (
+        <div className="space-y-4">
+          <h4 className="text-sm font-semibold text-gray-700">معاينة الصورة وتعديل الإضاءة</h4>
+          
+          {/* Image Preview */}
+          <div className="flex justify-center">
+            <img
+              src={item.image_url}
+              alt="معاينة الصورة"
+              className="w-32 h-32 object-cover rounded-xl transition-all duration-300"
+              style={{
+                filter: `brightness(${previewBrightness}) contrast(${previewContrast})`
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
+
+          {/* Brightness Control */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-semibold text-gray-700">السطوع</label>
+              <span className="text-sm text-gray-500">{previewBrightness.toFixed(1)}</span>
+            </div>
+            <input
+              type="range"
+              min="0.5"
+              max="2.0"
+              step="0.1"
+              value={previewBrightness}
+              onChange={(e) => setPreviewBrightness(parseFloat(e.target.value))}
+              className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+                selectedRestaurant === 'mister-crispy' 
+                  ? 'bg-gray-200 slider-thumb-[#55421A]' 
+                  : selectedRestaurant === 'mister-burgerito'
+                    ? 'bg-gray-200 slider-thumb-[#E59F49]'
+                    : 'bg-gray-200 slider-thumb-[#7A1120]'
+              }`}
+            />
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>مظلم</span>
+              <span>مشرق</span>
+            </div>
+          </div>
+
+          {/* Contrast Control */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-semibold text-gray-700">التباين</label>
+              <span className="text-sm text-gray-500">{previewContrast.toFixed(1)}</span>
+            </div>
+            <input
+              type="range"
+              min="0.5"
+              max="2.0"
+              step="0.1"
+              value={previewContrast}
+              onChange={(e) => setPreviewContrast(parseFloat(e.target.value))}
+              className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+                selectedRestaurant === 'mister-crispy' 
+                  ? 'bg-gray-200 slider-thumb-[#55421A]' 
+                  : selectedRestaurant === 'mister-burgerito'
+                    ? 'bg-gray-200 slider-thumb-[#E59F49]'
+                    : 'bg-gray-200 slider-thumb-[#7A1120]'
+              }`}
+            />
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>منخفض</span>
+              <span>عالي</span>
+            </div>
+          </div>
+
+          {/* Reset Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setPreviewBrightness(1.2);
+              setPreviewContrast(1.1);
+            }}
+            className="text-sm text-gray-600 hover:text-gray-800 underline"
+          >
+            إعادة تعيين إلى القيم الافتراضية
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="flex items-center gap-2">

@@ -136,3 +136,70 @@ html, body {
 .bg-gray-25 {
   background-color: #fafafa;
 }
+/* Custom slider styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: #e5e7eb;
+  height: 8px;
+  border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #781220;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-track {
+  background: #e5e7eb;
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #781220;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Slider thumb colors for different restaurants */
+.slider-thumb-\[#55421A\]::-webkit-slider-thumb {
+  background: #55421A;
+}
+
+.slider-thumb-\[#E59F49\]::-webkit-slider-thumb {
+  background: #E59F49;
+}
+
+.slider-thumb-\[#7A1120\]::-webkit-slider-thumb {
+  background: #7A1120;
+}
+
+.slider-thumb-\[#55421A\]::-moz-range-thumb {
+  background: #55421A;
+}
+
+.slider-thumb-\[#E59F49\]::-moz-range-thumb {
+  background: #E59F49;
+}
+
+.slider-thumb-\[#7A1120\]::-moz-range-thumb {
+  background: #7A1120;
+}

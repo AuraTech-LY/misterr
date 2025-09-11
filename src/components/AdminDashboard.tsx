@@ -50,6 +50,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     available_dollar: false,
     available_balaoun: false,
     available_burgerito_airport: false,
+    image_brightness: 1.2,
+    image_contrast: 1.1,
   };
 
   const [newItem, setNewItem] = useState(newItemTemplate);
@@ -192,6 +194,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           available_dollar: itemToSave.available_dollar,
           available_balaoun: itemToSave.available_balaoun,
           available_burgerito_airport: itemToSave.available_burgerito_airport,
+          image_brightness: itemToSave.image_brightness || 1.2,
+          image_contrast: itemToSave.image_contrast || 1.1,
         })
         .eq('id', itemToSave.id);
 
@@ -253,6 +257,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           available_dollar: itemToAdd.available_dollar,
           available_balaoun: itemToAdd.available_balaoun,
           available_burgerito_airport: itemToAdd.available_burgerito_airport,
+          image_brightness: itemToAdd.image_brightness || 1.2,
+          image_contrast: itemToAdd.image_contrast || 1.1,
         }])
         .select()
         .single();
