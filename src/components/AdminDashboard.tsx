@@ -620,7 +620,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <img
                         src={item.image_url}
                         alt={item.name}
-                        className="w-full h-32 sm:w-24 sm:h-24 object-cover rounded-lg"
+                       className="w-full h-32 sm:w-24 sm:h-24 object-cover rounded-lg food-image"
                       />
                       <div className="flex-1">
                         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">

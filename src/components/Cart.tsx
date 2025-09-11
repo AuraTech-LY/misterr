@@ -246,7 +246,7 @@ export const Cart: React.FC<CartProps> = ({
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
+                   className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg food-image"
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h3>

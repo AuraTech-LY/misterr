@@ -204,7 +204,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             <img
               src={item.image}
               alt={item.name}
-              className="w-24 h-24 object-cover rounded-xl"
+             className="w-24 h-24 object-cover rounded-xl food-image"
             />
             <button
               onClick={handleMobileQuickAdd}
@@ -366,7 +366,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           <img
             src={item.image}
             alt={item.name}
-            className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500"
+           className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500 food-image"
             style={{ minHeight: '128px' }}
           />
           {item.popular && (
