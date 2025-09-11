@@ -204,7 +204,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             <img
               src={item.image}
               alt={item.name}
-             className="w-24 h-24 object-cover rounded-xl food-image"
+             className="w-24 h-24 object-cover rounded-xl"
+             style={{
+               filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+             }}
             />
             <button
               onClick={handleMobileQuickAdd}
@@ -240,7 +243,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-full h-48 object-cover"
+               className="w-full h-48 object-cover"
                 style={{
                   filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
                 }}
@@ -369,8 +372,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           <img
             src={item.image}
             alt={item.name}
-           className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500 food-image"
-            style={{ minHeight: '128px' }}
+           className="w-full h-32 object-cover group-hover:scale-110 transition-transform duration-500"
+            style={{ 
+              minHeight: '128px',
+              filter: `brightness(${(item as any).image_brightness || 1.2}) contrast(${(item as any).image_contrast || 1.1})`
+            }}
           />
           {item.popular && (
             <div className="absolute top-2 right-2 bg-[#781220] text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
