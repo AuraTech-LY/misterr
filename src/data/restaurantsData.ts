@@ -54,8 +54,8 @@ export const restaurants: Restaurant[] = [
         address: 'طريق المطار',
         phone: '0946375518',
         deliveryTime: '25-35 دقيقة',
-        latitude: 32.1057120,
-        longitude: 20.1391424
+        latitude: 32.1061181,
+        longitude: 20.1370751
       }
     ]
   }
