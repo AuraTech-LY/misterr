@@ -214,7 +214,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
                 isOpen !== true
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
+                  : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
