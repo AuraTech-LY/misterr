@@ -286,7 +286,7 @@ export const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <h4 className={`font-bold mb-2 ${selectedRestaurant.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>الفرع الحالي</h4>
-              <p className="text-gray-300">{selectedBranch?.name || 'غير محدد'}</p>
+              <p className="text-gray-300">{selectedRestaurant?.name || 'غير محدد'}</p>
               <p className="text-gray-400 text-sm">{selectedBranch?.address || ''}</p>
             </div>
             <div>
