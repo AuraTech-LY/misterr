@@ -258,14 +258,29 @@ export const HomePage: React.FC = () => {
           localStorage.removeItem('selectedBranchId');
         }}
         cartTotal={getTotalPrice()}
-        showBackButton={true}
-        onBackClick={handleBackToRestaurants}
         isCartOpen={isCartOpen}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
         {/* Add top padding to account for fixed header */}
         <div className="pt-20 sm:pt-24">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={handleBackToRestaurants}
+            className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
+              selectedRestaurant?.name?.includes('مستر كريسبي') 
+                ? 'hover:text-[#55421A]' 
+                : selectedRestaurant?.name?.includes('مستر برجريتو')
+                  ? 'hover:text-[#E59F49]'
+                  : 'hover:text-[#781220]'
+            }`}
+          >
+            <ArrowRight className="w-5 h-5" />
+            <span className="text-sm font-medium">العودة إلى اختيار المطعم</span>
+          </button>
+        </div>
+        
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">

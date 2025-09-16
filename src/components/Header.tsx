@@ -52,8 +52,6 @@ interface HeaderProps {
   selectedBranch?: Branch;
   onBranchChange?: () => void;
   cartTotal?: number;
-  showBackButton?: boolean;
-  onBackClick?: () => void;
   isCartOpen?: boolean;
 }
 
@@ -64,8 +62,6 @@ export const Header: React.FC<HeaderProps> = ({
   selectedBranch,
   onBranchChange,
   cartTotal = 0,
-  showBackButton = false,
-  onBackClick,
   isCartOpen = false
 }) => {
   const navigate = useNavigate();
@@ -128,25 +124,6 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
       
-      {/* Main Navigation Bar */}
-      {/* Placeholder to maintain space when navigation is fixed */}
-      {isCartOpen && (
-        <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
-          <div className="container mx-auto">
-            <div className="text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 bg-transparent">
-              <div className="flex justify-between items-center">
-                <button className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300 invisible">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16"></div>
-                  <div className="flex flex-col justify-center text-right">
-                    <h1 className="text-xl sm:text-3xl font-black invisible">المستر</h1>
-                    <p className="text-xs sm:text-sm opacity-75 leading-tight text-right invisible">يغلق خلال ساعة</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       
       <div className="fixed top-0 z-40 w-full">
         <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
@@ -155,10 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
               selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
             }`}>
               <div className="flex justify-between items-center">
-                <button 
-                  onClick={onBackClick}
-                  className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
-                >
+                <div className="flex items-center gap-3">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
                     <img 
                       src="/New Element 88 [8BACFE9].png" 
@@ -180,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
                       <p className="text-xs sm:text-sm opacity-75 text-yellow-200 leading-tight text-right">جاري التحقق...</p>
                     )}
                   </div>
-                </button>
+                </div>
 
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div className="relative">
