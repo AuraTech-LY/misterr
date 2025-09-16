@@ -176,6 +176,18 @@ export const HomePage: React.FC = () => {
     // Clear branch selection when restaurant changes
     setSelectedBranch(null);
     localStorage.removeItem('selectedBranchId');
+    
+    // Navigate to restaurant-specific URL
+    const restaurantRoutes: Record<string, string> = {
+      'mister-shish': '/sheesh',
+      'mister-crispy': '/krispy',
+      'mister-burgerito': '/burgerito'
+    };
+    
+    const targetRoute = restaurantRoutes[restaurant.id];
+    if (targetRoute) {
+      navigate(targetRoute, { replace: true });
+    }
   };
 
   // Handle branch selection
