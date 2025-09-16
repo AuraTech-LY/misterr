@@ -44,14 +44,15 @@ export const Cart: React.FC<CartProps> = ({
   // Prevent background scrolling when cart is open
   React.useEffect(() => {
     if (shouldRender) {
-      document.body.style.overflow = 'hidden';
+      // Don't prevent scrolling to avoid layout shifts
+      // document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      // document.body.style.overflow = 'unset';
     }
 
     // Cleanup function to restore scrolling when component unmounts
     return () => {
-      document.body.style.overflow = 'unset';
+      // document.body.style.overflow = 'unset';
     };
   }, [shouldRender]);
 
