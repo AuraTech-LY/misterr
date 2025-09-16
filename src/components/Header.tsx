@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
                     <h1 className="text-xl sm:text-3xl font-black invisible">المستر</h1>
                     <p className="text-xs sm:text-sm opacity-75 leading-tight text-right invisible">يغلق خلال ساعة</p>
                   </div>
-                </div>
+                </button>
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div className="relative">
                     <div className="text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold flex items-center gap-1 sm:gap-2 text-xs sm:text-base invisible">
@@ -203,10 +203,8 @@ export const Header: React.FC<HeaderProps> = ({
                     />
                   </div>
                   <div className="flex flex-col justify-center text-right">
-                    <h1 className="text-xl sm:text-3xl font-black opacity-0">
+                    <h1 className="text-xl sm:text-3xl font-black">
                       المستر
-                    </h1>
-                    <p className="text-xs sm:text-sm opacity-0 leading-tight text-right">يغلق خلال ساعة</p>
                     </h1>
                     {isOpen === false && (
                       <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
@@ -219,10 +217,9 @@ export const Header: React.FC<HeaderProps> = ({
                     )}
                   </div>
                 </button>
-                </button>
 
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="relative opacity-0">
+                  <div className="relative">
                     <div className="text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 bg-white bg-opacity-20 hidden sm:flex">
                       <div className="w-4 h-4"></div>
                       <span>بلعون</span>
@@ -258,7 +255,7 @@ export const Header: React.FC<HeaderProps> = ({
                             } else {
                               navigate('/', { replace: true });
                             }
-                    <div className="hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm bg-white text-transparent">
+                          }, 300);
                         }}
                       />
                     </div>
