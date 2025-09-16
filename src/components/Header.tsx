@@ -129,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({
       )}
       
       {/* Main Navigation Bar */}
-      <div className={`${isCartOpen ? 'relative' : 'sticky top-0'} z-40 w-full`}>
+      <div className={`${isCartOpen ? 'fixed' : 'sticky'} top-0 z-40 w-full`}>
         {/* Actual navigation bar with animation */}
         <div className={`px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full transition-all duration-500 ease-in-out transform ${
           isCartOpen ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0 delay-200'
