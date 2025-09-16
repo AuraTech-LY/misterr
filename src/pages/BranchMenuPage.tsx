@@ -9,6 +9,12 @@ import { useCart } from '../hooks/useCart';
 import { getBranchById } from '../data/restaurantsData';
 import { Branch } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 interface BranchMenuPageProps {
   branchId: string;
@@ -39,6 +45,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   } = useCart(branchId);
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
   const [timeUntilOpening, setTimeUntilOpening] = useState<string | null>(null);
+  const [workingHours, setWorkingHours] = useState<string>('يومياً من 10:00 ص إلى 12:00 م');
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
@@ -65,6 +72,63 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
     return () => clearInterval(interval);
   }, [branchId]);
+
+  // Fetch working hours from database
+  useEffect(() => {
+    const fetchWorkingHours = async () => {
+      if (!branchId) {
+        setWorkingHours('يومياً من 10:00 ص إلى 12:00 م');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('operating_hours')
+          .select('*')
+          .eq('branch_id', branchId)
+          .limit(1);
+
+        if (error || !data || data.length === 0) {
+          // Use default hours if no data found
+          const defaultClosingTime = branchId === 'dollar' ? '03:00' : '23:59';
+          setWorkingHours(`يومياً من 11:00 ص إلى ${formatTime(defaultClosingTime)}`);
+          return;
+        }
+
+        const hours = data[0];
+        
+        if (hours.is_closed) {
+          setWorkingHours('مغلق حالياً');
+        } else if (hours.is_24_hours) {
+          setWorkingHours('مفتوح 24 ساعة');
+        } else {
+          const openingTime = formatTime(hours.opening_time);
+          const closingTime = formatTime(hours.closing_time);
+          setWorkingHours(`يومياً من ${openingTime} إلى ${closingTime}`);
+        }
+      } catch (error) {
+        console.error('Error fetching working hours:', error);
+        setWorkingHours('يومياً من 11:00 ص إلى 11:59 م');
+      }
+    };
+
+    fetchWorkingHours();
+  }, [branchId]);
+
+  // Helper function to format time from 24h to 12h format
+  const formatTime = (time24: string): string => {
+    const [hours, minutes] = time24.split(':').map(Number);
+    
+    if (hours === 0) {
+      return `12:${minutes.toString().padStart(2, '0')} ص`;
+    } else if (hours < 12) {
+      return `${hours}:${minutes.toString().padStart(2, '0')} ص`;
+    } else if (hours === 12) {
+      return `12:${minutes.toString().padStart(2, '0')} م`;
+    } else {
+      return `${hours - 12}:${minutes.toString().padStart(2, '0')} م`;
+    }
+  };
 
   // Redirect to branches page if branch not found
   if (!branch) {
@@ -254,7 +318,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
             </div>
             <div>
               <h4 className={`font-bold mb-2 ${branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : branch.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>ساعات العمل</h4>
-              <p className="text-gray-300">يومياً من 10:00 ص إلى 12:00 م</p>
+              <p className="text-gray-300">{workingHours}</p>
             </div>
             <div>
               <h4 className={`font-bold mb-2 ${branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : branch.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>الهاتف</h4>
