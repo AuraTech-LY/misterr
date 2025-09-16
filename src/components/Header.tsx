@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingBag, Star, MapPin, ChevronDown, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
@@ -64,6 +64,8 @@ export const Header: React.FC<HeaderProps> = ({
   cartTotal = 0,
   isCartOpen = false
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const navigate = useNavigate();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
@@ -151,30 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
                         selectedBranch={selectedBranch}
                         isChangingBranch={isChangingBranch}
                         onBranchChanging={setIsChangingBranch}
-                        onBranchSelect={(branch) => {
-                          setIsChangingBranch(true);
-                          
-                          // Save the selected branch
-                          localStorage.setItem('selectedBranch', JSON.stringify(branch));
-                          
-                          const branchRoutes: Record<string, string> = {
-                            'airport': '/sheesh/airport-road',
-                            'dollar': '/krispy/beloun',
-                            'balaoun': '/sheesh/beloun',
-                            'burgerito-airport': '/burgerito/airport-road'
-                          };
-                          
-                          const targetRoute = branchRoutes[branch.id];
-                          
-                          // Add smooth transition delay
-                          setTimeout(() => {
-                            if (targetRoute) {
-                              navigate(targetRoute, { replace: true });
-                            } else {
-                              navigate('/', { replace: true });
-                            }
-                          }, 300);
-                        }}
+                        navigate={navigate}
                       />
                     </div>
                   )}
@@ -269,16 +248,16 @@ export const Header: React.FC<HeaderProps> = ({
 
 interface BranchDropdownProps {
   selectedBranch: Branch;
-  onBranchSelect: (branch: Branch) => void;
   isChangingBranch: boolean;
   onBranchChanging: (changing: boolean) => void;
+  navigate: (path: string) => void;
 }
 
 const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
   selectedBranch, 
-  onBranchSelect, 
   isChangingBranch,
-  onBranchChanging 
+  onBranchChanging,
+  navigate
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -310,13 +289,27 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
   const handleSelect = (branch: Branch) => {
     setIsAnimating(false);
     
-    // Update browser theme color based on branch
-    if (window.updateThemeColorForRestaurant) {
-      window.updateThemeColorForRestaurant(branch.name);
-    }
+    // Close dropdown first
+    setTimeout(() => setIsOpen(false), 100);
     
-    onBranchSelect(branch);
-    setTimeout(() => setIsOpen(false), 200);
+    // Navigate to the correct branch URL
+    const branchRoutes: Record<string, string> = {
+      'airport': '/sheesh/airport-road',
+      'balaoun': '/sheesh/beloun', 
+      'dollar': '/krispy/beloun',
+      'burgerito-airport': '/burgerito/airport-road'
+    };
+    
+    const targetRoute = branchRoutes[branch.id];
+    if (targetRoute) {
+      // Use navigate instead of onBranchSelect
+      navigate(targetRoute);
+      
+      // Update browser theme color based on branch
+      if (window.updateThemeColorForRestaurant) {
+        window.updateThemeColorForRestaurant(branch.name);
+      }
+    }
   };
 
   return (
