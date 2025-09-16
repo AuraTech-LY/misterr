@@ -418,7 +418,14 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
                   : 'text-gray-400'
               }`} />
               <div className="flex-1 text-right">
-                <div className="font-semibold">{branch.name}</div>
+                <div className="font-semibold">
+                  {branch.name?.includes('مستر كريسبي') 
+                    ? 'مستر كريسبي' 
+                    : branch.name?.includes('مستر برجريتو')
+                      ? 'مستر برجريتو'
+                      : 'مستر شيش'
+                  }
+                </div>
                 <div className="text-xs opacity-75">{branch.area}</div>
               </div>
               {selectedBranch.id === branch.id && (
