@@ -133,16 +133,22 @@ export const Header: React.FC<HeaderProps> = ({
       {isCartOpen && (
         <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
           <div className="container mx-auto">
-            <div className="text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 bg-transparent">
+            <div className="rounded-2xl sm:rounded-3xl px-4 sm:px-6 py-3 sm:py-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 sm:w-16 sm:h-16"></div>
                   <div className="flex flex-col justify-center text-right">
-                    <h1 className="text-xl sm:text-3xl font-black opacity-0">المستر</h1>
+                    <h1 className="text-xl sm:text-3xl font-black invisible">المستر</h1>
+                    <p className="text-xs sm:text-sm opacity-75 leading-tight text-right invisible">يغلق خلال ساعة</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="w-32 h-12"></div>
+                  <div className="relative">
+                    <div className="text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold flex items-center gap-1 sm:gap-2 text-xs sm:text-base invisible">
+                      <div className="w-5 h-5"></div>
+                      <span className="hidden sm:inline">السلة</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
