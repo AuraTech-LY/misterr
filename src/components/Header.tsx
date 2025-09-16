@@ -187,10 +187,10 @@ export const Header: React.FC<HeaderProps> = ({
                     localStorage.setItem('selectedBranch', JSON.stringify(branch));
                     
                     const branchRoutes: Record<string, string> = {
-                      'airport': '/sheesh-airport_road',
-                      'dollar': '/dollar-menu',
-                      'balaoun': '/balaoun-menu',
-                      'burgerito-airport': '/burgerito-airport-menu'
+                      'airport': '/sheesh/airport-road',
+                      'dollar': '/krispy/beloun',
+                      'balaoun': '/sheesh/beloun',
+                      'burgerito-airport': '/burgerito/airport-road'
                     };
                     
                     const targetRoute = branchRoutes[branch.id];

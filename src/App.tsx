@@ -18,10 +18,10 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/branches" element={<BranchesPage />} />
-      <Route path="/sheesh-airport_road" element={<BranchMenuPage branchId="airport" />} />
-      <Route path="/dollar-menu" element={<BranchMenuPage branchId="dollar" />} />
-      <Route path="/balaoun-menu" element={<BranchMenuPage branchId="balaoun" />} />
-      <Route path="/burgerito-airport-menu" element={<BranchMenuPage branchId="burgerito-airport" />} />
+      <Route path="/sheesh/airport-road" element={<BranchMenuPage branchId="airport" />} />
+      <Route path="/sheesh/beloun" element={<BranchMenuPage branchId="balaoun" />} />
+      <Route path="/krispy/beloun" element={<BranchMenuPage branchId="dollar" />} />
+      <Route path="/burgerito/airport-road" element={<BranchMenuPage branchId="burgerito-airport" />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
