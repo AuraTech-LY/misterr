@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingBag, Star, MapPin, ChevronDown, ArrowRight } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Branch } from '../types';
 import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
@@ -67,7 +67,6 @@ export const Header: React.FC<HeaderProps> = ({
   onBackClick
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
@@ -198,9 +197,9 @@ export const Header: React.FC<HeaderProps> = ({
                     // Add smooth transition delay
                     setTimeout(() => {
                       if (targetRoute) {
-                        window.location.href = targetRoute;
+                        navigate(targetRoute, { replace: true });
                       } else {
-                        window.location.href = '/';
+                        navigate('/', { replace: true });
                       }
                     }, 300);
                   }}
