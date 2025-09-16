@@ -23,6 +23,8 @@ export const useMenu = (branchId?: string) => {
       try {
         setLoading(true);
         setError(null);
+        
+        console.log('Fetching menu data for branch:', branchId);
 
         // Fetch categories
         const { data: categoriesData, error: categoriesError } = await supabase
@@ -52,6 +54,7 @@ export const useMenu = (branchId?: string) => {
           } else {
             branchColumn = `available_${branchId}`;
           }
+          console.log('Filtering by branch column:', branchColumn);
           query = query.eq(branchColumn, true);
         }
 
@@ -74,6 +77,7 @@ export const useMenu = (branchId?: string) => {
           image_contrast: item.image_contrast || 1.1
         }));
 
+        console.log('Loaded menu items for branch:', branchId, 'Count:', transformedItems.length);
         setMenuItems(transformedItems);
       } catch (err) {
         console.error('Error fetching menu:', err);

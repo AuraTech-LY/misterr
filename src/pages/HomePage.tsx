@@ -67,6 +67,46 @@ export const HomePage: React.FC = () => {
   });
   
   const [selectedCategory, setSelectedCategory] = useState('الكل');
+  
+  // Update branch when URL changes
+  React.useEffect(() => {
+    const updateBranchFromPath = () => {
+      const path = window.location.pathname;
+      let newBranchId = null;
+      
+      if (path === '/sheesh/airport-road') {
+        newBranchId = 'airport';
+      } else if (path === '/sheesh/beloun') {
+        newBranchId = 'balaoun';
+      } else if (path === '/krispy/beloun') {
+        newBranchId = 'dollar';
+      } else if (path === '/burgerito/airport-road') {
+        newBranchId = 'burgerito-airport';
+      }
+      
+      if (newBranchId) {
+        const branchData = getBranchById(newBranchId);
+        if (branchData && branchData.branch.id !== selectedBranch?.id) {
+          console.log('Branch changed from URL:', newBranchId);
+          setSelectedBranch(branchData.branch);
+          setSelectedRestaurant(branchData.restaurant);
+          localStorage.setItem('selectedBranchId', newBranchId);
+          localStorage.setItem('selectedRestaurantId', branchData.restaurant.id);
+        }
+      }
+    };
+    
+    // Listen for popstate events (back/forward navigation)
+    window.addEventListener('popstate', updateBranchFromPath);
+    
+    // Also check on mount
+    updateBranchFromPath();
+    
+    return () => {
+      window.removeEventListener('popstate', updateBranchFromPath);
+    };
+  }, [selectedBranch?.id]);
+  
   const { menuItems, categories, loading, error } = useMenu(selectedBranch?.id);
   const {
     cartItems,

@@ -38,6 +38,16 @@ export const BranchMenuPage: React.FC = () => {
   const branch = branchData?.branch;
   const restaurant = branchData?.restaurant;
   
+  // Update branch data when URL changes
+  React.useEffect(() => {
+    const newBranchId = getBranchIdFromPath(location.pathname);
+    if (newBranchId && newBranchId !== branchId) {
+      console.log('Branch changed in BranchMenuPage:', newBranchId);
+      // Force a re-render by updating the key or state
+      window.location.reload();
+    }
+  }, [location.pathname, branchId]);
+  
   const { menuItems, categories, loading, error } = useMenu(branchId);
   const {
     cartItems,
