@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
     <>
       {/* Back Button - Above Navigation */}
       {showBackButton && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-gray-50 px-3 sm:px-4 py-2 lg:px-16 xl:px-32 2xl:px-48">
+        <div className="bg-gray-50 px-3 sm:px-4 py-2 lg:px-16 xl:px-32 2xl:px-48">
           <div className="container mx-auto">
             <button
               onClick={(e) => {
@@ -134,7 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
       )}
       
       {/* Main Navigation Bar */}
-      <div className={`fixed left-0 right-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 ${showBackButton ? 'top-12' : 'top-0'}`}>
+      <div className="sticky top-0 left-0 right-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48">
       <div className="container mx-auto">
         <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
           selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
