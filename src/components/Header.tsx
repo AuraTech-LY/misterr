@@ -130,29 +130,8 @@ export const Header: React.FC<HeaderProps> = ({
       
       {/* Main Navigation Bar */}
       <div className="sticky top-0 z-40 w-full">
-        {/* Placeholder to maintain space */}
-        <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 invisible">
-          <div className="container mx-auto">
-            <div className="text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
-                    <div className="w-full h-full"></div>
-                  </div>
-                  <div className="flex flex-col justify-center text-right">
-                    <h1 className="text-xl sm:text-3xl font-black">المستر</h1>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="w-32 h-10"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
         {/* Actual navigation bar with animation */}
-        <div className={`absolute top-0 left-0 right-0 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full transition-all duration-500 ease-in-out transform ${
+        <div className={`px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full transition-all duration-500 ease-in-out transform ${
           isCartOpen ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0 delay-200'
         }`}>
           <div className="container mx-auto">
