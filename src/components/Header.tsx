@@ -187,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({
                     localStorage.setItem('selectedBranch', JSON.stringify(branch));
                     
                     const branchRoutes: Record<string, string> = {
-                      'airport': '/airport-menu',
+                      'airport': '/sheesh-airport_road',
                       'dollar': '/dollar-menu',
                       'balaoun': '/balaoun-menu',
                       'burgerito-airport': '/burgerito-airport-menu'

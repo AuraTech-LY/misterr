@@ -18,7 +18,7 @@ function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/branches" element={<BranchesPage />} />
-      <Route path="/airport-menu" element={<BranchMenuPage branchId="airport" />} />
+      <Route path="/sheesh-airport_road" element={<BranchMenuPage branchId="airport" />} />
       <Route path="/dollar-menu" element={<BranchMenuPage branchId="dollar" />} />
       <Route path="/balaoun-menu" element={<BranchMenuPage branchId="balaoun" />} />
       <Route path="/burgerito-airport-menu" element={<BranchMenuPage branchId="burgerito-airport" />} />
