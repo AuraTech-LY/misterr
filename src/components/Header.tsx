@@ -148,7 +148,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       )}
       
-      <div className="sticky top-0 z-40 w-full">
+      <div className="fixed top-0 z-40 w-full">
         <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
           <div className="container mx-auto">
             <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
