@@ -313,13 +313,11 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
     console.log('Navigating to:', targetRoute);
     
     if (targetRoute) {
-      // Navigate and then reset changing state
+      // Navigate immediately and reset changing state
+      navigate(targetRoute);
       setTimeout(() => {
-        navigate(targetRoute);
-        setTimeout(() => {
-          onBranchChanging(false);
-        }, 500);
-      }, 200);
+        onBranchChanging(false);
+      }, 1000);
       
       // Update browser theme color based on branch
       if (window.updateThemeColorForRestaurant) {

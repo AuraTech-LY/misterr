@@ -60,10 +60,12 @@ export const BranchMenuPage: React.FC = () => {
   useEffect(() => {
     if (branchId) {
       loadBranchCart(branchId);
-    }
-    // Also save the branch to localStorage for consistency
-    if (branch) {
-      localStorage.setItem('selectedBranch', JSON.stringify(branch));
+      
+      // Update localStorage with current branch
+      if (branch) {
+        localStorage.setItem('selectedBranchId', branchId);
+        localStorage.setItem('selectedRestaurantId', restaurant?.id || '');
+      }
     }
   }, [branchId, loadBranchCart, branch]);
 

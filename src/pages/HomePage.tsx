@@ -193,12 +193,26 @@ export const HomePage: React.FC = () => {
 
   // Handle branch selection
   const handleBranchSelect = (branch: Branch) => {
+    setSelectedBranch(branch);
+    localStorage.setItem('selectedBranchId', branch.id);
+    
     // Update browser theme color based on branch
     if (window.updateThemeColorForRestaurant) {
       window.updateThemeColorForRestaurant(branch.name);
     }
-    setSelectedBranch(branch);
-    localStorage.setItem('selectedBranchId', branch.id);
+    
+    // Navigate to branch-specific URL
+    const branchRoutes: Record<string, string> = {
+      'airport': '/sheesh/airport-road',
+      'balaoun': '/sheesh/beloun',
+      'dollar': '/krispy/beloun',
+      'burgerito-airport': '/burgerito/airport-road'
+    };
+    
+    const targetRoute = branchRoutes[branch.id];
+    if (targetRoute) {
+      navigate(targetRoute, { replace: true });
+    }
   };
 
   const handleBackToRestaurants = () => {
