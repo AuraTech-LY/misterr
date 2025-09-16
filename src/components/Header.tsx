@@ -286,7 +286,17 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
   };
 
   const handleSelect = (branch: Branch) => {
+    console.log('Branch selected:', branch.id, 'Current:', selectedBranch.id);
+    
+    // Don't do anything if same branch is selected
+    if (branch.id === selectedBranch.id) {
+      setIsAnimating(false);
+      setTimeout(() => setIsOpen(false), 100);
+      return;
+    }
+    
     setIsAnimating(false);
+    onBranchChanging(true);
     
     // Close dropdown first
     setTimeout(() => setIsOpen(false), 100);
@@ -300,14 +310,24 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
     };
     
     const targetRoute = branchRoutes[branch.id];
+    console.log('Navigating to:', targetRoute);
+    
     if (targetRoute) {
-      // Use navigate instead of onBranchSelect
-      navigate(targetRoute);
+      // Navigate and then reset changing state
+      setTimeout(() => {
+        navigate(targetRoute);
+        setTimeout(() => {
+          onBranchChanging(false);
+        }, 500);
+      }, 200);
       
       // Update browser theme color based on branch
       if (window.updateThemeColorForRestaurant) {
         window.updateThemeColorForRestaurant(branch.name);
       }
+    } else {
+      console.error('No route found for branch:', branch.id);
+      onBranchChanging(false);
     }
   };
 
