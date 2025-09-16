@@ -337,6 +337,12 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
 
   const handleSelect = (branch: Branch) => {
     setIsAnimating(false);
+    
+    // Update browser theme color based on branch
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(branch.name);
+    }
+    
     onBranchSelect(branch);
     setTimeout(() => setIsOpen(false), 200);
   };
