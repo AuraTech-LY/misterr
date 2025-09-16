@@ -2,7 +2,7 @@ import React from 'react';
 import { ShoppingBag, Star, MapPin, ChevronDown, ArrowRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
-import { getAllBranches } from '../data/restaurantsData';
+import { getAllBranches, getBranchById } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
 import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
 
