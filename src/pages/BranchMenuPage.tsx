@@ -155,8 +155,10 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
 
   const handleBackToRestaurants = () => {
-    // Refresh the page to go back to restaurant selection
-    window.location.reload();
+    // Clear localStorage and redirect to root
+    localStorage.removeItem('selectedRestaurantId');
+    localStorage.removeItem('selectedBranchId');
+    window.location.href = '/';
   };
 
   return (

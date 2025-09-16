@@ -201,12 +201,10 @@ export const HomePage: React.FC = () => {
   };
 
   const handleBackToRestaurants = () => {
-    // Clear both restaurant and branch selection
-    setSelectedRestaurant(null);
-    setSelectedBranch(null);
+    // Clear localStorage and redirect to root
     localStorage.removeItem('selectedRestaurantId');
     localStorage.removeItem('selectedBranchId');
-    navigate('/', { replace: true });
+    window.location.href = '/';
   };
 
   // Show restaurant selector if no restaurant is selected
