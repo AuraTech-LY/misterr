@@ -86,8 +86,12 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
           <button
             onClick={onBackToRestaurants}
             className={`flex items-center gap-2 mb-4 ${
-              restaurantName?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
-            }`}
+              restaurantName?.includes('مستر كريسبي') 
+                ? 'text-[#55421A] hover:text-[#3d2f12]' 
+                : restaurantName?.includes('مستر برجريتو')
+                  ? 'text-[#E59F49] hover:text-[#cc8a3d]'
+                  : 'text-[#781220] hover:text-[#5c0d18]'
+            } transition-colors duration-300`}
           >
             <ArrowRight className="w-5 h-5" />
             <span>العودة</span>
