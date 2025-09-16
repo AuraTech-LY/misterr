@@ -69,6 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
@@ -103,6 +104,70 @@ export const Header: React.FC<HeaderProps> = ({
     // Always navigate to branches page when button is clicked
     navigate('/branches');
   };
+
+  const handleBranchSelect = (branch: Branch) => {
+    console.log('Branch selected:', branch.id, 'Current:', selectedBranch?.id);
+    
+    // Don't do anything if same branch is selected
+    if (branch.id === selectedBranch?.id) {
+      setIsDropdownOpen(false);
+      return;
+    }
+    
+    setIsChangingBranch(true);
+    setIsDropdownOpen(false);
+    
+    // Update localStorage
+    localStorage.setItem('selectedBranchId', branch.id);
+    
+    // Find the restaurant for this branch
+    const branchData = getBranchById(branch.id);
+    if (branchData) {
+      localStorage.setItem('selectedRestaurantId', branchData.restaurant.id);
+    }
+    
+    // Update browser theme color based on branch
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(branch.name);
+    }
+    
+    // Navigate to the correct branch URL with page refresh
+    const branchRoutes: Record<string, string> = {
+      'airport': '/sheesh/airport-road',
+      'balaoun': '/sheesh/beloun', 
+      'dollar': '/krispy/beloun',
+      'burgerito-airport': '/burgerito/airport-road'
+    };
+    
+    const targetRoute = branchRoutes[branch.id];
+    console.log('Navigating to:', targetRoute);
+    
+    if (targetRoute) {
+      // Force page refresh to ensure everything reloads
+      window.location.href = targetRoute;
+    } else {
+      console.error('No route found for branch:', branch.id);
+      setIsChangingBranch(false);
+    }
+  };
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.relative')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   return (
     <>
@@ -148,12 +213,98 @@ export const Header: React.FC<HeaderProps> = ({
                   
                   {selectedBranch && (
                     <div className="relative">
-                      <BranchDropdown
-                        selectedBranch={selectedBranch}
-                        isChangingBranch={isChangingBranch}
-                        onBranchChanging={setIsChangingBranch}
-                        navigate={navigate}
-                      />
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                          disabled={isChangingBranch}
+                          className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
+                            selectedRestaurant?.name?.includes('مستر كريسبي')
+                              ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
+                              : selectedRestaurant?.name?.includes('مستر برجريتو')
+                                ? 'bg-[#E59F49] bg-opacity-20 hover:bg-opacity-30'
+                                : 'bg-white bg-opacity-20 hover:bg-opacity-30'
+                          } ${
+                            isDropdownOpen ? 'bg-opacity-30' : ''
+                          } ${
+                           isChangingBranch ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          <MapPin className="w-4 h-4" />
+                          <span>{selectedBranch.area}</span>
+                          {isChangingBranch ? (
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          ) : (
+                            <ChevronDown 
+                              className={`w-4 h-4 transition-transform duration-300 ${
+                                isDropdownOpen ? 'transform rotate-180' : ''
+                              }`} 
+                            />
+                          )}
+                        </button>
+
+                        {isDropdownOpen && (
+                          <div className="absolute top-full left-0 mt-2 z-50" dir="ltr">
+                            <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] animate-fadeInUp">
+                              {getAllBranches().map((branch) => (
+                                <button
+                                  key={branch.id}
+                                  type="button"
+                                  disabled={isChangingBranch}
+                                  onClick={() => handleBranchSelect(branch)}
+                                  className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
+                                    selectedBranch.id === branch.id 
+                                      ? `bg-red-50 font-semibold ${
+                                          branch.name?.includes('مستر كريسبي') 
+                                            ? 'text-[#55421A]' 
+                                            : branch.name?.includes('مستر برجريتو')
+                                              ? 'text-[#E59F49]'
+                                              : 'text-[#781220]'
+                                        }`
+                                      : 'text-gray-700'
+                                  } ${
+                                    branch.name?.includes('مستر كريسبي')
+                                      ? 'hover:bg-[#55421A]'
+                                      : branch.name?.includes('مستر برجريتو')
+                                        ? 'hover:bg-[#E59F49]'
+                                        : 'hover:bg-[#7A1120]'
+                                  } hover:text-white hover:scale-[1.02] active:scale-[0.98]`}
+                                >
+                                  <MapPin className={`w-4 h-4 ${
+                                    selectedBranch.id === branch.id 
+                                      ? branch.name?.includes('مستر كريسبي') 
+                                          ? 'text-[#55421A]' 
+                                          : branch.name?.includes('مستر برجريتو')
+                                            ? 'text-[#E59F49]'
+                                            : 'text-[#781220]'
+                                      : 'text-gray-400'
+                                  }`} />
+                                  <div className="flex-1 text-right">
+                                    <div className="font-semibold">
+                                      {branch.name?.includes('مستر كريسبي') 
+                                        ? 'مستر كريسبي' 
+                                        : branch.name?.includes('مستر برجريتو')
+                                          ? 'مستر برجريتو'
+                                          : 'مستر شيش'
+                                      }
+                                    </div>
+                                    <div className="text-xs opacity-75">{branch.area}</div>
+                                  </div>
+                                  {selectedBranch.id === branch.id && (
+                                    <div className={`w-2 h-2 rounded-full ${
+                                      branch.name?.includes('مستر كريسبي') 
+                                        ? 'bg-[#55421A]' 
+                                        : branch.name?.includes('مستر برجريتو')
+                                          ? 'bg-[#E59F49]'
+                                          : 'bg-[#781220]'
+                                    }`}></div>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                   
@@ -242,194 +393,5 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
     </>
-  );
-};
-
-interface BranchDropdownProps {
-  selectedBranch: Branch;
-  isChangingBranch: boolean;
-  onBranchChanging: (changing: boolean) => void;
-  navigate: (path: string) => void;
-}
-
-const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
-  selectedBranch, 
-  isChangingBranch,
-  onBranchChanging,
-  navigate
-}) => {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-  const [isAnimating, setIsAnimating] = React.useState(false);
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleToggle = () => {
-    if (isOpen) {
-      // Closing animation
-      setIsAnimating(false);
-      setTimeout(() => setIsOpen(false), 200);
-    } else {
-      // Opening animation
-      setIsOpen(true);
-      setTimeout(() => setIsAnimating(true), 10);
-    }
-  };
-
-  const handleSelect = (branch: Branch) => {
-    console.log('Branch selected:', branch.id, 'Current:', selectedBranch.id);
-    
-    // Don't do anything if same branch is selected
-    if (branch.id === selectedBranch.id) {
-      setIsAnimating(false);
-      setTimeout(() => setIsOpen(false), 100);
-      return;
-    }
-    
-    setIsAnimating(false);
-    onBranchChanging(true);
-    
-    // Close dropdown first
-    setTimeout(() => setIsOpen(false), 100);
-    
-    // Navigate to the correct branch URL
-    const branchRoutes: Record<string, string> = {
-      'airport': '/sheesh/airport-road',
-      'balaoun': '/sheesh/beloun', 
-      'dollar': '/krispy/beloun',
-      'burgerito-airport': '/burgerito/airport-road'
-    };
-    
-    const targetRoute = branchRoutes[branch.id];
-    console.log('Navigating to:', targetRoute);
-    
-    if (targetRoute) {
-      // Use React Router navigation
-      navigate(targetRoute, { replace: true });
-      setTimeout(() => {
-        onBranchChanging(false);
-      }, 1000);
-      
-      // Update browser theme color based on branch
-      if (window.updateThemeColorForRestaurant) {
-        window.updateThemeColorForRestaurant(branch.name);
-      }
-    } else {
-      console.error('No route found for branch:', branch.id);
-      onBranchChanging(false);
-    }
-  };
-
-  return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        type="button"
-        onClick={handleToggle}
-        disabled={isChangingBranch}
-        className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
-          selectedBranch?.name?.includes('مستر كريسبي')
-            ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
-            : selectedBranch?.name?.includes('مستر برجريتو')
-              ? 'bg-[#E59F49] bg-opacity-20 hover:bg-opacity-30'
-              : 'bg-white bg-opacity-20 hover:bg-opacity-30'
-        } ${
-          isOpen ? 'bg-opacity-30' : ''
-        } ${
-         isChangingBranch || !isWithinOperatingHours() ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-      >
-        <MapPin className="w-4 h-4" />
-        <span>{selectedBranch.area}</span>
-        {isChangingBranch ? (
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        ) : (
-          <ChevronDown 
-            className={`w-4 h-4 transition-transform duration-300 ${
-              isOpen ? 'transform rotate-180' : ''
-            }`} 
-          />
-        )}
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 mt-2 z-50" dir="ltr">
-          <div 
-            className={`bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] transition-all duration-200 ease-out transform origin-top-right ${
-              isAnimating 
-                ? 'opacity-100 scale-100 translate-y-0' 
-                : 'opacity-0 scale-95 -translate-y-2'
-            }`}
-          >
-            {getAllBranches().map((branch) => (
-              <button
-                key={branch.id}
-                type="button"
-                disabled={isChangingBranch}
-                onClick={() => handleSelect(branch)}
-                className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
-                  selectedBranch.id === branch.id 
-                    ? `bg-red-50 font-semibold ${
-                        branch.name?.includes('مستر كريسبي') 
-                          ? 'text-[#55421A]' 
-                          : branch.name?.includes('مستر برجريتو')
-                            ? 'text-[#E59F49]'
-                            : 'text-[#781220]'
-                      }`
-                    : 'text-gray-700'
-                } ${
-                  branch.name?.includes('مستر كريسبي')
-                    ? 'hover:bg-[#55421A]'
-                    : branch.name?.includes('مستر برجريتو')
-                      ? 'hover:bg-[#E59F49]'
-                      : 'hover:bg-[#7A1120]'
-                } hover:text-white hover:scale-[1.02] active:scale-[0.98]`}
-              >
-                {isChangingBranch && selectedBranch.id !== branch.id && (
-                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                )}
-                <MapPin className={`w-4 h-4 ${
-                  selectedBranch.id === branch.id 
-                    ? branch.name?.includes('مستر كريسبي') 
-                        ? 'text-[#55421A]' 
-                        : branch.name?.includes('مستر برجريتو')
-                          ? 'text-[#E59F49]'
-                          : 'text-[#781220]'
-                    : 'text-gray-400'
-                }`} />
-                <div className="flex-1 text-right">
-                  <div className="font-semibold">
-                    {branch.name?.includes('مستر كريسبي') 
-                      ? 'مستر كريسبي' 
-                      : branch.name?.includes('مستر برجريتو')
-                        ? 'مستر برجريتو'
-                        : 'مستر شيش'
-                    }
-                  </div>
-                  <div className="text-xs opacity-75">{branch.area}</div>
-                </div>
-                {selectedBranch.id === branch.id && (
-                  <div className={`w-2 h-2 rounded-full ${
-                    branch.name?.includes('مستر كريسبي') 
-                      ? 'bg-[#55421A]' 
-                      : branch.name?.includes('مستر برجريتو')
-                        ? 'bg-[#E59F49]'
-                        : 'bg-[#781220]'
-                  }`}></div>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
   );
 };
