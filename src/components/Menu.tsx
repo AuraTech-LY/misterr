@@ -80,13 +80,6 @@ export const Menu: React.FC<MenuProps> = ({
                 />
               ))}
             </div>
-            <div className={`w-16 h-1 mx-auto rounded-full ${
-              branchId === 'dollar' 
-                ? 'bg-gradient-to-r from-[#55421A] to-[#3d2f12]'
-                : branchId === 'burgerito-airport'
-                  ? 'bg-gradient-to-r from-[#E59F49] to-[#cc8a3d]'
-                  : 'bg-gradient-to-r from-[#781220] to-[#5c0d18]'
-            }`}></div>
           </div>
         );
       })}
