@@ -60,7 +60,13 @@ export const Menu: React.FC<MenuProps> = ({
               <h3 className="text-xl md:text-2xl font-black text-gray-800 mb-2">
                 {category.name}
               </h3>
-              <div className="w-16 h-1 bg-gradient-to-r from-[#781220] to-[#55421A] mx-auto rounded-full"></div>
+              <div className={`w-16 h-1 mx-auto rounded-full ${
+                branchId === 'dollar' 
+                  ? 'bg-gradient-to-r from-[#55421A] to-[#3d2f12]'
+                  : branchId === 'burgerito-airport'
+                    ? 'bg-gradient-to-r from-[#E59F49] to-[#cc8a3d]'
+                    : 'bg-gradient-to-r from-[#781220] to-[#5c0d18]'
+              }`}></div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6 animate-fadeIn">
               {categoryItems.map((item) => (
