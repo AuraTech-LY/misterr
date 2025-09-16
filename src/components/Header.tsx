@@ -350,7 +350,9 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
         className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
           selectedBranch?.name?.includes('مستر كريسبي')
             ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
-            : 'bg-white bg-opacity-20 hover:bg-opacity-30'
+            : selectedBranch?.name?.includes('مستر برجريتو')
+              ? 'bg-[#E59F49] bg-opacity-20 hover:bg-opacity-30'
+              : 'bg-white bg-opacity-20 hover:bg-opacity-30'
         } ${
           isOpen ? 'bg-opacity-30' : ''
         } ${
@@ -392,7 +394,9 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               } ${
                 branch.name?.includes('مستر كريسبي')
                   ? 'hover:bg-[#55421A]'
-                  : 'hover:bg-[#7A1120]'
+                  : branch.name?.includes('مستر برجريتو')
+                    ? 'hover:bg-[#E59F49]'
+                    : 'hover:bg-[#7A1120]'
               } hover:text-white hover:scale-[1.02] active:scale-[0.98]`}
             >
               {isChangingBranch && selectedBranch.id !== branch.id && (
@@ -409,7 +413,11 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               </div>
               {selectedBranch.id === branch.id && (
                 <div className={`w-2 h-2 rounded-full ${
-                  branch.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'
+                  branch.name?.includes('مستر كريسبي') 
+                    ? 'bg-[#55421A]' 
+                    : branch.name?.includes('مستر برجريتو')
+                      ? 'bg-[#E59F49]'
+                      : 'bg-[#781220]'
                 }`}></div>
               )}
             </button>
