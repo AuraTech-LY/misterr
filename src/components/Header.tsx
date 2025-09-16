@@ -129,8 +129,8 @@ export const Header: React.FC<HeaderProps> = ({
       )}
       
       {/* Main Navigation Bar */}
-      <div className={`${isCartOpen ? 'fixed' : 'sticky'} top-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 transition-all duration-300 transform w-full ${
-        isCartOpen ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0'
+      <div className={`${isCartOpen ? 'fixed' : 'sticky'} top-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 transition-all duration-500 ease-in-out transform w-full ${
+        isCartOpen ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0 delay-200'
       }`}>
       <div className="container mx-auto">
         <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
