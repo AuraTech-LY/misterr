@@ -1,6 +1,14 @@
 // Time utilities for Libya timezone (UTC+2)
 
+import { createClient } from '@supabase/supabase-js';
+
 export const LIBYA_TIMEZONE = 'Africa/Tripoli'; // Libya/Tripoli timezone
+
+// Initialize Supabase client at module level
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 // Cache configuration
 const CACHE_EXPIRATION_MINUTES = 30; // Cache operating hours for 30 minutes
@@ -96,12 +104,6 @@ const setCachedOperatingHours = (branchId: string, data: Omit<CachedOperatingHou
  */
 const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOperatingHours | null> => {
   try {
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY
-    );
-
     const { data, error } = await supabase
       .from('operating_hours')
       .select('*')
