@@ -59,6 +59,20 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
     if (window.updateThemeColorForRestaurant) {
       window.updateThemeColorForRestaurant(branch.name);
     }
+    
+    // Navigate to branch-specific URL
+    const branchRoutes: Record<string, string> = {
+      'airport': '/sheesh/airport-road',
+      'balaoun': '/sheesh/beloun',
+      'dollar': '/krispy/beloun',
+      'burgerito-airport': '/burgerito/airport-road'
+    };
+    
+    const targetRoute = branchRoutes[branch.id];
+    if (targetRoute) {
+      window.location.href = targetRoute;
+    }
+    
     onBranchSelect(branch);
   };
 

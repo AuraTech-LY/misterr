@@ -20,14 +20,43 @@ const supabase = createClient(
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Load selected restaurant and branch from localStorage
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(() => {
+    // First check URL path to determine restaurant
+    const path = window.location.pathname;
+    if (path.startsWith('/sheesh')) {
+      return getRestaurantById('mister-shish') || null;
+    } else if (path.startsWith('/krispy')) {
+      return getRestaurantById('mister-crispy') || null;
+    } else if (path.startsWith('/burgerito')) {
+      return getRestaurantById('mister-burgerito') || null;
+    }
+    
+    // Fallback to localStorage
     const savedRestaurantId = localStorage.getItem('selectedRestaurantId');
     return savedRestaurantId ? getRestaurantById(savedRestaurantId) || null : null;
   });
   
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(() => {
+    // Check URL path for branch
+    const path = window.location.pathname;
+    if (path === '/sheesh/airport-road') {
+      const branchData = getBranchById('airport');
+      return branchData ? branchData.branch : null;
+    } else if (path === '/sheesh/beloun') {
+      const branchData = getBranchById('balaoun');
+      return branchData ? branchData.branch : null;
+    } else if (path === '/krispy/beloun') {
+      const branchData = getBranchById('dollar');
+      return branchData ? branchData.branch : null;
+    } else if (path === '/burgerito/airport-road') {
+      const branchData = getBranchById('burgerito-airport');
+      return branchData ? branchData.branch : null;
+    }
+    
+    // Fallback to localStorage
     const savedBranchId = localStorage.getItem('selectedBranchId');
     if (savedBranchId) {
       const branchData = getBranchById(savedBranchId);
