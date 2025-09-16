@@ -129,97 +129,99 @@ export const Header: React.FC<HeaderProps> = ({
       )}
       
       {/* Main Navigation Bar */}
-      <div className={`${isCartOpen ? 'fixed' : 'sticky'} top-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 transition-all duration-500 ease-in-out transform w-full ${
-        isCartOpen ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0 delay-200'
+      <div className={`sticky top-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full ${
+        isCartOpen ? '' : ''
       }`}>
-      <div className="container mx-auto">
-        <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
-          selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
+        <div className={`container mx-auto transition-all duration-500 ease-in-out transform ${
+          isCartOpen ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0 delay-200'
         }`}>
-        <div className="flex justify-between items-center">
-          <button 
-            onClick={onBackClick}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
-          >
-            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
-              <img 
-                src="/New Element 88 [8BACFE9].png" 
-                alt="مطعم المستر" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="flex flex-col justify-center text-right">
-              <h1 className="text-xl sm:text-3xl font-black">
-                {selectedRestaurant?.name || 'المستر'}
-              </h1>
-              {isOpen === false && (
-                <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
-              )}
-              {isOpen === true && timeUntilClosing && (
-                <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
-              )}
-              {isOpen === null && (
-                <p className="text-xs sm:text-sm opacity-75 text-yellow-200 leading-tight text-right">جاري التحقق...</p>
-              )}
-            </div>
-          </button>
-
-          <div className="flex items-center gap-2 sm:gap-4">
-            {selectedBranch && (
-              <div className="relative">
-                <BranchDropdown
-                  selectedBranch={selectedBranch}
-                  isChangingBranch={isChangingBranch}
-                  onBranchChanging={setIsChangingBranch}
-                  onBranchSelect={(branch) => {
-                    setIsChangingBranch(true);
-                    
-                    // Save the selected branch
-                    localStorage.setItem('selectedBranch', JSON.stringify(branch));
-                    
-                    const branchRoutes: Record<string, string> = {
-                      'airport': '/sheesh/airport-road',
-                      'dollar': '/krispy/beloun',
-                      'balaoun': '/sheesh/beloun',
-                      'burgerito-airport': '/burgerito/airport-road'
-                    };
-                    
-                    const targetRoute = branchRoutes[branch.id];
-                    
-                    // Add smooth transition delay
-                    setTimeout(() => {
-                      if (targetRoute) {
-                        navigate(targetRoute, { replace: true });
-                      } else {
-                        navigate('/', { replace: true });
-                      }
-                    }, 300);
-                  }}
+          <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
+            selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
+          }`}>
+          <div className="flex justify-between items-center">
+            <button 
+              onClick={onBackClick}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
+            >
+              <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
+                <img 
+                  src="/New Element 88 [8BACFE9].png" 
+                  alt="مطعم المستر" 
+                  className="w-full h-full object-contain"
                 />
               </div>
-            )}
-            
-            <button
-              onClick={onCartClick}
-              disabled={isOpen !== true}
-              className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
-                isOpen !== true
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
-              }`}
-            >
-              <ShoppingBag className="w-5 h-5" />
-              <span className="hidden sm:inline">{isOpen === false ? 'مغلق' : isOpen === null ? 'جاري التحقق...' : 'السلة'}</span>
-              {cartItemCount > 0 && (
-                <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
-                  {cartItemCount}
-                </span>
-              )}
+              <div className="flex flex-col justify-center text-right">
+                <h1 className="text-xl sm:text-3xl font-black">
+                  {selectedRestaurant?.name || 'المستر'}
+                </h1>
+                {isOpen === false && (
+                  <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
+                )}
+                {isOpen === true && timeUntilClosing && (
+                  <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
+                )}
+                {isOpen === null && (
+                  <p className="text-xs sm:text-sm opacity-75 text-yellow-200 leading-tight text-right">جاري التحقق...</p>
+                )}
+              </div>
             </button>
+
+            <div className="flex items-center gap-2 sm:gap-4">
+              {selectedBranch && (
+                <div className="relative">
+                  <BranchDropdown
+                    selectedBranch={selectedBranch}
+                    isChangingBranch={isChangingBranch}
+                    onBranchChanging={setIsChangingBranch}
+                    onBranchSelect={(branch) => {
+                      setIsChangingBranch(true);
+                      
+                      // Save the selected branch
+                      localStorage.setItem('selectedBranch', JSON.stringify(branch));
+                      
+                      const branchRoutes: Record<string, string> = {
+                        'airport': '/sheesh/airport-road',
+                        'dollar': '/krispy/beloun',
+                        'balaoun': '/sheesh/beloun',
+                        'burgerito-airport': '/burgerito/airport-road'
+                      };
+                      
+                      const targetRoute = branchRoutes[branch.id];
+                      
+                      // Add smooth transition delay
+                      setTimeout(() => {
+                        if (targetRoute) {
+                          navigate(targetRoute, { replace: true });
+                        } else {
+                          navigate('/', { replace: true });
+                        }
+                      }, 300);
+                    }}
+                  />
+                </div>
+              )}
+              
+              <button
+                onClick={onCartClick}
+                disabled={isOpen !== true}
+                className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
+                  isOpen !== true
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
+                }`}
+              >
+                <ShoppingBag className="w-5 h-5" />
+                <span className="hidden sm:inline">{isOpen === false ? 'مغلق' : isOpen === null ? 'جاري التحقق...' : 'السلة'}</span>
+                {cartItemCount > 0 && (
+                  <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
           </div>
         </div>
-        </div>
-      </div>
       </div>
       
       {/* Branch Switching Overlay */}
