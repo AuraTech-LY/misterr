@@ -155,10 +155,10 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
 
   const handleBackToRestaurants = () => {
-    // Clear both restaurant and branch selection
+    // Clear both restaurant and branch to go to restaurant selector
     localStorage.removeItem('selectedRestaurantId');
     localStorage.removeItem('selectedBranchId');
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   return (

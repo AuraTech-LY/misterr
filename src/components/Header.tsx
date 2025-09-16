@@ -112,13 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="bg-gray-50 px-3 sm:px-4 py-2 lg:px-16 xl:px-32 2xl:px-48">
           <div className="container mx-auto">
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                // Clear both restaurant and branch to go to restaurant selector
-                localStorage.removeItem('selectedRestaurantId');
-                localStorage.removeItem('selectedBranchId');
-                window.location.href = '/';
-              }}
+              onClick={onBackClick}
               className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
                 selectedRestaurant?.name?.includes('مستر كريسبي') 
                   ? 'hover:text-[#55421A]' 
@@ -140,13 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
         }`}>
         <div className="flex justify-between items-center">
           <button 
-            onClick={(e) => {
-              e.preventDefault();
-              // Clear both restaurant and branch to go to restaurant selector
-              localStorage.removeItem('selectedRestaurantId');
-              localStorage.removeItem('selectedBranchId');
-             window.location.href = '/';
-            }}
+            onClick={onBackClick}
             className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
           >
             <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">

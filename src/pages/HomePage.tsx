@@ -201,6 +201,7 @@ export const HomePage: React.FC = () => {
   };
 
   const handleBackToRestaurants = () => {
+    // Clear both restaurant and branch selection
     setSelectedRestaurant(null);
     setSelectedBranch(null);
     localStorage.removeItem('selectedRestaurantId');
