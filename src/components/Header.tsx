@@ -313,8 +313,8 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
     console.log('Navigating to:', targetRoute);
     
     if (targetRoute) {
-      // Navigate immediately and reset changing state
-      navigate(targetRoute);
+      // Use React Router navigation
+      navigate(targetRoute, { replace: true });
       setTimeout(() => {
         onBranchChanging(false);
       }, 1000);
