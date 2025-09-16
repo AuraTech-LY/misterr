@@ -140,6 +140,14 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="flex flex-col justify-center text-right">
                     <h1 className="text-xl sm:text-3xl font-black invisible">المستر</h1>
                     <p className="text-xs sm:text-sm opacity-75 leading-tight text-right invisible">يغلق خلال ساعة</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="sticky top-0 z-40 w-full">
         <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
           <div className="container mx-auto">
