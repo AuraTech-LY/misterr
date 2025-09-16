@@ -265,7 +265,7 @@ export const HomePage: React.FC = () => {
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
         {/* Add bottom padding for mobile navigation */}
-        <div className="pb-20 sm:pb-0 pt-32 sm:pt-36">
+        <div className={`pb-20 sm:pb-0 ${selectedRestaurant && selectedBranch ? 'pt-32 sm:pt-36' : 'pt-20 sm:pt-24'}`}>
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
