@@ -193,6 +193,7 @@ export const HomePage: React.FC = () => {
     setSelectedBranch(null);
     localStorage.removeItem('selectedRestaurantId');
     localStorage.removeItem('selectedBranchId');
+    navigate('/', { replace: true });
   };
 
   // Show restaurant selector if no restaurant is selected

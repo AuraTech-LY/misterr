@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Restaurant } from '../types';
 import { Store } from 'lucide-react';
 import { isWithinOperatingHours } from '../utils/timeUtils';
@@ -12,6 +13,7 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
   restaurants,
   onSelectRestaurant,
 }) => {
+  const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = React.useState(false);
   const [restaurantStatuses, setRestaurantStatuses] = React.useState<Record<string, boolean>>({});
   const [isCheckingHours, setIsCheckingHours] = React.useState(true);
@@ -21,6 +23,11 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Reset URL to root when component mounts
+  React.useEffect(() => {
+    navigate('/', { replace: true });
+  }, [navigate]);
 
   // Check if any branch in each restaurant is open
   React.useEffect(() => {
