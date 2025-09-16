@@ -253,7 +253,7 @@ export const Cart: React.FC<CartProps> = ({
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800 text-sm sm:text-base">{item.name}</h3>
-                    <div className={`text-sm sm:text-base ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'} whitespace-nowrap`}>
+                    <div className={`text-sm sm:text-base ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} whitespace-nowrap`}>
                       <span className="font-bold">{Math.round(item.price * item.quantity)}</span>
                       <span className="font-normal text-xs sm:text-sm opacity-70"> د.ل</span>
                     </div>
@@ -289,7 +289,7 @@ export const Cart: React.FC<CartProps> = ({
           <div className="border-t p-4 sm:p-6 bg-gray-50 mt-auto flex-shrink-0">
             <div className="flex justify-between items-center mb-4">
               <span className="text-base sm:text-lg font-semibold">المجموع الكلي:</span>
-              <div className={`text-xl sm:text-2xl ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>
+              <div className={`text-xl sm:text-2xl ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>
                 <span className="font-black">{Math.round(total)}</span>
                 <span className="font-normal text-lg sm:text-xl opacity-70"> د.ل</span>
               </div>
