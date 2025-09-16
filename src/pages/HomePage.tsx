@@ -24,11 +24,45 @@ export const HomePage: React.FC = () => {
   
   // Load selected restaurant and branch from localStorage
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(() => {
-    return null; // Always start with null, will be set by useEffect
+    // First check URL path to determine restaurant
+    const path = window.location.pathname;
+    if (path.startsWith('/sheesh')) {
+      return getRestaurantById('mister-shish') || null;
+    } else if (path.startsWith('/krispy')) {
+      return getRestaurantById('mister-crispy') || null;
+    } else if (path.startsWith('/burgerito')) {
+      return getRestaurantById('mister-burgerito') || null;
+    }
+    
+    // Fallback to localStorage
+    const savedRestaurantId = localStorage.getItem('selectedRestaurantId');
+    return savedRestaurantId ? getRestaurantById(savedRestaurantId) || null : null;
   });
   
   const [selectedBranch, setSelectedBranch] = useState<Branch | null>(() => {
-    return null; // Always start with null, will be set by useEffect
+    // Check URL path for branch
+    const path = window.location.pathname;
+    if (path === '/sheesh/airport-road') {
+      const branchData = getBranchById('airport');
+      return branchData ? branchData.branch : null;
+    } else if (path === '/sheesh/beloun') {
+      const branchData = getBranchById('balaoun');
+      return branchData ? branchData.branch : null;
+    } else if (path === '/krispy/beloun') {
+      const branchData = getBranchById('dollar');
+      return branchData ? branchData.branch : null;
+    } else if (path === '/burgerito/airport-road') {
+      const branchData = getBranchById('burgerito-airport');
+      return branchData ? branchData.branch : null;
+    }
+    
+    // Fallback to localStorage
+    const savedBranchId = localStorage.getItem('selectedBranchId');
+    if (savedBranchId) {
+      const branchData = getBranchById(savedBranchId);
+      return branchData ? branchData.branch : null;
+    }
+    return null;
   });
   
   const [selectedCategory, setSelectedCategory] = useState('الكل');
@@ -49,86 +83,6 @@ export const HomePage: React.FC = () => {
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilOpening, setTimeUntilOpening] = React.useState<string | null>(null);
   const [workingHours, setWorkingHours] = React.useState<string>('يومياً من 10:00 ص إلى 12:00 م');
-
-  // Handle URL changes and set restaurant/branch based on current path
-  useEffect(() => {
-    const path = location.pathname;
-    
-    // If we're at root path, clear everything
-    if (path === '/') {
-      setSelectedRestaurant(null);
-      setSelectedBranch(null);
-      localStorage.removeItem('selectedRestaurantId');
-      localStorage.removeItem('selectedBranchId');
-      return;
-    }
-    
-    // Check URL path to determine restaurant and branch
-    if (path.startsWith('/sheesh')) {
-      const restaurant = getRestaurantById('mister-shish');
-      setSelectedRestaurant(restaurant || null);
-      if (restaurant) {
-        localStorage.setItem('selectedRestaurantId', restaurant.id);
-      }
-      
-      if (path === '/sheesh/airport-road') {
-        const branchData = getBranchById('airport');
-        if (branchData) {
-          setSelectedBranch(branchData.branch);
-          localStorage.setItem('selectedBranchId', branchData.branch.id);
-        }
-      } else if (path === '/sheesh/beloun') {
-        const branchData = getBranchById('balaoun');
-        if (branchData) {
-          setSelectedBranch(branchData.branch);
-          localStorage.setItem('selectedBranchId', branchData.branch.id);
-        }
-      } else {
-        setSelectedBranch(null);
-        localStorage.removeItem('selectedBranchId');
-      }
-    } else if (path.startsWith('/krispy')) {
-      const restaurant = getRestaurantById('mister-crispy');
-      setSelectedRestaurant(restaurant || null);
-      if (restaurant) {
-        localStorage.setItem('selectedRestaurantId', restaurant.id);
-      }
-      
-      if (path === '/krispy/beloun') {
-        const branchData = getBranchById('dollar');
-        if (branchData) {
-          setSelectedBranch(branchData.branch);
-          localStorage.setItem('selectedBranchId', branchData.branch.id);
-        }
-      } else {
-        setSelectedBranch(null);
-        localStorage.removeItem('selectedBranchId');
-      }
-    } else if (path.startsWith('/burgerito')) {
-      const restaurant = getRestaurantById('mister-burgerito');
-      setSelectedRestaurant(restaurant || null);
-      if (restaurant) {
-        localStorage.setItem('selectedRestaurantId', restaurant.id);
-      }
-      
-      if (path === '/burgerito/airport-road') {
-        const branchData = getBranchById('burgerito-airport');
-        if (branchData) {
-          setSelectedBranch(branchData.branch);
-          localStorage.setItem('selectedBranchId', branchData.branch.id);
-        }
-      } else {
-        setSelectedBranch(null);
-        localStorage.removeItem('selectedBranchId');
-      }
-    } else {
-      // Unknown path, clear everything
-      setSelectedRestaurant(null);
-      setSelectedBranch(null);
-      localStorage.removeItem('selectedRestaurantId');
-      localStorage.removeItem('selectedBranchId');
-    }
-  }, [location.pathname]);
 
   // Load branch-specific cart when branch changes
   React.useEffect(() => {
