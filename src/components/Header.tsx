@@ -389,7 +389,13 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               onClick={() => handleSelect(branch)}
               className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
                 selectedBranch.id === branch.id 
-                  ? 'bg-red-50 text-[#781220] font-semibold' 
+                  ? `bg-red-50 font-semibold ${
+                      branch.name?.includes('مستر كريسبي') 
+                        ? 'text-[#55421A]' 
+                        : branch.name?.includes('مستر برجريتو')
+                          ? 'text-[#E59F49]'
+                          : 'text-[#781220]'
+                    }`
                   : 'text-gray-700'
               } ${
                 branch.name?.includes('مستر كريسبي')
@@ -404,7 +410,11 @@ const BranchDropdown: React.FC<BranchDropdownProps> = ({
               )}
               <MapPin className={`w-4 h-4 ${
                 selectedBranch.id === branch.id 
-                  ? branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'
+                  ? branch.name?.includes('مستر كريسبي') 
+                      ? 'text-[#55421A]' 
+                      : branch.name?.includes('مستر برجريتو')
+                        ? 'text-[#E59F49]'
+                        : 'text-[#781220]'
                   : 'text-gray-400'
               }`} />
               <div className="flex-1 text-right">
