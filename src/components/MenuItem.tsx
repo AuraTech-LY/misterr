@@ -384,7 +384,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
               <span>الأكثر طلباً</span>
             </div>
           )}
-          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
         </div>
         
         <div className="p-4 flex flex-col flex-grow">
