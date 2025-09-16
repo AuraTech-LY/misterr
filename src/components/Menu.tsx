@@ -73,6 +73,7 @@ export const Menu: React.FC<MenuProps> = ({
                   cartItems={cartItems}
                 />
               ))}
+            </div>
             <div className={`w-16 h-1 mx-auto rounded-full ${
               branchId === 'dollar' 
                 ? 'bg-gradient-to-r from-[#55421A] to-[#3d2f12]'
