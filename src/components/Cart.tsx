@@ -45,13 +45,17 @@ export const Cart: React.FC<CartProps> = ({
   React.useEffect(() => {
     if (shouldRender) {
       document.body.style.overflow = 'hidden';
+      // Also prevent scrolling on the document element
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     }
 
     // Cleanup function to restore scrolling when component unmounts
     return () => {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     };
   }, [shouldRender]);
 
