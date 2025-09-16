@@ -262,6 +262,7 @@ export const HomePage: React.FC = () => {
         cartTotal={getTotalPrice()}
         showBackButton={true}
         onBackClick={handleBackToRestaurants}
+        isCartOpen={isCartOpen}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
