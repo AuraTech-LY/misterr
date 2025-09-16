@@ -66,7 +66,6 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const navigate = useNavigate();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
