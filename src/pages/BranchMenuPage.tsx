@@ -361,7 +361,12 @@ export const BranchMenuPage: React.FC = () => {
             </div>
             <div>
               <h4 className={`font-bold mb-2 ${branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : branch.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>الهاتف</h4>
-              <p className="text-gray-300">{branch.phone}</p>
+              <p className="text-gray-300">
+                {branch.id === 'burgerito-airport' ? 
+                  branch.phone.replace(/(\d{3})(\d{7})/, '$1-$2') : 
+                  branch.phone
+                }
+              </p>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6">
