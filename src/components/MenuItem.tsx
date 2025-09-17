@@ -41,8 +41,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   // Determine if this is a Mister Crispy branch
   const branchData = branchId ? getBranchById(branchId) : null;
-  const isMisterCrispy = branchData?.branch?.name?.includes('مستر كريسبي') || false;
-  const isMisterBurgerito = branchData?.branch?.name?.includes('مستر برجريتو') || false;
+  const isMisterCrispy = branchId === 'dollar';
+  const isMisterBurgerito = branchId === 'burgerito-airport';
 
   // Trigger appearing animation on mount
   React.useEffect(() => {
