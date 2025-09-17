@@ -203,14 +203,6 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="relative">
-                    <div className="text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 bg-white bg-opacity-20 hidden sm:flex">
-                      <div className="w-4 h-4"></div>
-                      <span>بلعون</span>
-                      <div className="w-4 h-4"></div>
-                    </div>
-                  </div>
-                  
                   {selectedBranch && (
                     <div className="relative">
                       <div className="relative">
