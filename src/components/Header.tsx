@@ -2,7 +2,7 @@ import React from 'react';
 import { ShoppingBag, Star, MapPin, ChevronDown, ArrowRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Branch } from '../types';
-import { getAllBranches, getBranchById } from '../data/restaurantsData';
+import { getAllBranches } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
 import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
 
@@ -52,7 +52,8 @@ interface HeaderProps {
   selectedBranch?: Branch;
   onBranchChange?: () => void;
   cartTotal?: number;
-  isCartOpen?: boolean;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -62,14 +63,14 @@ export const Header: React.FC<HeaderProps> = ({
   selectedBranch,
   onBranchChange,
   cartTotal = 0,
-  isCartOpen = false
+  showBackButton = false,
+  onBackClick
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isChangingBranch, setIsChangingBranch] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
@@ -105,231 +106,129 @@ export const Header: React.FC<HeaderProps> = ({
     navigate('/branches');
   };
 
-  const handleBranchSelect = (branch: Branch) => {
-    console.log('Branch selected:', branch.id, 'Current:', selectedBranch?.id);
-    
-    // Don't do anything if same branch is selected
-    if (branch.id === selectedBranch?.id) {
-      setIsDropdownOpen(false);
-      return;
-    }
-    
-    setIsChangingBranch(true);
-    setIsDropdownOpen(false);
-    
-    // Update localStorage
-    localStorage.setItem('selectedBranchId', branch.id);
-    
-    // Find the restaurant for this branch
-    const branchData = getBranchById(branch.id);
-    if (branchData) {
-      localStorage.setItem('selectedRestaurantId', branchData.restaurant.id);
-    }
-    
-    // Update browser theme color based on branch
-    if (window.updateThemeColorForRestaurant) {
-      window.updateThemeColorForRestaurant(branch.name);
-    }
-    
-    // Navigate to the correct branch URL with page refresh
-    const branchRoutes: Record<string, string> = {
-      'airport': '/sheesh/airport-road',
-      'balaoun': '/sheesh/beloun', 
-      'dollar': '/krispy/beloun',
-      'burgerito-airport': '/burgerito/airport-road'
-    };
-    
-    const targetRoute = branchRoutes[branch.id];
-    console.log('Navigating to:', targetRoute);
-    
-    if (targetRoute) {
-      // Force page refresh to ensure everything reloads
-      window.location.href = targetRoute;
-    } else {
-      console.error('No route found for branch:', branch.id);
-      setIsChangingBranch(false);
-    }
-  };
-
-  // Close dropdown when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.relative')) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isDropdownOpen]);
-
   return (
     <>
-      <div className="fixed top-0 z-40 w-full">
-        <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
+      {/* Back Button - Above Navigation */}
+      {showBackButton && (
+        <div className="bg-gray-50 px-3 sm:px-4 py-2 lg:px-16 xl:px-32 2xl:px-48">
           <div className="container mx-auto">
-            <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
-              selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
-            }`}>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
-                    <img 
-                      src="/New Element 88 [8BACFE9].png" 
-                      alt="مطعم المستر" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center text-right">
-                    <h1 className="text-xl sm:text-3xl font-black">
-                      المستر
-                    </h1>
-                    {isOpen === false && (
-                      <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
-                    )}
-                    {isOpen === true && timeUntilClosing && (
-                      <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
-                    )}
-                    {isOpen === null && (
-                      <p className="text-xs sm:text-sm opacity-75 text-yellow-200 leading-tight text-right">جاري التحقق...</p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="relative">
-                    <div className="text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 bg-white bg-opacity-20 hidden sm:flex">
-                      <div className="w-4 h-4"></div>
-                      <span>بلعون</span>
-                      <div className="w-4 h-4"></div>
-                    </div>
-                  </div>
-                  
-                  {selectedBranch && (
-                    <div className="relative">
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                          disabled={isChangingBranch}
-                          className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
-                            selectedRestaurant?.name?.includes('مستر كريسبي')
-                              ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
-                              : selectedRestaurant?.name?.includes('مستر برجريتو')
-                                ? 'bg-[#E59F49] bg-opacity-20 hover:bg-opacity-30'
-                                : 'bg-white bg-opacity-20 hover:bg-opacity-30'
-                          } ${
-                            isDropdownOpen ? 'bg-opacity-30' : ''
-                          } ${
-                           isChangingBranch ? 'opacity-50 cursor-not-allowed' : ''
-                          }`}
-                        >
-                          <MapPin className="w-4 h-4" />
-                          <span>{selectedBranch.area}</span>
-                          {isChangingBranch ? (
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          ) : (
-                            <ChevronDown 
-                              className={`w-4 h-4 transition-transform duration-300 ${
-                                isDropdownOpen ? 'transform rotate-180' : ''
-                              }`} 
-                            />
-                          )}
-                        </button>
-
-                        {isDropdownOpen && (
-                          <div className="absolute top-full left-0 mt-2 z-50" dir="ltr">
-                            <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] animate-fadeInUp">
-                              {getAllBranches().map((branch) => (
-                                <button
-                                  key={branch.id}
-                                  type="button"
-                                  disabled={isChangingBranch}
-                                  onClick={() => handleBranchSelect(branch)}
-                                  className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
-                                    selectedBranch.id === branch.id 
-                                      ? `bg-red-50 font-semibold ${
-                                          branch.name?.includes('مستر كريسبي') 
-                                            ? 'text-[#55421A]' 
-                                            : branch.name?.includes('مستر برجريتو')
-                                              ? 'text-[#E59F49]'
-                                              : 'text-[#781220]'
-                                        }`
-                                      : 'text-gray-700'
-                                  } ${
-                                    branch.name?.includes('مستر كريسبي')
-                                      ? 'hover:bg-[#55421A]'
-                                      : branch.name?.includes('مستر برجريتو')
-                                        ? 'hover:bg-[#E59F49]'
-                                        : 'hover:bg-[#7A1120]'
-                                  } hover:text-white hover:scale-[1.02] active:scale-[0.98]`}
-                                >
-                                  <MapPin className={`w-4 h-4 ${
-                                    selectedBranch.id === branch.id 
-                                      ? branch.name?.includes('مستر كريسبي') 
-                                          ? 'text-[#55421A]' 
-                                          : branch.name?.includes('مستر برجريتو')
-                                            ? 'text-[#E59F49]'
-                                            : 'text-[#781220]'
-                                      : 'text-gray-400'
-                                  }`} />
-                                  <div className="flex-1 text-right">
-                                    <div className="font-semibold">
-                                      {branch.name?.includes('مستر كريسبي') 
-                                        ? 'مستر كريسبي' 
-                                        : branch.name?.includes('مستر برجريتو')
-                                          ? 'مستر برجريتو'
-                                          : 'مستر شيش'
-                                      }
-                                    </div>
-                                    <div className="text-xs opacity-75">{branch.area}</div>
-                                  </div>
-                                  {selectedBranch.id === branch.id && (
-                                    <div className={`w-2 h-2 rounded-full ${
-                                      branch.name?.includes('مستر كريسبي') 
-                                        ? 'bg-[#55421A]' 
-                                        : branch.name?.includes('مستر برجريتو')
-                                          ? 'bg-[#E59F49]'
-                                          : 'bg-[#781220]'
-                                    }`}></div>
-                                  )}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  
-                  <button
-                    onClick={onCartClick}
-                    disabled={isOpen !== true}
-                    className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
-                      isOpen !== true
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
-                    }`}
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                    <span className="hidden sm:inline">{isOpen === false ? 'مغلق' : isOpen === null ? 'جاري التحقق...' : 'السلة'}</span>
-                    {cartItemCount > 0 && (
-                      <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
-                        {cartItemCount}
-                      </span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                // Clear both restaurant and branch to go to restaurant selector
+                localStorage.removeItem('selectedRestaurantId');
+                localStorage.removeItem('selectedBranchId');
+                window.location.href = '/';
+              }}
+              className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
+                selectedRestaurant?.name?.includes('مستر كريسبي') 
+                  ? 'hover:text-[#55421A]' 
+                  : 'hover:text-[#781220]'
+              }`}
+            >
+              <ArrowRight className="w-5 h-5" />
+              <span className="text-sm font-medium">العودة إلى اختيار المطعم</span>
+            </button>
           </div>
         </div>
+      )}
+      
+      {/* Main Navigation Bar */}
+      <div className="sticky top-0 z-40 px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48">
+      <div className="container mx-auto">
+        <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
+          selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
+        }`}>
+        <div className="flex justify-between items-center">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              // Clear both restaurant and branch to go to restaurant selector
+              localStorage.removeItem('selectedRestaurantId');
+              localStorage.removeItem('selectedBranchId');
+             window.location.href = '/';
+            }}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
+          >
+            <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
+              <img 
+                src="/New Element 88 [8BACFE9].png" 
+                alt="مطعم المستر" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="flex flex-col justify-center text-right">
+              <h1 className="text-xl sm:text-3xl font-black">
+                {selectedRestaurant?.name || 'المستر'}
+              </h1>
+              {isOpen === false && (
+                <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
+              )}
+              {isOpen === true && timeUntilClosing && (
+                <p className="text-xs sm:text-sm opacity-75 leading-tight text-right">يغلق خلال {timeUntilClosing}</p>
+              )}
+              {isOpen === null && (
+                <p className="text-xs sm:text-sm opacity-75 text-yellow-200 leading-tight text-right">جاري التحقق...</p>
+              )}
+            </div>
+          </button>
+
+          <div className="flex items-center gap-2 sm:gap-4">
+            {selectedBranch && (
+              <div className="relative">
+                <BranchDropdown
+                  selectedBranch={selectedBranch}
+                  isChangingBranch={isChangingBranch}
+                  onBranchChanging={setIsChangingBranch}
+                  onBranchSelect={(branch) => {
+                    setIsChangingBranch(true);
+                    
+                    // Save the selected branch
+                    localStorage.setItem('selectedBranch', JSON.stringify(branch));
+                    
+                    const branchRoutes: Record<string, string> = {
+                      'airport': '/sheesh/airport-road',
+                      'dollar': '/krispy/beloun',
+                      'balaoun': '/sheesh/beloun',
+                      'burgerito-airport': '/burgerito/airport-road'
+                    };
+                    
+                    const targetRoute = branchRoutes[branch.id];
+                    
+                    // Add smooth transition delay
+                    setTimeout(() => {
+                      if (targetRoute) {
+                        window.location.href = targetRoute;
+                      } else {
+                        window.location.href = '/';
+                      }
+                    }, 300);
+                  }}
+                />
+              </div>
+            )}
+            
+            <button
+              onClick={onCartClick}
+              disabled={isOpen !== true}
+              className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
+                isOpen !== true
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
+              }`}
+            >
+              <ShoppingBag className="w-5 h-5" />
+              <span className="hidden sm:inline">{isOpen === false ? 'مغلق' : isOpen === null ? 'جاري التحقق...' : 'السلة'}</span>
+              {cartItemCount > 0 && (
+                <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
+                  {cartItemCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+        </div>
+      </div>
       </div>
       
       {/* Branch Switching Overlay */}
@@ -393,5 +292,162 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
     </>
+  );
+};
+
+interface BranchDropdownProps {
+  selectedBranch: Branch;
+  onBranchSelect: (branch: Branch) => void;
+  isChangingBranch: boolean;
+  onBranchChanging: (changing: boolean) => void;
+}
+
+const BranchDropdown: React.FC<BranchDropdownProps> = ({ 
+  selectedBranch, 
+  onBranchSelect, 
+  isChangingBranch,
+  onBranchChanging 
+}) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleToggle = () => {
+    if (isOpen) {
+      // Closing animation
+      setIsAnimating(false);
+      setTimeout(() => setIsOpen(false), 200);
+    } else {
+      // Opening animation
+      setIsOpen(true);
+      setTimeout(() => setIsAnimating(true), 10);
+    }
+  };
+
+  const handleSelect = (branch: Branch) => {
+    setIsAnimating(false);
+    
+    // Update browser theme color based on branch
+    if (window.updateThemeColorForRestaurant) {
+      window.updateThemeColorForRestaurant(branch.name);
+    }
+    
+    onBranchSelect(branch);
+    setTimeout(() => setIsOpen(false), 200);
+  };
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={handleToggle}
+        disabled={isChangingBranch}
+        className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
+          selectedBranch?.name?.includes('مستر كريسبي')
+            ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
+            : selectedBranch?.name?.includes('مستر برجريتو')
+              ? 'bg-[#E59F49] bg-opacity-20 hover:bg-opacity-30'
+              : 'bg-white bg-opacity-20 hover:bg-opacity-30'
+        } ${
+          isOpen ? 'bg-opacity-30' : ''
+        } ${
+         isChangingBranch || !isWithinOperatingHours() ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+      >
+        <MapPin className="w-4 h-4" />
+        <span>{selectedBranch.area}</span>
+        {isChangingBranch ? (
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        ) : (
+          <ChevronDown 
+            className={`w-4 h-4 transition-transform duration-300 ${
+              isOpen ? 'transform rotate-180' : ''
+            }`} 
+          />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-2 z-50" dir="ltr">
+          <div 
+            className={`bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] transition-all duration-200 ease-out transform origin-top-right ${
+              isAnimating 
+                ? 'opacity-100 scale-100 translate-y-0' 
+                : 'opacity-0 scale-95 -translate-y-2'
+            }`}
+          >
+          {getAllBranches().map((branch) => (
+            <button
+              key={branch.id}
+              type="button"
+              disabled={isChangingBranch}
+              onClick={() => handleSelect(branch)}
+              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 ${
+                selectedBranch.id === branch.id 
+                  ? `bg-red-50 font-semibold ${
+                      branch.name?.includes('مستر كريسبي') 
+                        ? 'text-[#55421A]' 
+                        : branch.name?.includes('مستر برجريتو')
+                          ? 'text-[#E59F49]'
+                          : 'text-[#781220]'
+                    }`
+                  : 'text-gray-700'
+              } ${
+                branch.name?.includes('مستر كريسبي')
+                  ? 'hover:bg-[#55421A]'
+                  : branch.name?.includes('مستر برجريتو')
+                    ? 'hover:bg-[#E59F49]'
+                    : 'hover:bg-[#7A1120]'
+              } hover:text-white hover:scale-[1.02] active:scale-[0.98]`}
+            >
+              {isChangingBranch && selectedBranch.id !== branch.id && (
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+              )}
+              <MapPin className={`w-4 h-4 ${
+                selectedBranch.id === branch.id 
+                  ? branch.name?.includes('مستر كريسبي') 
+                      ? 'text-[#55421A]' 
+                      : branch.name?.includes('مستر برجريتو')
+                        ? 'text-[#E59F49]'
+                        : 'text-[#781220]'
+                  : 'text-gray-400'
+              }`} />
+              <div className="flex-1 text-right">
+                <div className="font-semibold">
+                  {branch.name?.includes('مستر كريسبي') 
+                    ? 'مستر كريسبي' 
+                    : branch.name?.includes('مستر برجريتو')
+                      ? 'مستر برجريتو'
+                      : 'مستر شيش'
+                  }
+                </div>
+                <div className="text-xs opacity-75">{branch.area}</div>
+              </div>
+              {selectedBranch.id === branch.id && (
+                <div className={`w-2 h-2 rounded-full ${
+                  branch.name?.includes('مستر كريسبي') 
+                    ? 'bg-[#55421A]' 
+                    : branch.name?.includes('مستر برجريتو')
+                      ? 'bg-[#E59F49]'
+                      : 'bg-[#781220]'
+                }`}></div>
+              )}
+            </button>
+          ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };

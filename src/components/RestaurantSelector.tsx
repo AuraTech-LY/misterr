@@ -66,7 +66,18 @@ export const RestaurantSelector: React.FC<RestaurantSelectorProps> = ({
       window.updateThemeColorForRestaurant(restaurant.name);
     }
     
-    // Just call the callback, let the parent handle navigation
+    // Navigate to restaurant-specific URL
+    const restaurantRoutes: Record<string, string> = {
+      'mister-shish': '/sheesh',
+      'mister-crispy': '/krispy',
+      'mister-burgerito': '/burgerito'
+    };
+    
+    const targetRoute = restaurantRoutes[restaurant.id];
+    if (targetRoute) {
+      window.location.href = targetRoute;
+    }
+    
     onSelectRestaurant(restaurant);
   };
 

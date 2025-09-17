@@ -330,11 +330,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 overflow-hidden transition-all duration-300 ${
-      isAnimating && !isTransitioning
-        ? 'bg-black bg-opacity-50 backdrop-blur-sm'
-        : 'bg-black bg-opacity-0 backdrop-blur-none'
-    }`}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4 overflow-hidden">
       <div className={`max-w-lg w-full bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[95vh] sm:max-h-[90vh] flex flex-col mx-2 sm:mx-0 transition-all duration-300 transform ${
         isAnimating && !isTransitioning
           ? 'scale-100 opacity-100 translate-x-0'

@@ -31,7 +31,6 @@ export const useCart = (branchId?: string) => {
 
   // Load cart when branch changes
   const loadBranchCart = (newBranchId?: string) => {
-    console.log('Loading cart for branch:', newBranchId);
     const branchCart = loadCartFromStorage(newBranchId);
     setCartItems(branchCart);
   };
