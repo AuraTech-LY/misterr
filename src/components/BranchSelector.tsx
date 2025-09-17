@@ -70,7 +70,9 @@ export const BranchSelector: React.FC<BranchSelectorProps> = ({
     
     const targetRoute = branchRoutes[branch.id];
     if (targetRoute) {
-      window.location.href = targetRoute;
+      // Use React Router navigation instead of window.location
+      window.history.pushState(null, '', targetRoute);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
     
     onBranchSelect(branch);

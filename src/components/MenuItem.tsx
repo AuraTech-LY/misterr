@@ -228,8 +228,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
       {/* Mobile Popup Modal */}
       {showMobilePopup && (
-        <div className={`md:hidden fixed inset-0 bg-black z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${
-          isClosing ? 'bg-opacity-0' : 'bg-opacity-50'
+        <div className={`md:hidden fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+          isClosing ? 'bg-black bg-opacity-0 backdrop-blur-none' : 'bg-black bg-opacity-50 backdrop-blur-sm'
         }`}>
           <div className={`bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden transition-all duration-300 ease-out transform ${
             isClosing 

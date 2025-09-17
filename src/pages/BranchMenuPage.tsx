@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { Header } from '../components/Header';
 import { CategoryFilter } from '../components/CategoryFilter';
 import { Menu } from '../components/Menu';
@@ -16,18 +17,36 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-interface BranchMenuPageProps {
-  branchId: string;
-}
-
-export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
+export const BranchMenuPage: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState('الكل');
+  
+  // Get branch ID from URL path
+  const getBranchIdFromPath = (pathname: string): string | null => {
+    if (pathname === '/sheesh/airport-road') return 'airport';
+    if (pathname === '/sheesh/beloun') return 'balaoun';
+    if (pathname === '/krispy/beloun') return 'dollar';
+    if (pathname === '/burgerito/airport-road') return 'burgerito-airport';
+    return null;
+  };
+  
+  const branchId = getBranchIdFromPath(location.pathname);
   
   // Find the branch data
   const branchData = getBranchById(branchId);
   const branch = branchData?.branch;
   const restaurant = branchData?.restaurant;
+  
+  // Update branch data when URL changes
+  React.useEffect(() => {
+    const newBranchId = getBranchIdFromPath(location.pathname);
+    if (newBranchId && newBranchId !== branchId) {
+      console.log('Branch changed in BranchMenuPage:', newBranchId);
+      // Force a re-render by updating the key or state
+      window.location.reload();
+    }
+  }, [location.pathname, branchId]);
   
   const { menuItems, categories, loading, error } = useMenu(branchId);
   const {
@@ -49,15 +68,21 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
-    loadBranchCart(branchId);
-    // Also save the branch to localStorage for consistency
-    if (branch) {
-      localStorage.setItem('selectedBranch', JSON.stringify(branch));
+    if (branchId) {
+      loadBranchCart(branchId);
+      
+      // Update localStorage with current branch
+      if (branch) {
+        localStorage.setItem('selectedBranchId', branchId);
+        localStorage.setItem('selectedRestaurantId', restaurant?.id || '');
+      }
     }
   }, [branchId, loadBranchCart, branch]);
 
   // Update operating status every minute with branch-specific hours
   useEffect(() => {
+    if (!branchId) return;
+    
     const updateStatus = async () => {
       const branchIsOpen = await isWithinOperatingHours(branchId);
       const timeUntilOpen = await getTimeUntilOpening(branchId);
@@ -75,11 +100,9 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
   // Fetch working hours from database
   useEffect(() => {
+    if (!branchId) return;
+    
     const fetchWorkingHours = async () => {
-      if (!branchId) {
-        setWorkingHours('يومياً من 10:00 ص إلى 12:00 م');
-        return;
-      }
 
       try {
         const { data, error } = await supabase
@@ -131,7 +154,7 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
   };
 
   // Redirect to branches page if branch not found
-  if (!branch) {
+  if (!branchId || !branch) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-4" dir="rtl">
         <div className="max-w-md w-full mx-auto text-center">
@@ -155,10 +178,10 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
 
 
   const handleBackToRestaurants = () => {
-    // Clear both restaurant and branch selection
+    // Clear localStorage and redirect to root
     localStorage.removeItem('selectedRestaurantId');
     localStorage.removeItem('selectedBranchId');
-    navigate('/');
+    window.location.href = '/';
   };
 
   return (
@@ -177,13 +200,29 @@ export const BranchMenuPage: React.FC<BranchMenuPageProps> = ({ branchId }) => {
         selectedBranch={branch}
         onBranchChange={() => navigate('/branches')}
         cartTotal={getTotalPrice()}
-        showBackButton={true}
-        onBackClick={handleBackToRestaurants}
+        isCartOpen={isCartOpen}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
-        {/* Add bottom padding for mobile navigation */}
-        <div className="pb-20 sm:pb-0">
+        {/* Add top padding to account for fixed header */}
+        <div className="pt-20 sm:pt-24">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={handleBackToRestaurants}
+            className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
+              branch?.name?.includes('مستر كريسبي') 
+                ? 'hover:text-[#55421A]' 
+                : branch?.name?.includes('مستر برجريتو')
+                  ? 'hover:text-[#E59F49]'
+                  : 'hover:text-[#781220]'
+            }`}
+          >
+            <ArrowRight className="w-5 h-5" />
+            <span className="text-sm font-medium">العودة إلى اختيار المطعم</span>
+          </button>
+        </div>
+        
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
