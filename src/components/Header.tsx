@@ -188,7 +188,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </div>
                   <div className="flex flex-col justify-center text-right">
                     <h1 className="text-xl sm:text-3xl font-black">
-                      المستر
+                      {selectedRestaurant?.name || 'المستر'}
                     </h1>
                     {isOpen === false && (
                       <p className="text-xs sm:text-sm opacity-75 text-red-200 leading-tight text-right">مغلق حالياً</p>
