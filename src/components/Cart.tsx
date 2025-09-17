@@ -44,14 +44,15 @@ export const Cart: React.FC<CartProps> = ({
   // Prevent background scrolling when cart is open
   React.useEffect(() => {
     if (shouldRender) {
-      document.body.style.overflow = 'hidden';
+      // Don't prevent scrolling to avoid layout shifts
+      // document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      // document.body.style.overflow = 'unset';
     }
 
     // Cleanup function to restore scrolling when component unmounts
     return () => {
-      document.body.style.overflow = 'unset';
+      // document.body.style.overflow = 'unset';
     };
   }, [shouldRender]);
 
@@ -206,7 +207,7 @@ export const Cart: React.FC<CartProps> = ({
   }
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 transition-all duration-300 overflow-hidden ${
-      isAnimating ? 'bg-black bg-opacity-50' : 'bg-black bg-opacity-0'
+      isAnimating ? 'bg-black bg-opacity-50 backdrop-blur-sm' : 'bg-black bg-opacity-0 backdrop-blur-none'
     }`}>
       <div className={`bg-white rounded-2xl max-w-md w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden shadow-2xl mx-2 sm:mx-0 flex flex-col transition-all duration-300 transform min-w-0 ${
         isAnimating && !isTransitioning

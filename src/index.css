@@ -203,3 +203,14 @@ input[type="range"]::-moz-range-thumb {
 .slider-thumb-\[#7A1120\]::-moz-range-thumb {
   background: #7A1120;
 }
+
+/* Smooth backdrop blur transitions */
+.backdrop-blur-none {
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}

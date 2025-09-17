@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { Header } from '../components/Header';
 import { CategoryFilter } from '../components/CategoryFilter';
 import { Menu } from '../components/Menu';
@@ -66,6 +67,46 @@ export const HomePage: React.FC = () => {
   });
   
   const [selectedCategory, setSelectedCategory] = useState('الكل');
+  
+  // Update branch when URL changes
+  React.useEffect(() => {
+    const updateBranchFromPath = () => {
+      const path = window.location.pathname;
+      let newBranchId = null;
+      
+      if (path === '/sheesh/airport-road') {
+        newBranchId = 'airport';
+      } else if (path === '/sheesh/beloun') {
+        newBranchId = 'balaoun';
+      } else if (path === '/krispy/beloun') {
+        newBranchId = 'dollar';
+      } else if (path === '/burgerito/airport-road') {
+        newBranchId = 'burgerito-airport';
+      }
+      
+      if (newBranchId) {
+        const branchData = getBranchById(newBranchId);
+        if (branchData && branchData.branch.id !== selectedBranch?.id) {
+          console.log('Branch changed from URL:', newBranchId);
+          setSelectedBranch(branchData.branch);
+          setSelectedRestaurant(branchData.restaurant);
+          localStorage.setItem('selectedBranchId', newBranchId);
+          localStorage.setItem('selectedRestaurantId', branchData.restaurant.id);
+        }
+      }
+    };
+    
+    // Listen for popstate events (back/forward navigation)
+    window.addEventListener('popstate', updateBranchFromPath);
+    
+    // Also check on mount
+    updateBranchFromPath();
+    
+    return () => {
+      window.removeEventListener('popstate', updateBranchFromPath);
+    };
+  }, [selectedBranch?.id]);
+  
   const { menuItems, categories, loading, error } = useMenu(selectedBranch?.id);
   const {
     cartItems,
@@ -176,24 +217,49 @@ export const HomePage: React.FC = () => {
     // Clear branch selection when restaurant changes
     setSelectedBranch(null);
     localStorage.removeItem('selectedBranchId');
+    
+    // Navigate to restaurant-specific URL
+    const restaurantRoutes: Record<string, string> = {
+      'mister-shish': '/sheesh',
+      'mister-crispy': '/krispy',
+      'mister-burgerito': '/burgerito'
+    };
+    
+    const targetRoute = restaurantRoutes[restaurant.id];
+    if (targetRoute) {
+      navigate(targetRoute, { replace: true });
+    }
   };
 
   // Handle branch selection
   const handleBranchSelect = (branch: Branch) => {
+    setSelectedBranch(branch);
+    localStorage.setItem('selectedBranchId', branch.id);
+    
     // Update browser theme color based on branch
     if (window.updateThemeColorForRestaurant) {
       window.updateThemeColorForRestaurant(branch.name);
     }
-    setSelectedBranch(branch);
-    localStorage.setItem('selectedBranchId', branch.id);
+    
+    // Navigate to branch-specific URL
+    const branchRoutes: Record<string, string> = {
+      'airport': '/sheesh/airport-road',
+      'balaoun': '/sheesh/beloun',
+      'dollar': '/krispy/beloun',
+      'burgerito-airport': '/burgerito/airport-road'
+    };
+    
+    const targetRoute = branchRoutes[branch.id];
+    if (targetRoute) {
+      navigate(targetRoute, { replace: true });
+    }
   };
 
   const handleBackToRestaurants = () => {
-    setSelectedRestaurant(null);
-    setSelectedBranch(null);
+    // Clear localStorage and redirect to root
     localStorage.removeItem('selectedRestaurantId');
     localStorage.removeItem('selectedBranchId');
-    navigate('/', { replace: true });
+    window.location.href = '/';
   };
 
   // Show restaurant selector if no restaurant is selected
@@ -247,13 +313,29 @@ export const HomePage: React.FC = () => {
           localStorage.removeItem('selectedBranchId');
         }}
         cartTotal={getTotalPrice()}
-        showBackButton={true}
-        onBackClick={handleBackToRestaurants}
+        isCartOpen={isCartOpen}
       />
 
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
-        {/* Add bottom padding for mobile navigation */}
-        <div className="pb-20 sm:pb-0">
+        {/* Add top padding to account for fixed header */}
+        <div className="pt-20 sm:pt-24">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={handleBackToRestaurants}
+            className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
+              selectedRestaurant?.name?.includes('مستر كريسبي') 
+                ? 'hover:text-[#55421A]' 
+                : selectedRestaurant?.name?.includes('مستر برجريتو')
+                  ? 'hover:text-[#E59F49]'
+                  : 'hover:text-[#781220]'
+            }`}
+          >
+            <ArrowRight className="w-5 h-5" />
+            <span className="text-sm font-medium">العودة إلى اختيار المطعم</span>
+          </button>
+        </div>
+        
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md">
