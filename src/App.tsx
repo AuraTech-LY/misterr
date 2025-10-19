@@ -4,6 +4,8 @@ import { HomePage } from './pages/HomePage';
 import { BranchesPage } from './pages/BranchesPage';
 import { BranchMenuPage } from './pages/BranchMenuPage';
 import { AdminPage } from './pages/AdminPage';
+import { RestaurantListPage } from './pages/RestaurantListPage';
+import { RestaurantDetailPage } from './pages/RestaurantDetailPage';
 
 function App() {
   const location = useLocation();
@@ -16,7 +18,10 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route path="/" element={<RestaurantListPage />} />
+      <Route path="/restaurants" element={<RestaurantListPage />} />
+      <Route path="/restaurant/:slug" element={<RestaurantDetailPage />} />
+      <Route path="/restaurant/:slug/branch/:branchId" element={<BranchMenuPage />} />
       <Route path="/branches" element={<BranchesPage />} />
       <Route path="/sheesh" element={<HomePage />} />
       <Route path="/krispy" element={<HomePage />} />

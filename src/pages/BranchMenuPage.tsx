@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Header } from '../components/Header';
 import { CategoryFilter } from '../components/CategoryFilter';
@@ -20,9 +20,12 @@ const supabase = createClient(
 export const BranchMenuPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { slug, branchId: urlBranchId } = useParams<{ slug?: string; branchId?: string }>();
   const [selectedCategory, setSelectedCategory] = useState('الكل');
-  
-  // Get branch ID from URL path
+  const [branchData, setBranchData] = useState<any>(null);
+  const [isLoadingBranch, setIsLoadingBranch] = useState(true);
+
+  // Get branch ID from URL path (for backward compatibility)
   const getBranchIdFromPath = (pathname: string): string | null => {
     if (pathname === '/sheesh/airport-road') return 'airport';
     if (pathname === '/sheesh/beloun') return 'balaoun';
@@ -30,11 +33,40 @@ export const BranchMenuPage: React.FC = () => {
     if (pathname === '/burgerito/airport-road') return 'burgerito-airport';
     return null;
   };
-  
-  const branchId = getBranchIdFromPath(location.pathname);
-  
-  // Find the branch data
-  const branchData = getBranchById(branchId);
+
+  // Determine which branch ID to use
+  const effectiveBranchId = urlBranchId || getBranchIdFromPath(location.pathname);
+
+  // Fetch branch and restaurant data
+  useEffect(() => {
+    const fetchBranchData = async () => {
+      setIsLoadingBranch(true);
+
+      // If using new URL structure with branchId
+      if (urlBranchId) {
+        const { restaurantService } = await import('../services/restaurantService');
+        const data = await restaurantService.getBranchById(urlBranchId);
+        if (data) {
+          setBranchData(data);
+        }
+      } else {
+        // Fallback to old branch ID system
+        const branchId = getBranchIdFromPath(location.pathname);
+        const oldBranchData = getBranchById(branchId);
+        if (oldBranchData) {
+          setBranchData({
+            branch: oldBranchData.branch,
+            restaurant: oldBranchData.restaurant
+          });
+        }
+      }
+
+      setIsLoadingBranch(false);
+    };
+
+    fetchBranchData();
+  }, [urlBranchId, location.pathname]);
+
   const branch = branchData?.branch;
   const restaurant = branchData?.restaurant;
   
@@ -48,7 +80,7 @@ export const BranchMenuPage: React.FC = () => {
     }
   }, [location.pathname, branchId]);
   
-  const { menuItems, categories, loading, error } = useMenu(branchId);
+  const { menuItems, categories, loading, error } = useMenu(effectiveBranchId, restaurant?.id);
   const {
     cartItems,
     isCartOpen,
@@ -153,19 +185,31 @@ export const BranchMenuPage: React.FC = () => {
     }
   };
 
-  // Redirect to branches page if branch not found
-  if (!branchId || !branch) {
+  // Show loading state while fetching branch data
+  if (isLoadingBranch) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center" dir="rtl">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#781220]"></div>
+          <p className="mt-4 text-gray-600">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to restaurants page if branch not found
+  if (!effectiveBranchId || !branch) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-4" dir="rtl">
         <div className="max-w-md w-full mx-auto text-center">
           <h1 className="text-2xl font-bold text-gray-800 mb-4">الفرع غير موجود</h1>
           <p className="text-gray-600 mb-6">الفرع المطلوب غير متوفر حالياً</p>
-          <Link
-            to="/branches"
+          <button
+            onClick={() => navigate('/restaurants')}
             className="bg-[#781220] hover:bg-[#5c0d18] text-white py-3 px-6 rounded-full font-bold transition-all duration-300 inline-block"
           >
-            اختيار فرع آخر
-          </Link>
+            العودة إلى المطاعم
+          </button>
         </div>
       </div>
     );

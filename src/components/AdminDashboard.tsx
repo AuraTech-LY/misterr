@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
 import { AdminCategories } from './AdminCategories';
 import { AdminOperatingHours } from './AdminOperatingHours';
+import { AdminRestaurants } from './AdminRestaurants';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -34,7 +35,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'restaurants'>('menu');
   const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy' | 'mister-burgerito'>('mister-shish');
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
 
@@ -436,6 +437,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               </svg>
               أوقات العمل
             </button>
+            <button
+              onClick={() => setActiveTab('restaurants')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'restaurants'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+              }`}
+            >
+              <Store className="w-5 h-5" />
+              إدارة المطاعم
+            </button>
           </div>
         </div>
       </div>
@@ -445,6 +457,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminCategories onCategoriesChange={handleCategoriesChange} />
         ) : activeTab === 'hours' ? (
           <AdminOperatingHours />
+        ) : activeTab === 'restaurants' ? (
+          <AdminRestaurants onRestaurantsChange={fetchData} />
         ) : (
           <>
             {/* Restaurant Sub-tabs */}
