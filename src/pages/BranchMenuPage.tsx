@@ -69,17 +69,7 @@ export const BranchMenuPage: React.FC = () => {
 
   const branch = branchData?.branch;
   const restaurant = branchData?.restaurant;
-  
-  // Update branch data when URL changes
-  React.useEffect(() => {
-    const newBranchId = getBranchIdFromPath(location.pathname);
-    if (newBranchId && newBranchId !== branchId) {
-      console.log('Branch changed in BranchMenuPage:', newBranchId);
-      // Force a re-render by updating the key or state
-      window.location.reload();
-    }
-  }, [location.pathname, branchId]);
-  
+
   const { menuItems, categories, loading, error } = useMenu(effectiveBranchId, restaurant?.id);
   const {
     cartItems,
@@ -93,65 +83,64 @@ export const BranchMenuPage: React.FC = () => {
     closeCart,
     clearCart,
     loadBranchCart,
-  } = useCart(branchId);
+  } = useCart(effectiveBranchId);
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
   const [timeUntilOpening, setTimeUntilOpening] = useState<string | null>(null);
   const [workingHours, setWorkingHours] = useState<string>('يومياً من 10:00 ص إلى 12:00 م');
 
   // Load branch-specific cart when component mounts
   useEffect(() => {
-    if (branchId) {
-      loadBranchCart(branchId);
-      
+    if (effectiveBranchId) {
+      loadBranchCart(effectiveBranchId);
+
       // Update localStorage with current branch
       if (branch) {
-        localStorage.setItem('selectedBranchId', branchId);
+        localStorage.setItem('selectedBranchId', effectiveBranchId);
         localStorage.setItem('selectedRestaurantId', restaurant?.id || '');
       }
     }
-  }, [branchId, loadBranchCart, branch]);
+  }, [effectiveBranchId, loadBranchCart, branch, restaurant?.id]);
 
   // Update operating status every minute with branch-specific hours
   useEffect(() => {
-    if (!branchId) return;
-    
+    if (!effectiveBranchId) return;
+
     const updateStatus = async () => {
-      const branchIsOpen = await isWithinOperatingHours(branchId);
-      const timeUntilOpen = await getTimeUntilOpening(branchId);
+      const branchIsOpen = await isWithinOperatingHours(effectiveBranchId);
+      const timeUntilOpen = await getTimeUntilOpening(effectiveBranchId);
       setIsOpen(branchIsOpen);
       setTimeUntilOpening(timeUntilOpen);
     };
-    
+
     updateStatus();
     const interval = setInterval(() => {
       updateStatus();
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [branchId]);
+  }, [effectiveBranchId]);
 
   // Fetch working hours from database
   useEffect(() => {
-    if (!branchId) return;
-    
-    const fetchWorkingHours = async () => {
+    if (!effectiveBranchId) return;
 
+    const fetchWorkingHours = async () => {
       try {
         const { data, error } = await supabase
           .from('operating_hours')
           .select('*')
-          .eq('branch_id', branchId)
+          .eq('branch_id', effectiveBranchId)
           .limit(1);
 
         if (error || !data || data.length === 0) {
           // Use default hours if no data found
-          const defaultClosingTime = branchId === 'dollar' ? '03:00' : '23:59';
+          const defaultClosingTime = effectiveBranchId === 'dollar' || effectiveBranchId === 'cccccccc-cccc-cccc-cccc-cccccccccccc' ? '03:00' : '23:59';
           setWorkingHours(`يومياً من 11:00 ص إلى ${formatTime(defaultClosingTime)}`);
           return;
         }
 
         const hours = data[0];
-        
+
         if (hours.is_closed) {
           setWorkingHours('مغلق حالياً');
         } else if (hours.is_24_hours) {
@@ -168,7 +157,7 @@ export const BranchMenuPage: React.FC = () => {
     };
 
     fetchWorkingHours();
-  }, [branchId]);
+  }, [effectiveBranchId]);
 
   // Helper function to format time from 24h to 12h format
   const formatTime = (time24: string): string => {
@@ -360,7 +349,7 @@ export const BranchMenuPage: React.FC = () => {
               items={filteredItems}
               onAddToCart={addToCart}
               onRemoveFromCart={removeFromCart}
-              branchId={branchId}
+              branchId={effectiveBranchId}
               cartItems={cartItems}
               categories={categories}
               selectedCategory={selectedCategory}
