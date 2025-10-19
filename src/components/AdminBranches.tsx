@@ -13,6 +13,130 @@ interface BranchWithRestaurant extends RestaurantBranch {
   restaurant_color?: string;
 }
 
+const BranchForm: React.FC<{
+  branch: Partial<BranchWithRestaurant>;
+  onChange: (b: Partial<BranchWithRestaurant>) => void;
+  restaurants: Restaurant[];
+}> = ({ branch, onChange, restaurants }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">المطعم *</label>
+      <select
+        value={branch.restaurant_id || ''}
+        onChange={(e) => onChange({ ...branch, restaurant_id: e.target.value })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+        disabled={!!branch.id}
+      >
+        <option value="">اختر المطعم</option>
+        {restaurants.map(restaurant => (
+          <option key={restaurant.id} value={restaurant.id}>{restaurant.name}</option>
+        ))}
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">اسم الفرع *</label>
+      <input
+        type="text"
+        value={branch.name || ''}
+        onChange={(e) => onChange({ ...branch, name: e.target.value })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+        placeholder="مثال: فرع طريق المطار"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">المنطقة *</label>
+      <input
+        type="text"
+        value={branch.area || ''}
+        onChange={(e) => onChange({ ...branch, area: e.target.value })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+        placeholder="مثال: طريق المطار"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف *</label>
+      <input
+        type="text"
+        value={branch.phone || ''}
+        onChange={(e) => onChange({ ...branch, phone: e.target.value })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+        placeholder="مثال: 093-0625795"
+      />
+    </div>
+    <div className="md:col-span-2">
+      <label className="block text-sm font-semibold text-gray-700 mb-2">العنوان الكامل *</label>
+      <input
+        type="text"
+        value={branch.address || ''}
+        onChange={(e) => onChange({ ...branch, address: e.target.value })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+        placeholder="مثال: طريق المطار مقابل مدرسة المهاجرين"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">خط العرض (Latitude)</label>
+      <input
+        type="number"
+        step="0.00000001"
+        value={branch.latitude || 0}
+        onChange={(e) => onChange({ ...branch, latitude: parseFloat(e.target.value) })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">خط الطول (Longitude)</label>
+      <input
+        type="number"
+        step="0.00000001"
+        value={branch.longitude || 0}
+        onChange={(e) => onChange({ ...branch, longitude: parseFloat(e.target.value) })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">نطاق التوصيل (كم)</label>
+      <input
+        type="number"
+        step="0.5"
+        value={branch.delivery_radius_km || 10}
+        onChange={(e) => onChange({ ...branch, delivery_radius_km: parseFloat(e.target.value) })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">الحد الأدنى للطلب (د.ل)</label>
+      <input
+        type="number"
+        step="0.5"
+        value={branch.min_order_amount || 0}
+        onChange={(e) => onChange({ ...branch, min_order_amount: parseFloat(e.target.value) })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2">رسوم التوصيل الأساسية (د.ل)</label>
+      <input
+        type="number"
+        step="0.5"
+        value={branch.base_delivery_fee || 5}
+        onChange={(e) => onChange({ ...branch, base_delivery_fee: parseFloat(e.target.value) })}
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
+      />
+    </div>
+    <div className="flex items-center">
+      <label className="flex items-center gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={branch.is_active ?? true}
+          onChange={(e) => onChange({ ...branch, is_active: e.target.checked })}
+          className="w-4 h-4"
+        />
+        <span className="text-sm font-semibold text-gray-700">الفرع مفعل</span>
+      </label>
+    </div>
+  </div>
+);
+
 export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [branches, setBranches] = useState<BranchWithRestaurant[]>([]);
@@ -235,126 +359,6 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
     );
   }
 
-  const BranchForm = ({ branch, onChange }: { branch: Partial<BranchWithRestaurant>, onChange: (b: Partial<BranchWithRestaurant>) => void }) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">المطعم *</label>
-        <select
-          value={branch.restaurant_id || ''}
-          onChange={(e) => onChange({ ...branch, restaurant_id: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-          disabled={!!branch.id}
-        >
-          <option value="">اختر المطعم</option>
-          {restaurants.map(restaurant => (
-            <option key={restaurant.id} value={restaurant.id}>{restaurant.name}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">اسم الفرع *</label>
-        <input
-          type="text"
-          value={branch.name || ''}
-          onChange={(e) => onChange({ ...branch, name: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-          placeholder="مثال: فرع طريق المطار"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">المنطقة *</label>
-        <input
-          type="text"
-          value={branch.area || ''}
-          onChange={(e) => onChange({ ...branch, area: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-          placeholder="مثال: طريق المطار"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">رقم الهاتف *</label>
-        <input
-          type="text"
-          value={branch.phone || ''}
-          onChange={(e) => onChange({ ...branch, phone: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-          placeholder="مثال: 093-0625795"
-        />
-      </div>
-      <div className="md:col-span-2">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">العنوان الكامل *</label>
-        <input
-          type="text"
-          value={branch.address || ''}
-          onChange={(e) => onChange({ ...branch, address: e.target.value })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-          placeholder="مثال: طريق المطار مقابل مدرسة المهاجرين"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">خط العرض (Latitude)</label>
-        <input
-          type="number"
-          step="0.00000001"
-          value={branch.latitude || 0}
-          onChange={(e) => onChange({ ...branch, latitude: parseFloat(e.target.value) })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">خط الطول (Longitude)</label>
-        <input
-          type="number"
-          step="0.00000001"
-          value={branch.longitude || 0}
-          onChange={(e) => onChange({ ...branch, longitude: parseFloat(e.target.value) })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">نطاق التوصيل (كم)</label>
-        <input
-          type="number"
-          step="0.5"
-          value={branch.delivery_radius_km || 10}
-          onChange={(e) => onChange({ ...branch, delivery_radius_km: parseFloat(e.target.value) })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">الحد الأدنى للطلب (د.ل)</label>
-        <input
-          type="number"
-          step="0.5"
-          value={branch.min_order_amount || 0}
-          onChange={(e) => onChange({ ...branch, min_order_amount: parseFloat(e.target.value) })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">رسوم التوصيل الأساسية (د.ل)</label>
-        <input
-          type="number"
-          step="0.5"
-          value={branch.base_delivery_fee || 5}
-          onChange={(e) => onChange({ ...branch, base_delivery_fee: parseFloat(e.target.value) })}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220]"
-        />
-      </div>
-      <div className="flex items-center">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={branch.is_active ?? true}
-            onChange={(e) => onChange({ ...branch, is_active: e.target.checked })}
-            className="w-4 h-4"
-          />
-          <span className="text-sm font-semibold text-gray-700">الفرع مفعل</span>
-        </label>
-      </div>
-    </div>
-  );
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -397,7 +401,7 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
               <X className="w-6 h-6" />
             </button>
           </div>
-          <BranchForm branch={newBranch} onChange={setNewBranch} />
+          <BranchForm branch={newBranch} onChange={setNewBranch} restaurants={restaurants} />
           <div className="flex gap-4 mt-6">
             <button
               onClick={handleAddBranch}
@@ -431,7 +435,7 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
                     <X className="w-6 h-6" />
                   </button>
                 </div>
-                <BranchForm branch={editingBranch} onChange={setEditingBranch} />
+                <BranchForm branch={editingBranch} onChange={setEditingBranch} restaurants={restaurants} />
                 <div className="flex gap-4 mt-6">
                   <button
                     onClick={() => handleSaveBranch(editingBranch)}
