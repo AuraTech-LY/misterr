@@ -29,10 +29,12 @@ export const restaurantService = {
         continue;
       }
 
-      restaurantsWithBranches.push({
-        ...restaurant,
-        branches: branches || []
-      });
+      if (branches && branches.length > 0) {
+        restaurantsWithBranches.push({
+          ...restaurant,
+          branches: branches
+        });
+      }
     }
 
     return restaurantsWithBranches;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Save, X, Store, ChevronDown, ChevronUp, MapPin, Phone, Navigation, DollarSign, Clock, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Save, X, Store, ChevronDown, ChevronUp, MapPin, Phone, Navigation, DollarSign, Clock, Upload, Image as ImageIcon, Power, PowerOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Restaurant, RestaurantBranch } from '../types/restaurant';
 import { AdminBranchOperatingHours } from './AdminBranchOperatingHours';
@@ -29,6 +29,7 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
   const [addingBranchForRestaurant, setAddingBranchForRestaurant] = useState<string | null>(null);
   const [expandedBranchId, setExpandedBranchId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   const newRestaurantTemplate: Partial<Restaurant> = {
     name: '',
@@ -173,8 +174,8 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
     return name
       .toLowerCase()
       .replace(/\s+/g, '-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
       .replace(/^-+/, '')
       .replace(/-+$/, '');
   };
@@ -287,6 +288,62 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
     }
   };
 
+  const handleToggleRestaurantStatus = async (restaurant: Restaurant) => {
+    const newStatus = !restaurant.is_active;
+    const action = newStatus ? 'تفعيل' : 'تعطيل';
+
+    if (!confirm(`هل أنت متأكد من ${action} مطعم "${restaurant.name}"؟${!newStatus ? ' سيتم إخفاء جميع الفروع من العملاء.' : ''}`)) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('restaurants')
+        .update({ is_active: newStatus })
+        .eq('id', restaurant.id);
+
+      if (error) throw error;
+
+      await fetchData();
+      onRestaurantsChange();
+      alert(`تم ${action} المطعم بنجاح`);
+    } catch (error) {
+      console.error('Error toggling restaurant status:', error);
+      alert(`حدث خطأ في ${action} المطعم`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleBranchStatus = async (branch: BranchWithRestaurant) => {
+    const newStatus = !branch.is_active;
+    const action = newStatus ? 'تفعيل' : 'تعطيل';
+
+    if (!confirm(`هل أنت متأكد من ${action} فرع "${branch.name}"؟${!newStatus ? ' سيتم إخفاء الفرع من العملاء.' : ''}`)) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('restaurant_branches')
+        .update({ is_active: newStatus })
+        .eq('id', branch.id);
+
+      if (error) throw error;
+
+      await fetchData();
+      onRestaurantsChange();
+      alert(`تم ${action} الفرع بنجاح`);
+    } catch (error) {
+      console.error('Error toggling branch status:', error);
+      alert(`حدث خطأ في ${action} الفرع`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getRestaurantBranches = (restaurantId: string) => {
     return branches.filter(b => b.restaurant_id === restaurantId);
   };
@@ -295,15 +352,21 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
     setExpandedRestaurantId(expandedRestaurantId === restaurantId ? null : restaurantId);
   };
 
-  const filteredRestaurants = restaurants.filter(restaurant =>
-    restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    restaurant.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    branches.some(b =>
-      b.restaurant_id === restaurant.id &&
-      (b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       b.area.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-  );
+  const filteredRestaurants = restaurants.filter(restaurant => {
+    const matchesSearch = restaurant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      restaurant.slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      branches.some(b =>
+        b.restaurant_id === restaurant.id &&
+        (b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         b.area.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+    const matchesStatus = statusFilter === 'all' ||
+      (statusFilter === 'active' && restaurant.is_active) ||
+      (statusFilter === 'inactive' && !restaurant.is_active);
+
+    return matchesSearch && matchesStatus;
+  });
 
   const handleImageUpload = async (file: File, type: 'logo' | 'banner', restaurantId?: string) => {
     try {
@@ -483,13 +546,24 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex-1 w-full md:w-auto">
           <h2 className="text-2xl font-bold text-gray-800 mb-3">إدارة المطاعم والفروع</h2>
-          <input
-            type="text"
-            placeholder="ابحث عن مطعم أو فرع..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#781220]"
-          />
+          <div className="flex flex-col sm:flex-row gap-2 w-full">
+            <input
+              type="text"
+              placeholder="ابحث عن مطعم أو فرع..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 md:w-96 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#781220]"
+            />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+              className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#781220] bg-white"
+            >
+              <option value="all">جميع الحالات</option>
+              <option value="active">مفعل فقط</option>
+              <option value="inactive">معطل فقط</option>
+            </select>
+          </div>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
@@ -831,6 +905,18 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
                     </div>
                     <div className="flex gap-2">
                       <button
+                        onClick={() => handleToggleRestaurantStatus(restaurant)}
+                        disabled={saving}
+                        className={`p-3 rounded-full transition-all duration-300 ${
+                          restaurant.is_active
+                            ? 'text-green-600 hover:bg-green-50'
+                            : 'text-red-600 hover:bg-red-50'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        title={restaurant.is_active ? 'تعطيل المطعم' : 'تفعيل المطعم'}
+                      >
+                        {restaurant.is_active ? <Power className="w-5 h-5" /> : <PowerOff className="w-5 h-5" />}
+                      </button>
+                      <button
                         onClick={() => toggleRestaurantExpansion(restaurant.id)}
                         className="p-3 text-gray-600 hover:bg-gray-50 rounded-full transition-all duration-300"
                         title="عرض الفروع"
@@ -984,6 +1070,18 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
                                       </div>
 
                                       <div className="flex gap-2">
+                                        <button
+                                          onClick={() => handleToggleBranchStatus(branch)}
+                                          disabled={saving}
+                                          className={`p-2 rounded-full transition-all duration-300 ${
+                                            branch.is_active
+                                              ? 'text-green-600 hover:bg-green-50'
+                                              : 'text-red-600 hover:bg-red-50'
+                                          } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                          title={branch.is_active ? 'تعطيل الفرع' : 'تفعيل الفرع'}
+                                        >
+                                          {branch.is_active ? <Power className="w-4 h-4" /> : <PowerOff className="w-4 h-4" />}
+                                        </button>
                                         <button
                                           onClick={() => setExpandedBranchId(expandedBranchId === branch.id ? null : branch.id)}
                                           className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-all duration-300"

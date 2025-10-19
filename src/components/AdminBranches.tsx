@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Save, X, MapPin, Phone, Navigation, DollarSign, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Edit, Save, X, MapPin, Phone, Navigation, DollarSign, ChevronDown, ChevronUp, Power, PowerOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Restaurant, RestaurantBranch } from '../types/restaurant';
 import { AdminBranchOperatingHours } from './AdminBranchOperatingHours';
@@ -22,6 +22,7 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
   const [saving, setSaving] = useState(false);
   const [selectedRestaurantFilter, setSelectedRestaurantFilter] = useState<string>('all');
   const [expandedBranchId, setExpandedBranchId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   const newBranchTemplate: Partial<BranchWithRestaurant> = {
     restaurant_id: '',
@@ -187,9 +188,41 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
     }
   };
 
-  const filteredBranches = selectedRestaurantFilter === 'all'
-    ? branches
-    : branches.filter(b => b.restaurant_id === selectedRestaurantFilter);
+  const handleToggleBranchStatus = async (branch: BranchWithRestaurant) => {
+    const newStatus = !branch.is_active;
+    const action = newStatus ? 'تفعيل' : 'تعطيل';
+
+    if (!confirm(`هل أنت متأكد من ${action} فرع "${branch.name}"؟${!newStatus ? ' سيتم إخفاء الفرع من العملاء.' : ''}`)) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const { error } = await supabase
+        .from('restaurant_branches')
+        .update({ is_active: newStatus })
+        .eq('id', branch.id);
+
+      if (error) throw error;
+
+      await fetchData();
+      onBranchesChange();
+      alert(`تم ${action} الفرع بنجاح`);
+    } catch (error) {
+      console.error('Error toggling branch status:', error);
+      alert(`حدث خطأ في ${action} الفرع`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredBranches = branches.filter(branch => {
+    const matchesRestaurant = selectedRestaurantFilter === 'all' || branch.restaurant_id === selectedRestaurantFilter;
+    const matchesStatus = statusFilter === 'all' ||
+      (statusFilter === 'active' && branch.is_active) ||
+      (statusFilter === 'inactive' && !branch.is_active);
+    return matchesRestaurant && matchesStatus;
+  });
 
   if (loading) {
     return (
@@ -330,12 +363,21 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
           <select
             value={selectedRestaurantFilter}
             onChange={(e) => setSelectedRestaurantFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#781220]"
+            className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#781220] bg-white"
           >
             <option value="all">جميع المطاعم</option>
             {restaurants.map(restaurant => (
               <option key={restaurant.id} value={restaurant.id}>{restaurant.name}</option>
             ))}
+          </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'inactive')}
+            className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#781220] bg-white"
+          >
+            <option value="all">جميع الحالات</option>
+            <option value="active">مفعل فقط</option>
+            <option value="inactive">معطل فقط</option>
           </select>
           <button
             onClick={() => setShowAddForm(true)}
@@ -459,6 +501,18 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
                   </div>
 
                   <div className="flex gap-2">
+                    <button
+                      onClick={() => handleToggleBranchStatus(branch)}
+                      disabled={saving}
+                      className={`p-3 rounded-full transition-all duration-300 ${
+                        branch.is_active
+                          ? 'text-green-600 hover:bg-green-50'
+                          : 'text-red-600 hover:bg-red-50'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      title={branch.is_active ? 'تعطيل الفرع' : 'تفعيل الفرع'}
+                    >
+                      {branch.is_active ? <Power className="w-5 h-5" /> : <PowerOff className="w-5 h-5" />}
+                    </button>
                     <button
                       onClick={() => setExpandedBranchId(expandedBranchId === branch.id ? null : branch.id)}
                       className="p-3 text-gray-600 hover:bg-gray-50 rounded-full transition-all duration-300"
