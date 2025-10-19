@@ -238,7 +238,12 @@ export const Header: React.FC<HeaderProps> = ({
                         {isDropdownOpen && (
                           <div className="absolute top-full left-0 mt-2 z-50" dir="ltr">
                             <div className="bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden w-80 max-w-[90vw] animate-fadeInUp">
-                              {getAllBranches().map((branch) => (
+                              {getAllBranches()
+                                .filter((branch) => {
+                                  const branchData = getBranchById(branch.id);
+                                  return branchData?.restaurant.id === selectedRestaurant?.id;
+                                })
+                                .map((branch) => (
                                 <button
                                   key={branch.id}
                                   type="button"
