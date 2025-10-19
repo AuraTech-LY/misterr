@@ -449,16 +449,9 @@ export const HomePage: React.FC = () => {
       <footer className="bg-black text-white py-12 mt-16" style={{ borderTopLeftRadius: '3rem', borderTopRightRadius: '3rem' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <img 
-                src="/New Element 88 [8BACFE9].png" 
-                alt="مطعم المستر" 
-                className="w-full h-full object-contain"
-              />
-            </div>
             <h3 className="text-2xl font-black">{selectedRestaurant.name}</h3>
           </div>
-          <p className="text-gray-400 text-lg mb-6">مطعم الوجبات السريعة الأفضل في المدينة</p>
+          <p className="text-gray-400 text-lg mb-6">{selectedRestaurant.description || 'مطعم الوجبات السريعة الأفضل'}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
               <h4 className={`font-bold mb-2 ${selectedRestaurant.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>الفرع الحالي</h4>
