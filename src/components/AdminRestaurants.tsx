@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Save, X, Store, ChevronDown, ChevronUp, MapPin, Phone, Navigation, DollarSign, Clock } from 'lucide-react';
+import { Plus, Edit, Save, X, Store, ChevronDown, ChevronUp, MapPin, Phone, Navigation, DollarSign, Clock, Upload, Image as ImageIcon } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Restaurant, RestaurantBranch } from '../types/restaurant';
 import { AdminBranchOperatingHours } from './AdminBranchOperatingHours';
@@ -64,6 +64,8 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
   };
 
   const [newBranch, setNewBranch] = useState<Partial<BranchWithRestaurant>>(newBranchTemplate);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imagePreview, setImagePreview] = useState<{ logo?: string; banner?: string }>({});
 
   useEffect(() => {
     fetchData();
@@ -303,6 +305,62 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
     )
   );
 
+  const handleImageUpload = async (file: File, type: 'logo' | 'banner', restaurantId?: string) => {
+    try {
+      setUploadingImage(true);
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `restaurant-images/${type}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('restaurant-assets')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        alert('حدث خطأ في رفع الصورة. يرجى المحاولة مرة أخرى.');
+        return null;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('restaurant-assets')
+        .getPublicUrl(filePath);
+
+      if (restaurantId && editingRestaurant) {
+        const updateField = type === 'logo' ? 'logo_url' : 'banner_url';
+        setEditingRestaurant({ ...editingRestaurant, [updateField]: publicUrl });
+      } else {
+        const updateField = type === 'logo' ? 'logo_url' : 'banner_url';
+        setNewRestaurant({ ...newRestaurant, [updateField]: publicUrl });
+        setImagePreview({ ...imagePreview, [type]: publicUrl });
+      }
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('حدث خطأ في رفع الصورة');
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'banner', restaurantId?: string) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('يرجى اختيار ملف صورة');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('حجم الصورة يجب أن يكون أقل من 5 ميجابايت');
+        return;
+      }
+      handleImageUpload(file, type, restaurantId);
+    }
+  };
+
   const BranchForm = ({ branch, onChange }: { branch: Partial<BranchWithRestaurant>, onChange: (b: Partial<BranchWithRestaurant>) => void }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
@@ -482,6 +540,80 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
               />
             </div>
             <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">شعار المطعم (Logo)</label>
+              <div className="flex items-center gap-3">
+                {(imagePreview.logo || newRestaurant.logo_url) && (
+                  <div className="w-20 h-20 rounded-lg border-2 border-gray-300 overflow-hidden">
+                    <img
+                      src={imagePreview.logo || newRestaurant.logo_url}
+                      alt="Logo preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <label className="flex-1 cursor-pointer">
+                  <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#781220] hover:bg-gray-50 transition-all">
+                    {uploadingImage ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#781220]"></div>
+                        <span className="text-sm text-gray-600">جاري الرفع...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload className="w-5 h-5 text-gray-600" />
+                        <span className="text-sm text-gray-600">اختر صورة</span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileSelect(e, 'logo')}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                </label>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (أقصى حجم: 5MB)</p>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">صورة الغلاف (Banner)</label>
+              <div className="flex items-center gap-3">
+                {(imagePreview.banner || newRestaurant.banner_url) && (
+                  <div className="w-32 h-20 rounded-lg border-2 border-gray-300 overflow-hidden">
+                    <img
+                      src={imagePreview.banner || newRestaurant.banner_url}
+                      alt="Banner preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <label className="flex-1 cursor-pointer">
+                  <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#781220] hover:bg-gray-50 transition-all">
+                    {uploadingImage ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#781220]"></div>
+                        <span className="text-sm text-gray-600">جاري الرفع...</span>
+                      </div>
+                    ) : (
+                      <>
+                        <ImageIcon className="w-5 h-5 text-gray-600" />
+                        <span className="text-sm text-gray-600">اختر صورة</span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileSelect(e, 'banner')}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                </label>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF (أقصى حجم: 5MB)</p>
+            </div>
+            <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">نوع المطبخ</label>
               <input
                 type="text"
@@ -575,6 +707,78 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
                         onChange={(e) => setEditingRestaurant({ ...editingRestaurant, primary_color: e.target.value })}
                         className="w-full h-10 border border-gray-300 rounded-lg"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">شعار المطعم (Logo)</label>
+                      <div className="flex items-center gap-3">
+                        {editingRestaurant.logo_url && (
+                          <div className="w-20 h-20 rounded-lg border-2 border-gray-300 overflow-hidden">
+                            <img
+                              src={editingRestaurant.logo_url}
+                              alt="Logo"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <label className="flex-1 cursor-pointer">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#781220] hover:bg-gray-50 transition-all">
+                            {uploadingImage ? (
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#781220]"></div>
+                                <span className="text-sm text-gray-600">جاري الرفع...</span>
+                              </div>
+                            ) : (
+                              <>
+                                <Upload className="w-5 h-5 text-gray-600" />
+                                <span className="text-sm text-gray-600">تغيير الشعار</span>
+                              </>
+                            )}
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileSelect(e, 'logo', editingRestaurant.id)}
+                            className="hidden"
+                            disabled={uploadingImage}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">صورة الغلاف (Banner)</label>
+                      <div className="flex items-center gap-3">
+                        {editingRestaurant.banner_url && (
+                          <div className="w-32 h-20 rounded-lg border-2 border-gray-300 overflow-hidden">
+                            <img
+                              src={editingRestaurant.banner_url}
+                              alt="Banner"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <label className="flex-1 cursor-pointer">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#781220] hover:bg-gray-50 transition-all">
+                            {uploadingImage ? (
+                              <div className="flex items-center gap-2">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#781220]"></div>
+                                <span className="text-sm text-gray-600">جاري الرفع...</span>
+                              </div>
+                            ) : (
+                              <>
+                                <ImageIcon className="w-5 h-5 text-gray-600" />
+                                <span className="text-sm text-gray-600">تغيير الغلاف</span>
+                              </>
+                            )}
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleFileSelect(e, 'banner', editingRestaurant.id)}
+                            className="hidden"
+                            disabled={uploadingImage}
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-4 mt-6">
