@@ -18,6 +18,21 @@ interface Category {
   name: string;
 }
 
+interface Restaurant {
+  id: string;
+  name: string;
+  slug: string;
+  primary_color: string;
+  logo_url: string;
+}
+
+interface RestaurantBranch {
+  id: string;
+  restaurant_id: string;
+  name: string;
+  area: string;
+}
+
 interface AdminDashboardProps {
   onLogout: () => void;
 }
@@ -37,7 +52,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'restaurants' | 'orders'>('menu');
-  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy' | 'mister-burgerito'>('mister-shish');
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [branches, setBranches] = useState<RestaurantBranch[]>([]);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>('');
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
 
   const newItemTemplate: MenuItem = {
@@ -78,6 +95,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   };
 
   useEffect(() => {
+    fetchRestaurants();
     fetchData();
     checkAuthStatus();
   }, []);
@@ -89,10 +107,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
+  const fetchRestaurants = async () => {
+    try {
+      const { data: restaurantsData, error: restaurantsError } = await supabase
+        .from('restaurants')
+        .select('*')
+        .order('name');
+
+      if (restaurantsError) throw restaurantsError;
+      setRestaurants(restaurantsData || []);
+
+      if (restaurantsData && restaurantsData.length > 0 && !selectedRestaurantId) {
+        setSelectedRestaurantId(restaurantsData[0].id);
+      }
+
+      const { data: branchesData, error: branchesError } = await supabase
+        .from('restaurant_branches')
+        .select('*')
+        .order('name');
+
+      if (branchesError) throw branchesError;
+      setBranches(branchesData || []);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch categories
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
@@ -123,32 +167,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
   // Filter items based on selected restaurant and branch
   const getFilteredItems = () => {
-    let filtered = [];
-    
-    // Filter by restaurant branches
-    if (selectedRestaurant === 'mister-shish') {
-      filtered = menuItems.filter(item => 
-        item.available_airport || item.available_balaoun
-      );
-    } else if (selectedRestaurant === 'mister-crispy') {
-      filtered = menuItems.filter(item => 
-        item.available_dollar
-      );
-    } else if (selectedRestaurant === 'mister-burgerito') {
-      filtered = menuItems.filter(item => 
-        item.available_burgerito_airport
-      );
-    }
-    
+    if (!selectedRestaurantId) return [];
+
+    let filtered = menuItems.filter(item => item.restaurant_id === selectedRestaurantId);
+
     // Further filter by specific branch if selected
     if (selectedBranch !== 'all') {
-      filtered = filtered.filter(item => 
-        item[`available_${selectedBranch}` as keyof MenuItem]
-      );
+      filtered = filtered.filter(item => item.branch_id === selectedBranch);
     }
-    
+
     return filtered;
   };
+
+  const selectedRestaurant = restaurants.find(r => r.id === selectedRestaurantId);
+  const restaurantBranches = branches.filter(b => b.restaurant_id === selectedRestaurantId);
 
   const filteredItems = getFilteredItems();
 
@@ -159,51 +191,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const handleSaveItem = async (item: MenuItem) => {
     try {
       setSaving(true);
-      
-      // Ensure item maintains correct restaurant availability
-      const itemToSave = { ...item };
-      if (selectedRestaurant === 'mister-shish') {
-        // For Mister Shish, ensure dollar is false
-        itemToSave.available_dollar = false;
-        itemToSave.available_burgerito_airport = false;
-      } else if (selectedRestaurant === 'mister-crispy') {
-        // For Mister Crispy, ensure airport and balaoun are false
-        itemToSave.available_airport = false;
-        itemToSave.available_balaoun = false;
-        // Ensure dollar is true
-        itemToSave.available_dollar = true;
-        itemToSave.available_burgerito_airport = false;
-      } else if (selectedRestaurant === 'mister-burgerito') {
-        // For Mister Burgerito, ensure other branches are false
-        itemToSave.available_airport = false;
-        itemToSave.available_balaoun = false;
-        itemToSave.available_dollar = false;
-        // Ensure burgerito-airport is true
-        itemToSave.available_burgerito_airport = true;
-      }
-      
+
       const { error } = await supabase
         .from('menu_items')
         .update({
-          name: itemToSave.name,
-          description: itemToSave.description,
-          price: itemToSave.price,
-          image_url: itemToSave.image_url,
-          category: itemToSave.category,
-          is_popular: itemToSave.is_popular,
-          is_available: itemToSave.is_available,
-          available_airport: itemToSave.available_airport,
-          available_dollar: itemToSave.available_dollar,
-          available_balaoun: itemToSave.available_balaoun,
-          available_burgerito_airport: itemToSave.available_burgerito_airport,
-          image_brightness: itemToSave.image_brightness || 1.2,
-          image_contrast: itemToSave.image_contrast || 1.1,
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          image_url: item.image_url,
+          category: item.category,
+          is_popular: item.is_popular,
+          is_available: item.is_available,
+          restaurant_id: item.restaurant_id,
+          branch_id: item.branch_id,
+          image_brightness: item.image_brightness || 1.2,
+          image_contrast: item.image_contrast || 1.1,
         })
-        .eq('id', itemToSave.id);
+        .eq('id', item.id);
 
       if (error) throw error;
 
-      setMenuItems(prev => prev.map(i => i.id === itemToSave.id ? itemToSave : i));
+      setMenuItems(prev => prev.map(i => i.id === item.id ? item : i));
       setEditingItem(null);
       addSuccessMessage('تم حفظ التغييرات بنجاح');
     } catch (error) {
@@ -217,50 +225,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const handleAddItem = async () => {
     try {
       setSaving(true);
-      
-      // Ensure new item has correct restaurant availability based on selected restaurant
-      const itemToAdd = { ...newItem };
-      if (selectedRestaurant === 'mister-shish') {
-        // For Mister Shish, ensure dollar is false
-        itemToAdd.available_dollar = false;
-        itemToAdd.available_burgerito_airport = false;
-        // If no branches selected, default to both Mister Shish branches
-        if (!itemToAdd.available_airport && !itemToAdd.available_balaoun) {
-          itemToAdd.available_airport = true;
-          itemToAdd.available_balaoun = true;
-        }
-      } else if (selectedRestaurant === 'mister-crispy') {
-        // For Mister Crispy, ensure airport and balaoun are false
-        itemToAdd.available_airport = false;
-        itemToAdd.available_balaoun = false;
-        // Ensure dollar is true
-        itemToAdd.available_dollar = true;
-        itemToAdd.available_burgerito_airport = false;
-      } else if (selectedRestaurant === 'mister-burgerito') {
-        // For Mister Burgerito, ensure other branches are false
-        itemToAdd.available_airport = false;
-        itemToAdd.available_balaoun = false;
-        itemToAdd.available_dollar = false;
-        // Ensure burgerito-airport is true
-        itemToAdd.available_burgerito_airport = true;
-      }
-      
+
       const { data, error } = await supabase
         .from('menu_items')
         .insert([{
-          name: itemToAdd.name,
-          description: itemToAdd.description,
-          price: itemToAdd.price,
-          image_url: itemToAdd.image_url,
-          category: itemToAdd.category,
-          is_popular: itemToAdd.is_popular,
-          is_available: itemToAdd.is_available,
-          available_airport: itemToAdd.available_airport,
-          available_dollar: itemToAdd.available_dollar,
-          available_balaoun: itemToAdd.available_balaoun,
-          available_burgerito_airport: itemToAdd.available_burgerito_airport,
-          image_brightness: itemToAdd.image_brightness || 1.2,
-          image_contrast: itemToAdd.image_contrast || 1.1,
+          name: newItem.name,
+          description: newItem.description,
+          price: newItem.price,
+          image_url: newItem.image_url,
+          category: newItem.category,
+          is_popular: newItem.is_popular,
+          is_available: newItem.is_available,
+          restaurant_id: selectedRestaurantId,
+          branch_id: newItem.branch_id || null,
+          image_brightness: newItem.image_brightness || 1.2,
+          image_contrast: newItem.image_contrast || 1.1,
         }])
         .select()
         .single();
@@ -280,68 +259,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   };
 
   const handleDeleteItem = async (id: string) => {
-    // Find the item to check if it belongs to other restaurants
-    const itemToDelete = menuItems.find(item => item.id === id);
-    if (!itemToDelete) return;
-    
-    // Check if item exists in other restaurants
-    const existsInOtherRestaurants = 
-      (selectedRestaurant === 'mister-shish' && itemToDelete.available_dollar) ||
-      (selectedRestaurant === 'mister-crispy' && (itemToDelete.available_airport || itemToDelete.available_balaoun)) ||
-      (selectedRestaurant === 'mister-burgerito' && (itemToDelete.available_airport || itemToDelete.available_balaoun || itemToDelete.available_dollar));
-    
-    if (existsInOtherRestaurants) {
-      // If item exists in other restaurants, just disable it for current restaurant
-      const restaurantName = selectedRestaurant === 'mister-shish' ? 'مستر شيش' : selectedRestaurant === 'mister-crispy' ? 'مستر كريسبي' : 'مستر برجريتو';
-      if (!confirm('هذا العنصر موجود في مطاعم أخرى. هل تريد إزالته من ' + restaurantName + ' فقط؟')) return;
-      
-      try {
-        const updatedItem = { ...itemToDelete };
-        if (selectedRestaurant === 'mister-shish') {
-          updatedItem.available_airport = false;
-          updatedItem.available_balaoun = false;
-        } else if (selectedRestaurant === 'mister-crispy') {
-          updatedItem.available_dollar = false;
-        } else if (selectedRestaurant === 'mister-burgerito') {
-          updatedItem.available_burgerito_airport = false;
-        }
-        
-        const { error } = await supabase
-          .from('menu_items')
-          .update({
-            available_airport: updatedItem.available_airport,
-            available_dollar: updatedItem.available_dollar,
-            available_balaoun: updatedItem.available_balaoun,
-            available_burgerito_airport: updatedItem.available_burgerito_airport,
-          })
-          .eq('id', id);
+    if (!confirm('هل أنت متأكد من حذف هذا العنصر؟')) return;
 
-        if (error) throw error;
+    try {
+      const { error } = await supabase
+        .from('menu_items')
+        .delete()
+        .eq('id', id);
 
-        setMenuItems(prev => prev.map(item => item.id === id ? updatedItem : item));
-        addSuccessMessage('تم تحديث العنصر بنجاح');
-      } catch (error) {
-        console.error('Error updating item:', error);
-        alert('حدث خطأ في تحديث العنصر');
-      }
-    } else {
-      // If item only exists in current restaurant, delete it completely
-      if (!confirm('هل أنت متأكد من حذف هذا العنصر نهائياً؟')) return;
+      if (error) throw error;
 
-      try {
-        const { error } = await supabase
-          .from('menu_items')
-          .delete()
-          .eq('id', id);
-
-        if (error) throw error;
-
-        setMenuItems(prev => prev.filter(item => item.id !== id));
-        addSuccessMessage('تم حذف العنصر بنجاح');
-      } catch (error) {
-        console.error('Error deleting item:', error);
-        alert('حدث خطأ في حذف العنصر');
-      }
+      setMenuItems(prev => prev.filter(item => item.id !== id));
+      addSuccessMessage('تم حذف العنصر بنجاح');
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('حدث خطأ في حذف العنصر');
     }
   };
 
@@ -478,37 +410,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             {/* Restaurant Sub-tabs */}
             <div className="bg-white shadow-sm border-b mb-6">
               <div className="container mx-auto px-3 sm:px-8">
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => setSelectedRestaurant('mister-shish')}
-                    className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                      selectedRestaurant === 'mister-shish'
-                        ? 'text-[#781220] border-[#781220] bg-red-50'
-                        : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
-                    }`}
-                  >
-                    مستر شيش
-                  </button>
-                  <button
-                    onClick={() => setSelectedRestaurant('mister-crispy')}
-                    className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                      selectedRestaurant === 'mister-crispy'
-                        ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                        : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
-                    }`}
-                  >
-                    مستر كريسبي
-                  </button>
-                  <button
-                    onClick={() => setSelectedRestaurant('mister-burgerito')}
-                    className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                      selectedRestaurant === 'mister-burgerito'
-                        ? 'text-[#E59F49] border-[#E59F49] bg-red-50'
-                        : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
-                    }`}
-                  >
-                    مستر برجريتو
-                  </button>
+                <div className="flex gap-1 overflow-x-auto">
+                  {restaurants.map((restaurant) => (
+                    <button
+                      key={restaurant.id}
+                      onClick={() => setSelectedRestaurantId(restaurant.id)}
+                      className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 whitespace-nowrap ${
+                        selectedRestaurantId === restaurant.id
+                          ? `border-[${restaurant.primary_color}] bg-red-50`
+                          : 'text-gray-600 border-transparent hover:border-gray-300'
+                      }`}
+                      style={{
+                        color: selectedRestaurantId === restaurant.id ? restaurant.primary_color : undefined
+                      }}
+                    >
+                      {restaurant.name}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -523,51 +441,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   <CustomSelect
                     value={selectedBranch}
                     onChange={setSelectedBranch}
-                    options={selectedRestaurant === 'mister-shish' ? [
-                      { 
-                        value: 'all', 
+                    options={[
+                      {
+                        value: 'all',
                         label: 'جميع الفروع',
                         icon: <MapPin className="w-4 h-4 text-gray-500" />
                       },
-                      { 
-                        value: 'airport', 
-                        label: 'مستر شيش - فرع طريق المطار',
+                      ...restaurantBranches.map(branch => ({
+                        value: branch.id,
+                        label: branch.area,
                         icon: <MapPin className="w-4 h-4 text-blue-500" />
-                      },
-                      { 
-                        value: 'balaoun', 
-                        label: 'مستر شيش - بلعون',
-                        icon: <MapPin className="w-4 h-4 text-purple-500" />
-                      }
-                    ] : selectedRestaurant === 'mister-crispy' ? [
-                      { 
-                        value: 'all', 
-                        label: 'جميع الفروع',
-                        icon: <MapPin className="w-4 h-4 text-gray-500" />
-                      },
-                      { 
-                        value: 'dollar', 
-                        label: 'مستر كريسبي',
-                        icon: <MapPin className="w-4 h-4 text-green-500" />
-                      }
-                    ] : [
-                      { 
-                        value: 'all', 
-                        label: 'جميع الفروع',
-                        icon: <MapPin className="w-4 h-4 text-gray-500" />
-                      },
-                      { 
-                        value: 'burgerito-airport', 
-                        label: 'مستر برجريتو - طريق المطار',
-                        icon: <MapPin className="w-4 h-4 text-orange-500" />
-                      }
+                      }))
                     ]}
                     placeholder="اختر الفرع"
                   />
                 </div>
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className={`${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center`}
+                  className="text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center"
+                  style={{ backgroundColor: selectedRestaurant?.primary_color || '#781220' }}
                 >
                   <Plus className="w-5 h-5" />
                   إضافة عنصر جديد
@@ -587,7 +479,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     <X className="w-6 h-6" />
                   </button>
                 </div>
-                <ItemForm item={newItem} onChange={setNewItem} categories={categories} selectedRestaurant={selectedRestaurant} />
+                <ItemForm item={newItem} onChange={setNewItem} categories={categories} branches={restaurantBranches} />
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
                   <button
                     onClick={handleAddItem}
@@ -626,7 +518,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           <X className="w-6 h-6" />
                         </button>
                       </div>
-                      <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} selectedRestaurant={selectedRestaurant} />
+                      <ItemForm item={editingItem} onChange={setEditingItem} categories={categories} branches={restaurantBranches} />
                       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6">
                         <button
                           onClick={() => handleSaveItem(editingItem)}

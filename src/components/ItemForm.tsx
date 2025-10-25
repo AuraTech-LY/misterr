@@ -10,10 +10,12 @@ export interface MenuItem {
   category: string;
   is_popular: boolean;
   is_available: boolean;
-  available_airport: boolean;
-  available_dollar: boolean;
-  available_balaoun: boolean;
-  available_burgerito_airport: boolean;
+  restaurant_id?: string;
+  branch_id?: string | null;
+  available_airport?: boolean;
+  available_dollar?: boolean;
+  available_balaoun?: boolean;
+  available_burgerito_airport?: boolean;
   image_brightness?: number;
   image_contrast?: number;
 }
@@ -28,10 +30,10 @@ interface ItemFormProps {
   onChange: (item: MenuItem) => void;
   categories: Category[];
   isNew?: boolean;
-  selectedRestaurant?: 'mister-shish' | 'mister-crispy' | 'mister-burgerito';
+  branches?: Array<{ id: string; name: string; area: string }>;
 }
 
-export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, isNew = false, selectedRestaurant = 'mister-shish' }) => {
+export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, isNew = false, branches = [] }) => {
   const [previewBrightness, setPreviewBrightness] = React.useState(item.image_brightness || 1.2);
   const [previewContrast, setPreviewContrast] = React.useState(item.image_contrast || 1.1);
 
