@@ -65,10 +65,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     category: 'برجر',
     is_popular: false,
     is_available: true,
-    available_airport: false,
-    available_dollar: false,
-    available_balaoun: false,
-    available_burgerito_airport: false,
+    restaurant_id: '',
+    branch_id: null,
     image_brightness: 1.2,
     image_contrast: 1.1,
   };
@@ -484,11 +482,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   <button
                     onClick={handleAddItem}
                     disabled={saving || !newItem.name || !newItem.description}
-                    className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
-                      saving || !newItem.name || !newItem.description
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full`
-                    }`}
+                    className="px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full"
+                    style={{ backgroundColor: saving || !newItem.name || !newItem.description ? '#d1d5db' : selectedRestaurant?.primary_color || '#781220' }}
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'جاري الحفظ...' : 'حفظ العنصر'}
@@ -523,12 +518,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                         <button
                           onClick={() => handleSaveItem(editingItem)}
                           disabled={saving}
-                          className={`px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base ${
-                            saving
-                              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                              : `${selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#7A1120] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
-                          }`}
-                          style={{ borderRadius: '9999px' }}
+                          className="px-4 sm:px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                          style={{ backgroundColor: saving ? '#d1d5db' : selectedRestaurant?.primary_color || '#781220' }}
                         >
                           <Save className="w-4 h-4" />
                           {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
@@ -563,27 +554,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                             <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
                             <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                               <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
-                              <span className={`font-bold ${selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'text-[#E59F49]' : 'text-[#7A1120]'} text-sm sm:text-base`}>{item.price.toFixed(2)} د.ل</span>
+                              <span className="font-bold text-sm sm:text-base" style={{ color: selectedRestaurant?.primary_color || '#781220' }}>{item.price.toFixed(2)} د.ل</span>
                               {!item.is_available && (
                                 <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
                               )}
                             </div>
                             <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
-                              {selectedRestaurant === 'mister-shish' && (
-                                <>
-                                  {item.available_airport && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">مستر شيش - فرع طريق المطار</span>}
-                                  {item.available_balaoun && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full">مستر شيش - بلعون</span>}
-                                </>
-                              )}
-                              {selectedRestaurant === 'mister-crispy' && (
-                                <>
-                                  {item.available_dollar && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full">مستر كريسبي</span>}
-                                </>
-                              )}
-                              {selectedRestaurant === 'mister-burgerito' && (
-                                <>
-                                  {item.available_burgerito_airport && <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full">مستر برجريتو - طريق المطار</span>}
-                                </>
+                              {item.branch_id ? (
+                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                  {branches.find(b => b.id === item.branch_id)?.area || 'فرع محدد'}
+                                </span>
+                              ) : (
+                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full">جميع الفروع</span>
                               )}
                             </div>
                             
@@ -613,13 +595,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                                       handleSaveItem(updatedItem);
                                     }, 1000);
                                   }}
-                                  className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer ${
-                                    selectedRestaurant === 'mister-crispy' 
-                                      ? 'bg-gray-200 slider-thumb-[#55421A]' 
-                                      : selectedRestaurant === 'mister-burgerito'
-                                        ? 'bg-gray-200 slider-thumb-[#E59F49]'
-                                        : 'bg-gray-200 slider-thumb-[#7A1120]'
-                                  }`}
+                                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-200"
                                 />
                               </div>
 
@@ -645,13 +621,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                                       handleSaveItem(updatedItem);
                                     }, 1000);
                                   }}
-                                  className={`w-full h-1.5 rounded-lg appearance-none cursor-pointer ${
-                                    selectedRestaurant === 'mister-crispy' 
-                                      ? 'bg-gray-200 slider-thumb-[#55421A]' 
-                                      : selectedRestaurant === 'mister-burgerito'
-                                        ? 'bg-gray-200 slider-thumb-[#E59F49]'
-                                        : 'bg-gray-200 slider-thumb-[#7A1120]'
-                                  }`}
+                                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-200"
                                 />
                               </div>
 
