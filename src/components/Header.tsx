@@ -180,9 +180,17 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
-                    <img 
-                      src="/New Element 88 [8BACFE9].png" 
-                      alt="مطعم المستر" 
+                    <img
+                      src={
+                        selectedRestaurant?.name?.includes('مستر كريسبي')
+                          ? '/mr-Krispy.png'
+                          : selectedRestaurant?.name?.includes('مستر برجريتو')
+                            ? '/mr-burgerito.png'
+                            : selectedRestaurant?.name?.includes('مستر شيش')
+                              ? '/Mr-Sheesh.png'
+                              : '/New Element 88 [8BACFE9].png'
+                      }
+                      alt={selectedRestaurant?.name || 'مطعم المستر'}
                       className="w-full h-full object-contain"
                     />
                   </div>
