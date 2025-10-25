@@ -18,6 +18,7 @@ interface CheckoutFormProps {
   onBack: () => void;
   isTransitioning?: boolean;
   selectedBranch?: any;
+  isSubmitting?: boolean;
 }
 
 interface OrderData {
@@ -40,14 +41,15 @@ interface OrderData {
   scheduledTime?: string;
 }
 
-export const CheckoutForm: React.FC<CheckoutFormProps> = ({ 
-  total, 
-  itemCount, 
-  items, 
-  onSubmit, 
-  onBack, 
+export const CheckoutForm: React.FC<CheckoutFormProps> = ({
+  total,
+  itemCount,
+  items,
+  onSubmit,
+  onBack,
   isTransitioning = false,
-  selectedBranch
+  selectedBranch,
+  isSubmitting = false
 }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<OrderData>({
@@ -632,15 +634,16 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={!canSubmit() || isValidating}
+                  disabled={!canSubmit() || isValidating || isSubmitting}
                   className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
-                    canSubmit() && !isValidating
+                    canSubmit() && !isValidating && !isSubmitting
                       ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  {isValidating ? 'جاري المعالجة...' : 
-                   isCalculatingDistance ? 'جاري حساب التوصيل...' : 
+                  {isSubmitting ? 'جاري حفظ الطلب...' :
+                   isValidating ? 'جاري المعالجة...' :
+                   isCalculatingDistance ? 'جاري حساب التوصيل...' :
                    'تأكيد الطلب'}
                 </button>
               </div>

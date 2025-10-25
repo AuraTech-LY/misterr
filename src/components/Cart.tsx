@@ -1,7 +1,8 @@
 import React from 'react';
-import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, CheckCircle } from 'lucide-react';
 import { CartItem } from '../types';
 import { CheckoutForm } from './CheckoutForm';
+import { orderService } from '../services/orderService';
 
 interface CartProps {
   isOpen: boolean;
@@ -28,6 +29,9 @@ export const Cart: React.FC<CartProps> = ({
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [shouldRender, setShouldRender] = React.useState(false);
   const [isTransitioning, setIsTransitioning] = React.useState(false);
+  const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+  const [orderNumber, setOrderNumber] = React.useState<string>('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Handle animation states
   React.useEffect(() => {
@@ -66,118 +70,49 @@ export const Cart: React.FC<CartProps> = ({
     }, 300);
   };
 
-  const handleOrderSubmit = (orderData: any, cartItems: CartItem[]) => {
-    // Generate WhatsApp message
-    const customerName = orderData.customerInfo.name;
-    const customerPhone = orderData.customerInfo.phone;
-    const deliveryMethod = orderData.deliveryMethod === 'delivery' ? 'توصيل' : 'استلام';
-    const restaurantName = selectedBranch?.name?.includes('مستر شيش') ? 'مستر شيش' : 
-                          selectedBranch?.name?.includes('مستر كريسبي') ? 'مستر كريسبي' : 'المستر';
-    const branchName = selectedBranch?.name || 'غير محدد';
-    
-    let message = `🍔 *طلب جديد من ${restaurantName}*\n\n`;
-    message += `🏪 *الفرع:* ${branchName}\n`;
-    message += `👤 *اسم العميل:* ${customerName}\n`;
-    message += `📱 *رقم الهاتف:* ${customerPhone}\n\n`;
-    
-    message += `📋 *تفاصيل الطلب:*\n`;
-    cartItems.forEach((item, index) => {
-      message += `${index + 1}. ${item.name}\n`;
-      message += `   الكمية: ${item.quantity}\n`;
-      message += `   السعر: ${item.price.toFixed(2)} د.ل\n`;
-      message += `   المجموع: ${(item.price * item.quantity).toFixed(2)} د.ل\n\n`;
-    });
-    
-    message += `💰 *المجموع الكلي:* ${total.toFixed(2)} د.ل\n\n`;
-    message += `🚚 *طريقة الاستلام:* ${deliveryMethod}\n`;
-    
-    // Add delivery price if it's a delivery order
-    if (orderData.deliveryMethod === 'delivery' && orderData.deliveryPrice) {
-      message += `💵 *سعر التوصيل:* ${orderData.deliveryPrice} د.ل\n`;
-      message += `💰 *المجموع مع التوصيل:* ${(total + orderData.deliveryPrice).toFixed(2)} د.ل\n\n`;
-    } else {
-      message += `\n`;
+  const handleOrderSubmit = async (orderData: any, cartItems: CartItem[]) => {
+    setIsSubmitting(true);
+
+    try {
+      const restaurantName = selectedBranch?.name?.includes('مستر شيش') ? 'مستر شيش' :
+                            selectedBranch?.name?.includes('مستر كريسبي') ? 'مستر كريسبي' :
+                            selectedBranch?.name?.includes('مستر برجريتو') ? 'مستر برجريتو' : 'المستر';
+
+      const deliveryPrice = orderData.deliveryMethod === 'delivery' ? (orderData.deliveryPrice || 0) : 0;
+      const totalAmount = total + deliveryPrice;
+
+      const result = await orderService.createOrder({
+        branchId: selectedBranch?.id || 'unknown',
+        restaurantName,
+        customerName: orderData.customerInfo.name,
+        customerPhone: orderData.customerInfo.phone,
+        deliveryMethod: orderData.deliveryMethod,
+        deliveryArea: orderData.deliveryInfo?.area,
+        deliveryAddress: orderData.deliveryInfo?.address,
+        deliveryNotes: orderData.deliveryInfo?.notes,
+        customerLatitude: orderData.customerLocation?.latitude,
+        customerLongitude: orderData.customerLocation?.longitude,
+        paymentMethod: orderData.paymentMethod,
+        itemsTotal: total,
+        deliveryPrice,
+        totalAmount,
+        items: cartItems,
+      });
+
+      if (result.success && result.orderNumber) {
+        setOrderNumber(result.orderNumber);
+        setShowCheckout(false);
+        setShowSuccessModal(true);
+        onClearCart();
+      } else {
+        alert('حدث خطأ في حفظ الطلب. يرجى المحاولة مرة أخرى.');
+      }
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert('حدث خطأ في حفظ الطلب. يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    if (orderData.deliveryMethod === 'delivery') {
-      // Add location information if available
-      if (orderData.customerLocation?.latitude && orderData.customerLocation?.longitude) {
-        const { latitude, longitude } = orderData.customerLocation;
-        const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-        message += `📍 *موقع العميل (خريطة جوجل):*\n${googleMapsLink}\n\n`;
-      }
-      
-      // Add manual address if provided
-      if (orderData.deliveryInfo?.area) {
-        message += `🏘️ *المنطقة:* ${orderData.deliveryInfo.area}\n`;
-      }
-      if (orderData.deliveryInfo?.address) {
-        message += `📍 *العنوان:* ${orderData.deliveryInfo.address}\n`;
-      }
-      if (orderData.deliveryInfo?.notes) {
-        message += `📝 *ملاحظات:* ${orderData.deliveryInfo.notes}\n`;
-      }
-      message += `\n`;
-    }
-    
-    message += `شكراً لاختياركم ${restaurantName}! 🙏`;
-    
-    // Encode message for URL
-    // Clean phone number: remove spaces, dashes, and leading zero
-    const cleanPhone = selectedBranch?.phone?.replace(/[\s-]/g, '').replace(/^0/, '') || '';
-    const fullPhoneNumber = `218${cleanPhone}`;
-    
-    console.log('Branch phone:', selectedBranch?.phone);
-    console.log('Clean phone:', cleanPhone);
-    console.log('Full phone number:', fullPhoneNumber);
-    
-    // Create WhatsApp URLs for different platforms
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappWebUrl = `https://web.whatsapp.com/send?phone=${fullPhoneNumber}&text=${encodedMessage}`;
-    const whatsappAppUrl = `https://wa.me/${fullPhoneNumber}?text=${encodedMessage}`;
-    
-    console.log('WhatsApp Web URL:', whatsappWebUrl);
-    console.log('WhatsApp App URL:', whatsappAppUrl);
-    
-    // Detect device type and use appropriate URL
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    let finalUrl = whatsappAppUrl; // Default to app URL
-    
-    // For iOS devices, try the app URL first, then fallback
-    if (isIOS) {
-      // Try to open WhatsApp app directly
-      const whatsappScheme = `whatsapp://send?phone=${fullPhoneNumber}&text=${encodedMessage}`;
-      
-      // Create a temporary link to test if WhatsApp app is available
-      const tempLink = document.createElement('a');
-      tempLink.href = whatsappScheme;
-      
-      // Try to open WhatsApp app
-      try {
-        window.location.href = whatsappScheme;
-        
-        // Fallback to web version after a short delay if app doesn't open
-        setTimeout(() => {
-          window.open(whatsappWebUrl, '_blank');
-        }, 1000);
-      } catch (error) {
-        // If app scheme fails, use web version
-        window.open(whatsappWebUrl, '_blank');
-      }
-    } else if (isMobile) {
-      // For Android and other mobile devices, use app URL
-      window.open(whatsappAppUrl, '_blank');
-    } else {
-      // For desktop, use web version
-      window.open(whatsappWebUrl, '_blank');
-    }
-    
-    // Clear cart and close modals
-    onClearCart();
-    onClose();
-    setShowCheckout(false);
   };
 
   const handleBackToCart = () => {
@@ -191,6 +126,41 @@ export const Cart: React.FC<CartProps> = ({
     }, 300);
   };
 
+  // Show success modal
+  if (showSuccessModal) {
+    return (
+      <div className={`fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 transition-all duration-300 bg-black bg-opacity-50 backdrop-blur-sm`}>
+        <div className={`bg-white rounded-2xl max-w-md w-full shadow-2xl mx-2 sm:mx-0 p-6 sm:p-8 text-center animate-fadeInUp`}>
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-10 h-10 text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">تم استلام طلبك بنجاح!</h2>
+          <p className="text-gray-600 mb-4">رقم الطلب</p>
+          <div className={`text-3xl font-black mb-6 ${
+            selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' :
+            selectedBranch?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'
+          }`}>
+            {orderNumber}
+          </div>
+          <p className="text-gray-600 mb-6">سيتم التواصل معك قريباً لتأكيد الطلب</p>
+          <button
+            onClick={() => {
+              setShowSuccessModal(false);
+              onClose();
+            }}
+            className={`w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all ${
+              selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' :
+              selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' :
+              'bg-[#781220] hover:bg-[#5c0d18]'
+            } text-white shadow-lg hover:shadow-xl transform hover:scale-105`}
+          >
+            العودة للقائمة
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Show checkout form
   if (showCheckout) {
     return (
@@ -202,6 +172,7 @@ export const Cart: React.FC<CartProps> = ({
         onBack={handleBackToCart}
         isTransitioning={isTransitioning}
         selectedBranch={selectedBranch}
+        isSubmitting={isSubmitting}
       />
     );
   }
