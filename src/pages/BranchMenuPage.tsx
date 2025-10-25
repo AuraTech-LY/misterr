@@ -41,23 +41,35 @@ export const BranchMenuPage: React.FC = () => {
   useEffect(() => {
     const fetchBranchData = async () => {
       setIsLoadingBranch(true);
+      const { restaurantService } = await import('../services/restaurantService');
 
       // If using new URL structure with branchId
       if (urlBranchId) {
-        const { restaurantService } = await import('../services/restaurantService');
         const data = await restaurantService.getBranchById(urlBranchId);
         if (data) {
           setBranchData(data);
         }
       } else {
-        // Fallback to old branch ID system
+        // For old branch ID system, try to map to new UUID-based system
         const branchId = getBranchIdFromPath(location.pathname);
-        const oldBranchData = getBranchById(branchId);
-        if (oldBranchData) {
-          setBranchData({
-            branch: oldBranchData.branch,
-            restaurant: oldBranchData.restaurant
-          });
+        if (branchId) {
+          // Try to get mapping from old branch ID to new UUID
+          const mapping = await restaurantService.getOldBranchIdMapping(branchId);
+          if (mapping) {
+            const data = await restaurantService.getBranchById(mapping.new_branch_uuid);
+            if (data) {
+              setBranchData(data);
+            }
+          } else {
+            // If no mapping exists, fall back to old hardcoded data
+            const oldBranchData = getBranchById(branchId);
+            if (oldBranchData) {
+              setBranchData({
+                branch: oldBranchData.branch,
+                restaurant: oldBranchData.restaurant
+              });
+            }
+          }
         }
       }
 
