@@ -1,6 +1,16 @@
 import { supabase } from '../lib/supabase';
 import { Restaurant, RestaurantBranch, RestaurantWithBranches, RestaurantCuisineType } from '../types/restaurant';
 
+// Helper function to convert numeric strings to numbers (PostgreSQL numeric type returns strings)
+const processBranch = (branch: any): RestaurantBranch => ({
+  ...branch,
+  latitude: typeof branch.latitude === 'string' ? parseFloat(branch.latitude) : branch.latitude,
+  longitude: typeof branch.longitude === 'string' ? parseFloat(branch.longitude) : branch.longitude,
+  delivery_radius_km: typeof branch.delivery_radius_km === 'string' ? parseFloat(branch.delivery_radius_km) : branch.delivery_radius_km,
+  min_order_amount: typeof branch.min_order_amount === 'string' ? parseFloat(branch.min_order_amount) : branch.min_order_amount,
+  base_delivery_fee: typeof branch.base_delivery_fee === 'string' ? parseFloat(branch.base_delivery_fee) : branch.base_delivery_fee,
+});
+
 export const restaurantService = {
   async getAllRestaurants(): Promise<RestaurantWithBranches[]> {
     const { data: restaurants, error: restaurantsError } = await supabase
@@ -32,7 +42,7 @@ export const restaurantService = {
       if (branches && branches.length > 0) {
         restaurantsWithBranches.push({
           ...restaurant,
-          branches: branches
+          branches: branches.map(processBranch)
         });
       }
     }
@@ -66,7 +76,7 @@ export const restaurantService = {
 
     return {
       ...restaurant,
-      branches: branches || []
+      branches: (branches || []).map(processBranch)
     };
   },
 
@@ -96,7 +106,7 @@ export const restaurantService = {
 
     return {
       ...restaurant,
-      branches: branches || []
+      branches: (branches || []).map(processBranch)
     };
   },
 
@@ -125,7 +135,8 @@ export const restaurantService = {
       return null;
     }
 
-    return { restaurant, branch };
+    // Convert numeric strings to numbers (PostgreSQL numeric type returns strings)
+    return { restaurant, branch: processBranch(branch) };
   },
 
   async getRestaurantsByLocation(latitude: number, longitude: number, radiusKm: number = 50): Promise<RestaurantWithBranches[]> {
