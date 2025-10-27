@@ -105,11 +105,12 @@ export const Cart: React.FC<CartProps> = ({
         setShowSuccessModal(true);
         onClearCart();
       } else {
-        alert('حدث خطأ في حفظ الطلب. يرجى المحاولة مرة أخرى.');
+        console.error('Order creation failed:', result.error);
+        alert(`حدث خطأ في حفظ الطلب: ${result.error || 'خطأ غير معروف'}`);
       }
     } catch (error) {
       console.error('Error submitting order:', error);
-      alert('حدث خطأ في حفظ الطلب. يرجى المحاولة مرة أخرى.');
+      alert(`حدث خطأ في حفظ الطلب: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`);
     } finally {
       setIsSubmitting(false);
     }

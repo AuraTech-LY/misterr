@@ -47,6 +47,8 @@ export const orderService = {
         }],
       };
 
+      console.log('Attempting to insert order:', orderRecord);
+
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert([orderRecord])
@@ -55,8 +57,11 @@ export const orderService = {
 
       if (orderError) {
         console.error('Error creating order:', orderError);
+        console.error('Order data that failed:', orderRecord);
         return { success: false, error: orderError.message };
       }
+
+      console.log('Order created successfully:', order);
 
       const orderItems = orderData.items.map(item => ({
         order_id: order.id,
@@ -67,15 +72,20 @@ export const orderService = {
         subtotal: item.price * item.quantity,
       }));
 
+      console.log('Attempting to insert order items:', orderItems);
+
       const { error: itemsError } = await supabase
         .from('order_items')
         .insert(orderItems);
 
       if (itemsError) {
         console.error('Error creating order items:', itemsError);
+        console.error('Order items that failed:', orderItems);
         await supabase.from('orders').delete().eq('id', order.id);
         return { success: false, error: itemsError.message };
       }
+
+      console.log('Order items created successfully');
 
       return { success: true, orderId: order.id, orderNumber: order.order_number };
     } catch (error) {
