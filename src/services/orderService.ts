@@ -23,8 +23,10 @@ export const orderService = {
   async createOrder(orderData: CreateOrderData): Promise<{ success: boolean; orderId?: string; orderNumber?: string; error?: string }> {
     try {
       const orderNumber = await this.generateOrderNumber();
+      const orderId = crypto.randomUUID();
 
       const orderRecord = {
+        id: orderId,
         order_number: orderNumber,
         branch_id: orderData.branchId,
         restaurant_name: orderData.restaurantName,
@@ -49,11 +51,9 @@ export const orderService = {
 
       console.log('Attempting to insert order:', orderRecord);
 
-      const { data: order, error: orderError } = await supabase
+      const { error: orderError } = await supabase
         .from('orders')
-        .insert([orderRecord])
-        .select()
-        .single();
+        .insert([orderRecord]);
 
       if (orderError) {
         console.error('Error creating order:', orderError);
@@ -61,10 +61,10 @@ export const orderService = {
         return { success: false, error: orderError.message };
       }
 
-      console.log('Order created successfully:', order);
+      console.log('Order created successfully with ID:', orderId);
 
       const orderItems = orderData.items.map(item => ({
-        order_id: order.id,
+        order_id: orderId,
         menu_item_id: item.id,
         item_name: item.name,
         item_price: item.price,
@@ -81,13 +81,13 @@ export const orderService = {
       if (itemsError) {
         console.error('Error creating order items:', itemsError);
         console.error('Order items that failed:', orderItems);
-        await supabase.from('orders').delete().eq('id', order.id);
+        await supabase.from('orders').delete().eq('id', orderId);
         return { success: false, error: itemsError.message };
       }
 
       console.log('Order items created successfully');
 
-      return { success: true, orderId: order.id, orderNumber: order.order_number };
+      return { success: true, orderId: orderId, orderNumber: orderNumber };
     } catch (error) {
       console.error('Error in createOrder:', error);
       return { success: false, error: 'An unexpected error occurred' };
