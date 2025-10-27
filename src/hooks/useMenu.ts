@@ -47,23 +47,28 @@ export const useMenu = (branchId?: string, restaurantId?: string) => {
 
         // If restaurantId is provided, filter by restaurant
         if (restaurantId) {
+          console.log('Filtering by restaurant_id:', restaurantId);
           query = query.eq('restaurant_id', restaurantId);
         } else if (branchId) {
-          // Fallback to old branch filtering for backward compatibility
-          let branchColumn;
-          if (branchId === 'burgerito-airport' || branchId === 'dddddddd-dddd-dddd-dddd-dddddddddddd') {
-            branchColumn = 'available_burgerito_airport';
-          } else if (branchId === 'dollar' || branchId === 'cccccccc-cccc-cccc-cccc-cccccccccccc') {
-            branchColumn = 'available_dollar';
-          } else if (branchId === 'airport' || branchId === 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa') {
-            branchColumn = 'available_airport';
-          } else if (branchId === 'balaoun' || branchId === 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb') {
-            branchColumn = 'available_balaoun';
-          } else {
-            branchColumn = `available_${branchId}`;
+          // If only branchId is provided, get the restaurant_id from the branch
+          console.log('Getting restaurant_id for branch:', branchId);
+          const { data: branchData, error: branchError } = await supabase
+            .from('restaurant_branches')
+            .select('restaurant_id')
+            .eq('id', branchId)
+            .maybeSingle();
+
+          if (branchError) {
+            console.error('Error fetching branch data:', branchError);
+            throw branchError;
           }
-          console.log('Filtering by branch column:', branchColumn);
-          query = query.eq(branchColumn, true);
+
+          if (branchData?.restaurant_id) {
+            console.log('Found restaurant_id:', branchData.restaurant_id);
+            query = query.eq('restaurant_id', branchData.restaurant_id);
+          } else {
+            console.warn('No restaurant_id found for branch:', branchId);
+          }
         }
 
         const { data, error: fetchError } = await query.order('category');
