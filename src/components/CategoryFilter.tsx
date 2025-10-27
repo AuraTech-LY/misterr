@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CategoryFilterProps {
   categories: { id: string; name: string }[];
@@ -13,8 +14,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onCategoryChange,
   selectedRestaurant,
 }) => {
-  const brandColor = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#55421A' : selectedRestaurant?.name?.includes('مستر برجريتو') ? '#E59F49' : '#781220';
-  const brandColorHover = selectedRestaurant?.name?.includes('مستر كريسبي') ? '#3d2f12' : selectedRestaurant?.name?.includes('مستر برجريتو') ? '#cc8a3d' : '#5c0d18';
+  const { primaryColor } = useTheme();
 
   // Create ordered category names array, preserving the database order
   const orderedCategoryNames = ['الكل', ...categories.map(cat => cat.name)];
@@ -32,7 +32,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
                 : 'bg-white text-gray-700 hover:bg-gray-50 shadow-md hover:shadow-lg hover:scale-105'
             }`}
             style={{
-              backgroundColor: selectedCategory === categoryName ? brandColor : undefined
+              backgroundColor: selectedCategory === categoryName ? primaryColor : undefined
             }}
           >
             {categoryName}

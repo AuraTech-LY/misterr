@@ -11,6 +11,7 @@ import { getBranchById } from '../data/restaurantsData';
 import { Branch } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
 import { createClient } from '@supabase/supabase-js';
+import { useTheme } from '../contexts/ThemeContext';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -24,6 +25,7 @@ export const BranchMenuPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('الكل');
   const [branchData, setBranchData] = useState<any>(null);
   const [isLoadingBranch, setIsLoadingBranch] = useState(true);
+  const { setPrimaryColor, setLogoUrl, primaryColor } = useTheme();
 
   // Get branch ID from URL path (for backward compatibility)
   const getBranchIdFromPath = (pathname: string): string | null => {
@@ -81,6 +83,22 @@ export const BranchMenuPage: React.FC = () => {
 
   const branch = branchData?.branch;
   const restaurant = branchData?.restaurant;
+
+  useEffect(() => {
+    if (restaurant) {
+      if (restaurant.primary_color) {
+        setPrimaryColor(restaurant.primary_color);
+      } else {
+        setPrimaryColor('#781220');
+      }
+
+      if (restaurant.logo_url) {
+        setLogoUrl(restaurant.logo_url);
+      } else {
+        setLogoUrl('/New Element 88 [8BACFE9].png');
+      }
+    }
+  }, [restaurant, setPrimaryColor, setLogoUrl]);
 
   const { menuItems, categories, loading, error } = useMenu(effectiveBranchId, restaurant?.id);
   const {

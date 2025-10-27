@@ -5,6 +5,7 @@ import { Branch } from '../types';
 import { getAllBranches, getBranchById } from '../data/restaurantsData';
 import { CustomSelect } from './CustomSelect';
 import { isWithinOperatingHours, getTimeUntilClosing } from '../utils/timeUtils';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Custom hook for count-up animation
 const useCountUp = (endValue: number, duration: number = 600) => {
@@ -55,9 +56,9 @@ interface HeaderProps {
   isCartOpen?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-  cartItemCount, 
-  onCartClick, 
+export const Header: React.FC<HeaderProps> = ({
+  cartItemCount,
+  onCartClick,
   selectedRestaurant,
   selectedBranch,
   onBranchChange,
@@ -70,10 +71,11 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOpen, setIsOpen] = React.useState<boolean | null>(null);
   const [timeUntilClosing, setTimeUntilClosing] = React.useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
-  
+  const { primaryColor, logoUrl } = useTheme();
+
   // Count-up animation for cart total
   const { value: animatedTotal, isAnimating } = useCountUp(Math.round(cartTotal));
-  
+
   // Count-up animation for cart item count
   const { value: animatedItemCount, isAnimating: isItemCountAnimating } = useCountUp(cartItemCount);
 
@@ -174,22 +176,12 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="fixed top-0 z-40 w-full">
         <div className="px-3 sm:px-4 py-3 sm:py-4 lg:px-16 xl:px-32 2xl:px-48 w-full">
           <div className="container mx-auto">
-            <div className={`text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4 ${
-              selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
-            }`}>
+            <div className="text-white rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-lg border border-white border-opacity-10 px-4 sm:px-6 py-3 sm:py-4" style={{ backgroundColor: primaryColor }}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
                     <img
-                      src={
-                        selectedRestaurant?.name?.includes('مستر كريسبي')
-                          ? '/mr-Krispy.png'
-                          : selectedRestaurant?.name?.includes('مستر برجريتو')
-                            ? '/mr-burgerito.png'
-                            : selectedRestaurant?.name?.includes('مستر شيش')
-                              ? '/Mr-Sheesh.png'
-                              : '/New Element 88 [8BACFE9].png'
-                      }
+                      src={logoUrl}
                       alt={selectedRestaurant?.name || 'مطعم المستر'}
                       className="w-full h-full object-contain"
                     />
@@ -218,13 +210,7 @@ export const Header: React.FC<HeaderProps> = ({
                           type="button"
                           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                           disabled={isChangingBranch}
-                          className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 ${
-                            selectedRestaurant?.name?.includes('مستر كريسبي')
-                              ? 'bg-[#55421A] bg-opacity-20 hover:bg-opacity-30'
-                              : selectedRestaurant?.name?.includes('مستر برجريتو')
-                                ? 'bg-[#E59F49] bg-opacity-20 hover:bg-opacity-30'
-                                : 'bg-white bg-opacity-20 hover:bg-opacity-30'
-                          } ${
+                          className={`text-white px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 sm:gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base backdrop-blur-sm border border-white border-opacity-20 bg-white bg-opacity-20 hover:bg-opacity-30 ${
                             isDropdownOpen ? 'bg-opacity-30' : ''
                           } ${
                            isChangingBranch ? 'opacity-50 cursor-not-allowed' : ''
@@ -319,13 +305,14 @@ export const Header: React.FC<HeaderProps> = ({
                     className={`hidden sm:flex relative px-2 py-1.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 items-center gap-1 sm:gap-2 shadow-lg text-xs sm:text-base backdrop-blur-sm ${
                       isOpen !== true
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : `bg-white ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'} hover:bg-gray-100 hover:shadow-xl transform hover:scale-105`
+                        : 'bg-white hover:bg-gray-100 hover:shadow-xl transform hover:scale-105'
                     }`}
+                    style={isOpen === true ? { color: primaryColor } : {}}
                   >
                     <ShoppingBag className="w-5 h-5" />
                     <span className="hidden sm:inline">{isOpen === false ? 'مغلق' : isOpen === null ? 'جاري التحقق...' : 'السلة'}</span>
                     {cartItemCount > 0 && (
-                      <span className={`absolute -top-1 -left-1 sm:-top-2 sm:-left-2 ${selectedRestaurant?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedRestaurant?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'} text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white`}>
+                      <span className="absolute -top-1 -left-1 sm:-top-2 sm:-left-2 text-white text-xs w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center font-bold animate-pulse shadow-lg border-2 border-white" style={{ backgroundColor: primaryColor }}>
                         {cartItemCount}
                       </span>
                     )}
@@ -361,12 +348,9 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : cartItemCount === 0
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : selectedRestaurant?.name?.includes('مستر كريسبي') 
-                  ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl'
-                  : selectedRestaurant?.name?.includes('مستر برجريتو')
-                    ? 'bg-[#E59F49] hover:bg-[#cc8a3d] text-white hover:shadow-xl'
-                    : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl'
+                : 'text-white hover:shadow-xl'
             }`}
+            style={cartItemCount > 0 && isOpen === true ? { backgroundColor: primaryColor } : {}}
           >
             <div className="flex items-center justify-between w-full">
               {/* Item Count - Right Side */}

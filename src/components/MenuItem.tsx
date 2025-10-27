@@ -3,6 +3,7 @@ import { Plus, Star, X, Minus, Trash2 } from 'lucide-react';
 import { MenuItem as MenuItemType } from '../types';
 import { isWithinOperatingHours } from '../utils/timeUtils';
 import { getBranchById } from '../data/restaurantsData';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface MenuItemProps {
   item: MenuItemType;
@@ -13,6 +14,7 @@ interface MenuItemProps {
 }
 
 export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveFromCart, branchId, cartItems = [] }) => {
+  const { primaryColor } = useTheme();
   const [showMobilePopup, setShowMobilePopup] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
@@ -288,13 +290,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                   <span className="w-12 text-center font-bold text-lg">{quantity}</span>
                   <button
                     onClick={() => handleQuantityChange(quantity + 1)}
-                    className={`w-10 h-10 ${
-                      isMisterCrispy
-                        ? 'bg-[#55421A] hover:bg-[#3d2f12]'
-                        : isMisterBurgerito
-                          ? 'bg-[#E59F49] hover:bg-[#cc8a3d]'
-                          : 'bg-[#781220] hover:bg-[#5c0d18]'
-                    } text-white rounded-full flex items-center justify-center transition-colors`}
+                    className="w-10 h-10 text-white rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: primaryColor }}
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -318,13 +315,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 disabled={!isOpen}
                 className={`w-full px-4 py-4 rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-base ${
                   isOpen
-                    ? isMisterCrispy
-                      ? 'bg-[#55421A] hover:bg-[#3d2f12] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
-                      : isMisterBurgerito
-                        ? 'bg-[#E59F49] hover:bg-[#cc8a3d] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
-                        : 'bg-[#781220] hover:bg-[#5c0d18] text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
+                    ? 'text-white hover:shadow-xl transform hover:scale-105 active:scale-95 hover:opacity-90'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
+                style={isOpen ? { backgroundColor: primaryColor } : {}}
               >
                 {isOpen ? 'إضافة إلى السلة' : 'مغلق حالياً'}
               </button>

@@ -3,6 +3,7 @@ import { X, Minus, Plus, ShoppingBag, CheckCircle } from 'lucide-react';
 import { CartItem } from '../types';
 import { CheckoutForm } from './CheckoutForm';
 import { orderService } from '../services/orderService';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CartProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const Cart: React.FC<CartProps> = ({
   onClearCart,
   selectedBranch,
 }) => {
+  const { primaryColor } = useTheme();
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [showCheckout, setShowCheckout] = React.useState(false);
@@ -149,11 +151,8 @@ export const Cart: React.FC<CartProps> = ({
               setShowSuccessModal(false);
               onClose();
             }}
-            className={`w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all ${
-              selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' :
-              selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' :
-              'bg-[#781220] hover:bg-[#5c0d18]'
-            } text-white shadow-lg hover:shadow-xl transform hover:scale-105`}
+            className="w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all text-white shadow-lg hover:shadow-xl transform hover:scale-105 hover:opacity-90"
+            style={{ backgroundColor: primaryColor }}
           >
             العودة للقائمة
           </button>
@@ -188,9 +187,7 @@ export const Cart: React.FC<CartProps> = ({
           ? 'scale-95 opacity-0 translate-x-8'
           : 'scale-95 opacity-0 translate-y-4'
       }`}>
-        <div className={`text-white p-4 sm:p-6 flex-shrink-0 ${
-          selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
-        }`}>
+        <div className="text-white p-4 sm:p-6 flex-shrink-0" style={{ backgroundColor: primaryColor }}>
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <ShoppingBag className="w-6 h-6" />
@@ -241,7 +238,8 @@ export const Cart: React.FC<CartProps> = ({
                     <span className="w-6 sm:w-8 text-center font-semibold text-sm sm:text-base">{item.quantity}</span>
                     <button
                       onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                     className={`w-7 h-7 sm:w-8 sm:h-8 ${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white rounded-full flex items-center justify-center transition-colors`}
+                     className="w-7 h-7 sm:w-8 sm:h-8 text-white rounded-full flex items-center justify-center transition-opacity hover:opacity-80"
+                     style={{ backgroundColor: primaryColor }}
                     >
                       <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                     </button>
@@ -272,7 +270,8 @@ export const Cart: React.FC<CartProps> = ({
             </div>
             <button 
               onClick={handleCheckout}
-             className={`w-full ${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
+             className="w-full text-white py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 hover:opacity-90"
+             style={{ backgroundColor: primaryColor }}
             >
               المتابعة للدفع
             </button>

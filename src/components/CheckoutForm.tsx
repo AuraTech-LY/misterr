@@ -4,6 +4,7 @@ import { CartItem } from '../types';
 import { CustomSelect } from './CustomSelect';
 import { createClient } from '@supabase/supabase-js';
 import { isDeliveryAvailable } from '../utils/timeUtils';
+import { useTheme } from '../contexts/ThemeContext';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -51,6 +52,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   selectedBranch,
   isSubmitting = false
 }) => {
+  const { primaryColor } = useTheme();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<OrderData>({
     customerInfo: { name: '', phone: '' },
@@ -58,7 +60,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
     paymentMethod: 'cash',
     preferredTime: 'now'
   });
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isValidating, setIsValidating] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
@@ -345,9 +347,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           : 'scale-95 opacity-0 -translate-x-8'
       }`}>
         {/* Progress Indicator */}
-        <div className={`p-3 sm:p-4 flex-shrink-0 ${
-          selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49]' : 'bg-[#781220]'
-        }`}>
+        <div className="p-3 sm:p-4 flex-shrink-0" style={{ backgroundColor: primaryColor }}>
           <div className="flex items-center justify-between text-white">
             <div className="flex items-center gap-3">
               <button
@@ -377,7 +377,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
             <div className="space-y-6 animate-fadeInUp">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-[#781220]" />
+                  <User className="w-5 h-5" style={{ color: primaryColor }} />
                   معلومات العميل
                 </h3>
                 
@@ -441,9 +441,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 disabled={!canProceedToStep2()}
                 className={`w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all ${
                   canProceedToStep2()
-                    ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                    ? 'text-white shadow-lg hover:shadow-xl transform hover:scale-105 hover:opacity-90'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
+                style={canProceedToStep2() ? { backgroundColor: primaryColor } : {}}
               >
                 التالي
               </button>
@@ -456,7 +457,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
               {/* Delivery Method */}
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  <Truck className="w-5 h-5 text-[#781220]" />
+                  <Truck className="w-5 h-5" style={{ color: primaryColor }} />
                   طريقة الاستلام
                 </h3>
                 
@@ -466,11 +467,12 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     disabled={isCheckingDelivery || !isDeliveryAvailableNow}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'delivery' && isDeliveryAvailableNow
-                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'border-[#E59F49] bg-red-50 text-[#E59F49]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
+                        ? 'bg-red-50'
                         : isCheckingDelivery || !isDeliveryAvailableNow
                         ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
                         : 'border-gray-200 hover:border-gray-300'
                     } ${isCheckingDelivery || !isDeliveryAvailableNow ? 'opacity-50' : ''}`}
+                    style={formData.deliveryMethod === 'delivery' && isDeliveryAvailableNow ? { borderColor: primaryColor, color: primaryColor } : {}}
                   >
                     <Truck className="w-6 h-6 mx-auto mb-2" />
                     <div className="font-semibold text-sm sm:text-base">
@@ -482,9 +484,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                     onClick={() => updateFormData('deliveryMethod', 'pickup')}
                     className={`p-3 sm:p-4 rounded-full border-2 transition-all ${
                       formData.deliveryMethod === 'pickup'
-                        ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'border-[#55421A] bg-red-50 text-[#55421A]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'border-[#E59F49] bg-red-50 text-[#E59F49]' : 'border-[#781220] bg-red-50 text-[#781220]'}`
+                        ? 'bg-red-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
+                    style={formData.deliveryMethod === 'pickup' ? { borderColor: primaryColor, color: primaryColor } : {}}
                   >
                     <Store className="w-6 h-6 mx-auto mb-2" />
                     <div className="font-semibold text-sm sm:text-base">استلام</div>
@@ -602,7 +605,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         {/* Total Line */}
                         <div className="flex justify-between items-center py-3 mt-2">
                           <span className="text-xl font-bold text-gray-800">المجموع الكلي</span>
-                          <div className={`text-xl ${selectedBranch?.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : 'text-[#781220]'}`}>
+                          <div className="text-xl" style={{ color: primaryColor }}>
                             <span className="font-black">
                               {deliveryPrice !== null ? Math.round(total + deliveryPrice) : Math.round(total)}
                             </span>
@@ -637,9 +640,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   disabled={!canSubmit() || isValidating || isSubmitting}
                   className={`flex-1 py-3 sm:py-4 rounded-full font-bold text-sm sm:text-base transition-all duration-300 ${
                     canSubmit() && !isValidating && !isSubmitting
-                      ? `${selectedBranch?.name?.includes('مستر كريسبي') ? 'bg-[#55421A] hover:bg-[#3d2f12]' : selectedBranch?.name?.includes('مستر برجريتو') ? 'bg-[#E59F49] hover:bg-[#cc8a3d]' : 'bg-[#781220] hover:bg-[#5c0d18]'} text-white shadow-lg hover:shadow-xl transform hover:scale-105`
+                      ? 'text-white shadow-lg hover:shadow-xl transform hover:scale-105 hover:opacity-90'
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
+                  style={canSubmit() && !isValidating && !isSubmitting ? { backgroundColor: primaryColor } : {}}
                 >
                   {isSubmitting ? 'جاري حفظ الطلب...' :
                    isValidating ? 'جاري المعالجة...' :
