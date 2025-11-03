@@ -433,10 +433,13 @@ export const CashierOrdersView: React.FC = () => {
     <div className="min-h-screen bg-slate-50" dir="rtl">
       <audio ref={audioRef} src="/notification.mp3" preload="auto" />
 
-      {/* On-Screen Notification Banner */}
+      {/* On-Screen Notification Banner - Always on top */}
       {showNotificationBanner && notificationOrder && (
-        <div className="fixed top-20 left-4 right-4 z-50 animate-slide-down">
-          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-2 border-emerald-400">
+        <div
+          className="fixed left-1/2 -translate-x-1/2 top-20 w-[calc(100%-2rem)] max-w-md animate-slide-down pointer-events-auto"
+          style={{ zIndex: 10000 }}
+        >
+          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl p-5 border-4 border-emerald-300 drop-shadow-2xl">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -463,7 +466,7 @@ export const CashierOrdersView: React.FC = () => {
       )}
 
       {/* Mobile-Optimized Sticky Header */}
-      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
+      <div className="sticky top-0 z-40 bg-white shadow-sm border-b border-slate-200">
         <div className="px-3 py-3">
           {/* Top Row - Title and Count */}
           <div className="flex items-center justify-between mb-3">
