@@ -49,12 +49,16 @@ export const CashierOrdersView: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState<string>('active');
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showNotificationBanner, setShowNotificationBanner] = useState(false);
+  const [notificationOrder, setNotificationOrder] = useState<Order | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
     fetchOrders();
     subscribeToOrders();
+    requestNotificationPermission();
 
     return () => {
       if (channelRef.current) {
@@ -148,6 +152,7 @@ export const CashierOrdersView: React.FC = () => {
           await fetchOrderItems(newOrder.id);
           playNotificationSound();
           showNotification(newOrder);
+          showOnScreenNotification(newOrder);
           if ('vibrate' in navigator) {
             navigator.vibrate([200, 100, 200]);
           }
@@ -220,24 +225,90 @@ export const CashierOrdersView: React.FC = () => {
 
   const playNotificationSound = () => {
     if (audioRef.current) {
-      audioRef.current.play().catch(err => console.log('Could not play sound:', err));
+      audioRef.current.play().catch(err => {
+        console.log('Could not play audio file, using beep:', err);
+        playBeepSound();
+      });
+    } else {
+      playBeepSound();
+    }
+  };
+
+  const playBeepSound = () => {
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioContextRef.current;
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + 0.5);
+
+      setTimeout(() => {
+        const oscillator2 = ctx.createOscillator();
+        const gainNode2 = ctx.createGain();
+        oscillator2.connect(gainNode2);
+        gainNode2.connect(ctx.destination);
+        oscillator2.frequency.value = 1000;
+        oscillator2.type = 'sine';
+        gainNode2.gain.setValueAtTime(0.3, ctx.currentTime);
+        gainNode2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        oscillator2.start(ctx.currentTime);
+        oscillator2.stop(ctx.currentTime + 0.5);
+      }, 200);
+    } catch (err) {
+      console.error('Could not play beep sound:', err);
     }
   };
 
   const showNotification = (order: Order) => {
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('طلب جديد!', {
-        body: `طلب رقم ${order.order_number} من ${order.customer_name}`,
+      const notification = new Notification('🔔 طلب جديد!', {
+        body: `طلب رقم ${order.order_number} من ${order.customer_name}\nالمجموع: ${order.total_amount.toFixed(0)} د.ل`,
         icon: '/favicon.ico',
+        tag: order.id,
+        requireInteraction: true,
+        vibrate: [200, 100, 200],
       });
+
+      notification.onclick = () => {
+        window.focus();
+        setSelectedOrder(order);
+        notification.close();
+      };
     }
   };
 
+  const showOnScreenNotification = (order: Order) => {
+    setNotificationOrder(order);
+    setShowNotificationBanner(true);
+    setTimeout(() => {
+      setShowNotificationBanner(false);
+    }, 8000);
+  };
+
   const requestNotificationPermission = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        alert('تم تفعيل الإشعارات بنجاح!');
+    if ('Notification' in window && Notification.permission === 'default') {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          console.log('✅ Notification permission granted');
+        } else if (permission === 'denied') {
+          console.warn('⚠️ Notification permission denied');
+        }
+      } catch (err) {
+        console.error('Error requesting notification permission:', err);
       }
     }
   };
@@ -325,6 +396,35 @@ export const CashierOrdersView: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50" dir="rtl">
       <audio ref={audioRef} src="/notification.mp3" preload="auto" />
+
+      {/* On-Screen Notification Banner */}
+      {showNotificationBanner && notificationOrder && (
+        <div className="fixed top-20 left-4 right-4 z-50 animate-slide-down">
+          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl shadow-2xl p-4 border-2 border-emerald-400">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Bell className="w-6 h-6 animate-bounce" />
+                  <h3 className="text-xl font-black">طلب جديد!</h3>
+                </div>
+                <p className="text-lg font-bold mb-1">{notificationOrder.order_number}</p>
+                <p className="text-sm opacity-90">{notificationOrder.customer_name}</p>
+                <p className="text-sm opacity-90">{notificationOrder.customer_phone}</p>
+                <p className="text-2xl font-black mt-2">{notificationOrder.total_amount.toFixed(0)} د.ل</p>
+              </div>
+              <button
+                onClick={() => {
+                  setShowNotificationBanner(false);
+                  setSelectedOrder(notificationOrder);
+                }}
+                className="bg-white text-emerald-600 px-4 py-2 rounded-xl font-bold text-sm hover:bg-emerald-50 transition-colors"
+              >
+                عرض
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile-Optimized Sticky Header */}
       <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
@@ -606,6 +706,19 @@ export const CashierOrdersView: React.FC = () => {
         }
         .animate-slide-up {
           animation: slide-up 0.3s ease-out;
+        }
+        @keyframes slide-down {
+          from {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-down {
+          animation: slide-down 0.4s ease-out;
         }
       `}} />
     </div>
