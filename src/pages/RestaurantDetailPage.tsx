@@ -5,23 +5,20 @@ import { restaurantService } from '../services/restaurantService';
 import { RestaurantWithBranches, RestaurantBranch } from '../types/restaurant';
 
 export const RestaurantDetailPage: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState<RestaurantWithBranches | null>(null);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   useEffect(() => {
-    if (slug) {
-      fetchRestaurant();
-      getUserLocation();
-    }
-  }, [slug]);
+    fetchRestaurant();
+    getUserLocation();
+  }, []);
 
   const fetchRestaurant = async () => {
     try {
       setLoading(true);
-      const data = await restaurantService.getRestaurantBySlug(slug!);
+      const data = await restaurantService.getRestaurantBySlug('albaron');
       setRestaurant(data);
     } catch (error) {
       console.error('Error fetching restaurant:', error);
@@ -59,7 +56,7 @@ export const RestaurantDetailPage: React.FC = () => {
   };
 
   const handleBranchSelect = (branch: RestaurantBranch) => {
-    navigate(`/restaurant/${slug}/branch/${branch.id}`);
+    navigate(`/branch/${branch.id}`);
   };
 
   if (loading) {
@@ -77,12 +74,12 @@ export const RestaurantDetailPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">المطعم غير موجود</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">حدث خطأ في تحميل البيانات</h1>
           <button
-            onClick={() => navigate('/restaurants')}
+            onClick={fetchRestaurant}
             className="bg-[#781220] text-white px-6 py-3 rounded-full hover:bg-[#5c0d18] transition-colors"
           >
-            العودة إلى قائمة المطاعم
+            إعادة المحاولة
           </button>
         </div>
       </div>

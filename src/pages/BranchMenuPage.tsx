@@ -21,7 +21,7 @@ const supabase = createClient(
 export const BranchMenuPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { slug, branchId: urlBranchId } = useParams<{ slug?: string; branchId?: string }>();
+  const { branchId: urlBranchId } = useParams<{ branchId?: string }>();
   const [selectedCategory, setSelectedCategory] = useState('الكل');
   const [branchData, setBranchData] = useState<any>(null);
   const [isLoadingBranch, setIsLoadingBranch] = useState(true);

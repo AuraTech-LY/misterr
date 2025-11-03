@@ -5,7 +5,6 @@ import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
 import { AdminCategories } from './AdminCategories';
 import { AdminOperatingHours } from './AdminOperatingHours';
-import { AdminRestaurants } from './AdminRestaurants';
 import { AdminOrders } from './AdminOrders';
 import { AdminUserManagement } from './AdminUserManagement';
 import { AdminAuditLogs } from './AdminAuditLogs';
@@ -55,7 +54,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'restaurants' | 'orders' | 'cashier' | 'users' | 'logs'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'orders' | 'cashier' | 'users' | 'logs'>('menu');
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [branches, setBranches] = useState<RestaurantBranch[]>([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>('');
@@ -380,18 +379,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               <span className="xs:hidden">الأوقات</span>
             </button>
             <button
-              onClick={() => setActiveTab('restaurants')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'restaurants'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <Store className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden xs:inline">المطاعم والفروع</span>
-              <span className="xs:hidden">المطاعم</span>
-            </button>
-            <button
               onClick={() => setActiveTab('orders')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'orders'
@@ -446,8 +433,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminCategories onCategoriesChange={handleCategoriesChange} />
         ) : activeTab === 'hours' ? (
           <AdminOperatingHours />
-        ) : activeTab === 'restaurants' ? (
-          <AdminRestaurants onRestaurantsChange={fetchData} />
         ) : activeTab === 'orders' ? (
           <AdminOrders />
         ) : activeTab === 'cashier' ? (
