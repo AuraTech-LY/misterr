@@ -51,16 +51,19 @@ export const CashierOrdersView: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   const [notificationOrder, setNotificationOrder] = useState<Order | null>(null);
+  const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
+    console.log('🚀 CashierOrdersView mounted, initializing...');
     fetchOrders();
-    subscribeToOrders();
+    const channel = subscribeToOrders();
     requestNotificationPermission();
 
     return () => {
+      console.log('🛑 CashierOrdersView unmounting, cleaning up...');
       if (channelRef.current) {
         channelRef.current.unsubscribe();
       }
@@ -207,15 +210,31 @@ export const CashierOrdersView: React.FC = () => {
           }));
         }
       )
-      .subscribe((status) => {
+      .subscribe((status, err) => {
+        console.log('📡 Realtime subscription status:', status);
         if (status === 'SUBSCRIBED') {
           console.log('✅ Successfully subscribed to real-time orders');
+          console.log('📊 Listening for:', {
+            orders: 'INSERT, UPDATE',
+            order_items: 'INSERT, UPDATE'
+          });
+          setRealtimeStatus('connected');
         } else if (status === 'CHANNEL_ERROR') {
-          console.error('❌ Error subscribing to real-time orders');
+          console.error('❌ Error subscribing to real-time orders:', err);
+          setRealtimeStatus('disconnected');
         } else if (status === 'TIMED_OUT') {
           console.error('⏱️ Real-time subscription timed out');
-        } else {
-          console.log('📡 Realtime subscription status:', status);
+          console.log('🔄 Attempting to reconnect...');
+          setRealtimeStatus('disconnected');
+          setTimeout(() => {
+            if (channelRef.current) {
+              channelRef.current.unsubscribe();
+            }
+            subscribeToOrders();
+          }, 5000);
+        } else if (status === 'CLOSED') {
+          console.warn('🔌 Real-time connection closed');
+          setRealtimeStatus('disconnected');
         }
       });
 
@@ -432,12 +451,26 @@ export const CashierOrdersView: React.FC = () => {
           {/* Top Row - Title and Count */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="bg-slate-100 p-2 rounded-lg">
+              <div className="bg-slate-100 p-2 rounded-lg relative">
                 <Bell className="w-5 h-5 text-slate-700" />
+                {realtimeStatus === 'connected' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full animate-pulse border-2 border-white" title="متصل مباشرة"></div>
+                )}
+                {realtimeStatus === 'disconnected' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white" title="غير متصل"></div>
+                )}
+                {realtimeStatus === 'connecting' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full animate-pulse border-2 border-white" title="جاري الاتصال"></div>
+                )}
               </div>
               <div>
                 <h1 className="text-lg font-bold text-slate-900">الطلبات المباشرة</h1>
-                <p className="text-xs text-slate-500">{filteredOrders.length} طلب نشط</p>
+                <p className="text-xs text-slate-500">
+                  {filteredOrders.length} طلب نشط
+                  {realtimeStatus === 'connected' && ' • متصل'}
+                  {realtimeStatus === 'disconnected' && ' • غير متصل'}
+                  {realtimeStatus === 'connecting' && ' • جاري الاتصال...'}
+                </p>
               </div>
             </div>
             <div className="flex gap-2">
