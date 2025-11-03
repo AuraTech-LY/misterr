@@ -25,17 +25,11 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
   const [error, setError] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
-  const { canManageCategories, loading: permissionLoading, userRole } = usePermission();
+  const { canManageCategories, loading: permissionLoading } = usePermission();
 
   useEffect(() => {
     fetchCategories();
   }, []);
-
-  useEffect(() => {
-    console.log('AdminCategories - Permission loading:', permissionLoading);
-    console.log('AdminCategories - User role:', userRole);
-    console.log('AdminCategories - Can manage categories:', canManageCategories());
-  }, [permissionLoading, userRole]);
 
   const fetchCategories = async () => {
     try {
