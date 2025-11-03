@@ -271,7 +271,7 @@ export const BranchMenuPage: React.FC = () => {
         {/* Add top padding to account for fixed header */}
         <div className="pt-20 sm:pt-24">
 
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 mt-8">
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
             اكتشف أشهى الوجبات السريعة من {branch.name}
