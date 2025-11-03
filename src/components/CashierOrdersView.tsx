@@ -49,13 +49,16 @@ export const CashierOrdersView: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
     fetchOrders();
     subscribeToOrders();
 
     return () => {
-      supabase.channel('orders').unsubscribe();
+      if (channelRef.current) {
+        channelRef.current.unsubscribe();
+      }
     };
   }, []);
 
@@ -99,9 +102,29 @@ export const CashierOrdersView: React.FC = () => {
     }
   };
 
+  const fetchOrderItems = async (orderId: string) => {
+    try {
+      const { data: items, error: itemsError } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', orderId);
+
+      if (itemsError) throw itemsError;
+
+      if (items) {
+        setOrderItems(prev => ({
+          ...prev,
+          [orderId]: items,
+        }));
+      }
+    } catch (err) {
+      console.error('Error fetching order items:', err);
+    }
+  };
+
   const subscribeToOrders = () => {
     const channel = supabase
-      .channel('orders')
+      .channel('orders-realtime')
       .on(
         'postgres_changes',
         {
@@ -109,9 +132,11 @@ export const CashierOrdersView: React.FC = () => {
           schema: 'public',
           table: 'orders',
         },
-        (payload) => {
+        async (payload) => {
+          console.log('🔔 New order received via realtime:', payload.new);
           const newOrder = payload.new as Order;
           setOrders(prev => [newOrder, ...prev]);
+          await fetchOrderItems(newOrder.id);
           playNotificationSound();
           showNotification(newOrder);
         }
@@ -124,14 +149,60 @@ export const CashierOrdersView: React.FC = () => {
           table: 'orders',
         },
         (payload) => {
+          console.log('📝 Order updated via realtime:', payload.new);
           const updatedOrder = payload.new as Order;
           setOrders(prev =>
             prev.map(order => (order.id === updatedOrder.id ? updatedOrder : order))
           );
         }
       )
-      .subscribe();
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'order_items',
+        },
+        (payload) => {
+          console.log('🛒 New order item received via realtime:', payload.new);
+          const newItem = payload.new as OrderItem;
+          setOrderItems(prev => ({
+            ...prev,
+            [newItem.order_id]: [...(prev[newItem.order_id] || []), newItem],
+          }));
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'order_items',
+        },
+        (payload) => {
+          console.log('✏️ Order item updated via realtime:', payload.new);
+          const updatedItem = payload.new as OrderItem;
+          setOrderItems(prev => ({
+            ...prev,
+            [updatedItem.order_id]: (prev[updatedItem.order_id] || []).map(item =>
+              item.id === updatedItem.id ? updatedItem : item
+            ),
+          }));
+        }
+      )
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Successfully subscribed to real-time orders');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Error subscribing to real-time orders');
+        } else if (status === 'TIMED_OUT') {
+          console.error('⏱️ Real-time subscription timed out');
+        } else {
+          console.log('📡 Realtime subscription status:', status);
+        }
+      });
 
+    channelRef.current = channel;
     return channel;
   };
 
