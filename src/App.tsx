@@ -18,7 +18,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<RestaurantListPage />} />
+      <Route path="/" element={<Navigate to="/restaurant/albaron" replace />} />
       <Route path="/restaurants" element={<RestaurantListPage />} />
       <Route path="/restaurant/:slug" element={<RestaurantDetailPage />} />
       <Route path="/restaurant/:slug/branch/:branchId" element={<BranchMenuPage />} />

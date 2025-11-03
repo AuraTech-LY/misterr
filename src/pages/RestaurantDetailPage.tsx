@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowRight, MapPin, Phone, Clock, Star } from 'lucide-react';
+import { MapPin, Phone, Star } from 'lucide-react';
 import { restaurantService } from '../services/restaurantService';
 import { RestaurantWithBranches, RestaurantBranch } from '../types/restaurant';
 
@@ -107,12 +107,6 @@ export const RestaurantDetailPage: React.FC = () => {
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-        <button
-          onClick={() => navigate('/restaurants')}
-          className="absolute top-4 right-4 p-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-full hover:bg-opacity-30 transition-colors"
-        >
-          <ArrowRight className="w-6 h-6 text-white" />
-        </button>
       </div>
 
       <div className="container mx-auto px-4 -mt-16 relative z-10">
