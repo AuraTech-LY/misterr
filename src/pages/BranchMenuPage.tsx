@@ -37,7 +37,7 @@ export const BranchMenuPage: React.FC = () => {
   };
 
   // Determine which branch ID to use
-  const effectiveBranchId = urlBranchId || getBranchIdFromPath(location.pathname);
+  const effectiveBranchId = urlBranchId || branchData?.branch?.id || getBranchIdFromPath(location.pathname);
 
   // Fetch branch and restaurant data
   useEffect(() => {
@@ -52,24 +52,33 @@ export const BranchMenuPage: React.FC = () => {
           setBranchData(data);
         }
       } else {
-        // For old branch ID system, try to map to new UUID-based system
-        const branchId = getBranchIdFromPath(location.pathname);
-        if (branchId) {
-          // Try to get mapping from old branch ID to new UUID
-          const mapping = await restaurantService.getOldBranchIdMapping(branchId);
-          if (mapping) {
-            const data = await restaurantService.getBranchById(mapping.new_branch_uuid);
-            if (data) {
-              setBranchData(data);
-            }
-          } else {
-            // If no mapping exists, fall back to old hardcoded data
-            const oldBranchData = getBranchById(branchId);
-            if (oldBranchData) {
-              setBranchData({
-                branch: oldBranchData.branch,
-                restaurant: oldBranchData.restaurant
-              });
+        // No branch ID provided - load default Albaron branch
+        const restaurant = await restaurantService.getRestaurantBySlug('albaron');
+        if (restaurant && restaurant.branches && restaurant.branches.length > 0) {
+          // Get first branch
+          const firstBranch = restaurant.branches[0];
+          const data = await restaurantService.getBranchById(firstBranch.id);
+          if (data) {
+            setBranchData(data);
+          }
+        } else {
+          // Fallback: try old branch ID system
+          const branchId = getBranchIdFromPath(location.pathname);
+          if (branchId) {
+            const mapping = await restaurantService.getOldBranchIdMapping(branchId);
+            if (mapping) {
+              const data = await restaurantService.getBranchById(mapping.new_branch_uuid);
+              if (data) {
+                setBranchData(data);
+              }
+            } else {
+              const oldBranchData = getBranchById(branchId);
+              if (oldBranchData) {
+                setBranchData({
+                  branch: oldBranchData.branch,
+                  restaurant: oldBranchData.restaurant
+                });
+              }
             }
           }
         }

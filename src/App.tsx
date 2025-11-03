@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { BranchMenuPage } from './pages/BranchMenuPage';
 import { AdminPage } from './pages/AdminPage';
-import { RestaurantDetailPage } from './pages/RestaurantDetailPage';
 
 function App() {
   const location = useLocation();
@@ -15,9 +14,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/branches" replace />} />
-      <Route path="/branches" element={<RestaurantDetailPage />} />
-      <Route path="/branch/:branchId" element={<BranchMenuPage />} />
+      <Route path="/" element={<BranchMenuPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
