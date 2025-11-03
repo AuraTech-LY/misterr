@@ -13,10 +13,12 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
   const [error, setError] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<UserRole | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [newUser, setNewUser] = useState({
     user_email: '',
     user_name: '',
     user_phone: '',
+    password: '',
   });
 
   useEffect(() => {
@@ -66,38 +68,63 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
 
       await fetchUsers();
       setEditingUser(null);
-      alert('User permissions updated successfully!');
+      alert('تم تحديث صلاحيات المستخدم بنجاح!');
     } catch (err) {
       console.error('Error updating user:', err);
-      alert(err instanceof Error ? err.message : 'Failed to update user');
+      alert(err instanceof Error ? err.message : 'فشل في تحديث المستخدم');
     }
   };
 
   const handleAddUser = async () => {
-    if (!newUser.user_email || !newUser.user_name) {
-      alert('Email and name are required');
+    if (!newUser.user_email || !newUser.user_name || !newUser.password) {
+      alert('البريد الإلكتروني والاسم وكلمة المرور مطلوبة');
+      return;
+    }
+
+    if (newUser.password.length < 6) {
+      alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
       return;
     }
 
     try {
-      const { error: insertError } = await supabase
-        .from('user_roles')
-        .insert([{
-          user_email: newUser.user_email,
-          user_name: newUser.user_name,
-          user_phone: newUser.user_phone || null,
-          created_by: currentUserEmail,
-        }]);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('يجب تسجيل الدخول أولاً');
+        return;
+      }
 
-      if (insertError) throw insertError;
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: newUser.user_email,
+            password: newUser.password,
+            name: newUser.user_name,
+            phone: newUser.user_phone || null,
+            created_by: currentUserEmail,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create user');
+      }
 
       await fetchUsers();
       setShowAddForm(false);
-      setNewUser({ user_email: '', user_name: '', user_phone: '' });
-      alert('User added successfully!');
+      setNewUser({ user_email: '', user_name: '', user_phone: '', password: '' });
+      setShowPassword(false);
+      alert('تم إضافة المستخدم بنجاح!');
     } catch (err) {
       console.error('Error adding user:', err);
-      alert(err instanceof Error ? err.message : 'Failed to add user');
+      alert(err instanceof Error ? err.message : 'فشل في إضافة المستخدم');
     }
   };
 
@@ -147,7 +174,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading users...</p>
+          <p className="text-gray-600">جاري تحميل المستخدمين...</p>
         </div>
       </div>
     );
@@ -156,12 +183,12 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
   if (error) {
     return (
       <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-700">Error: {error}</p>
+        <p className="text-red-700">خطأ: {error}</p>
         <button
           onClick={fetchUsers}
           className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
         >
-          Retry
+          إعادة المحاولة
         </button>
       </div>
     );
@@ -190,7 +217,11 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-800">إضافة مستخدم جديد</h3>
             <button
-              onClick={() => setShowAddForm(false)}
+              onClick={() => {
+                setShowAddForm(false);
+                setNewUser({ user_email: '', user_name: '', user_phone: '', password: '' });
+                setShowPassword(false);
+              }}
               className="p-1 hover:bg-gray-100 rounded-lg"
             >
               <X className="w-5 h-5" />
@@ -233,6 +264,29 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 placeholder="0912345678"
               />
             </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                كلمة المرور *
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                  placeholder="كلمة المرور (6 أحرف على الأقل)"
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">سيستخدم المستخدم هذه الكلمة للدخول إلى النظام</p>
+            </div>
             <div className="flex gap-3">
               <button
                 onClick={handleAddUser}
@@ -241,7 +295,11 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 إضافة
               </button>
               <button
-                onClick={() => setShowAddForm(false)}
+                onClick={() => {
+                  setShowAddForm(false);
+                  setNewUser({ user_email: '', user_name: '', user_phone: '', password: '' });
+                  setShowPassword(false);
+                }}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 إلغاء
