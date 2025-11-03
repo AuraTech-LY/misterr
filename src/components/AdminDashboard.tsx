@@ -55,7 +55,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>('');
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
   const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
-  const { isOwner, canManageUsers, loading: permissionLoading } = usePermission();
+  const {
+    isOwner,
+    canManageUsers,
+    canManageCategories,
+    canManageMenuItems,
+    canViewOrders,
+    canManageBranches,
+    loading: permissionLoading
+  } = usePermission();
 
   const newItemTemplate: MenuItem = {
     name: '',
@@ -97,6 +105,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     fetchData();
     checkAuthStatus();
   }, []);
+
+  useEffect(() => {
+    if (!permissionLoading) {
+      if (canManageMenuItems()) {
+        setActiveTab('menu');
+      } else if (canManageCategories()) {
+        setActiveTab('categories');
+      } else if (canManageBranches()) {
+        setActiveTab('hours');
+      } else if (canViewOrders()) {
+        setActiveTab('orders');
+      } else if (canManageUsers()) {
+        setActiveTab('users');
+      } else if (isOwner()) {
+        setActiveTab('logs');
+      }
+    }
+  }, [permissionLoading]);
 
   const checkAuthStatus = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -336,107 +362,128 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-px">
             {/* Custom scrollbar hiding and smooth scroll */}
             <style dangerouslySetInnerHTML={{__html: `.scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; scroll-behavior: smooth; }`}} />
-            <button
-              onClick={() => setActiveTab('menu')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'menu'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden xs:inline">إدارة المنتجات</span>
-              <span className="xs:hidden">المنتجات</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('categories')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'categories'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <Tag className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>الفئات</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('hours')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'hours'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span className="hidden xs:inline">أوقات العمل</span>
-              <span className="xs:hidden">الأوقات</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('orders')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'orders'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>الطلبات</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('cashier')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'cashier'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden xs:inline">الطلبات المباشرة</span>
-              <span className="xs:hidden">مباشر</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'users'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>المستخدمون</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('logs')}
-              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                activeTab === 'logs'
-                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-              }`}
-            >
-              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden xs:inline">سجل التدقيق</span>
-              <span className="xs:hidden">السجل</span>
-            </button>
+
+            {canManageMenuItems() && (
+              <button
+                onClick={() => setActiveTab('menu')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'menu'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden xs:inline">إدارة المنتجات</span>
+                <span className="xs:hidden">المنتجات</span>
+              </button>
+            )}
+
+            {canManageCategories() && (
+              <button
+                onClick={() => setActiveTab('categories')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'categories'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <Tag className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>الفئات</span>
+              </button>
+            )}
+
+            {canManageBranches() && (
+              <button
+                onClick={() => setActiveTab('hours')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'hours'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="hidden xs:inline">أوقات العمل</span>
+                <span className="xs:hidden">الأوقات</span>
+              </button>
+            )}
+
+            {canViewOrders() && (
+              <button
+                onClick={() => setActiveTab('orders')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'orders'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>الطلبات</span>
+              </button>
+            )}
+
+            {canViewOrders() && (
+              <button
+                onClick={() => setActiveTab('cashier')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'cashier'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden xs:inline">الطلبات المباشرة</span>
+                <span className="xs:hidden">مباشر</span>
+              </button>
+            )}
+
+            {canManageUsers() && (
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'users'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>المستخدمون</span>
+              </button>
+            )}
+
+            {isOwner() && (
+              <button
+                onClick={() => setActiveTab('logs')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'logs'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden xs:inline">سجل التدقيق</span>
+                <span className="xs:hidden">السجل</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
 
       <main className="container mx-auto px-3 sm:px-8 py-4 sm:py-8">
-        {activeTab === 'categories' ? (
+        {activeTab === 'categories' && canManageCategories() ? (
           <AdminCategories onCategoriesChange={handleCategoriesChange} />
-        ) : activeTab === 'hours' ? (
+        ) : activeTab === 'hours' && canManageBranches() ? (
           <AdminOperatingHours />
-        ) : activeTab === 'orders' ? (
+        ) : activeTab === 'orders' && canViewOrders() ? (
           <AdminOrders />
-        ) : activeTab === 'cashier' ? (
+        ) : activeTab === 'cashier' && canViewOrders() ? (
           <CashierOrdersView />
-        ) : activeTab === 'users' ? (
+        ) : activeTab === 'users' && canManageUsers() ? (
           <AdminUserManagement currentUserEmail={currentUserEmail} />
-        ) : activeTab === 'logs' ? (
+        ) : activeTab === 'logs' && isOwner() ? (
           <AdminAuditLogs />
-        ) : (
+        ) : activeTab === 'menu' && canManageMenuItems() ? (
           <>
             {/* Restaurant Sub-tabs */}
             <div className="bg-white shadow-sm border-b mb-4 sm:mb-6 sticky top-[52px] sm:top-[60px] z-30">
@@ -700,6 +747,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               </div>
             )}
           </>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div className="text-red-600 mb-4">
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">ليس لديك صلاحية</h3>
+            <p className="text-gray-600">ليس لديك صلاحية للوصول إلى هذا القسم</p>
+          </div>
         )}
       </main>
     </div>
