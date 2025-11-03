@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, RefreshCw, Package, Clock, CheckCircle, XCircle, Truck, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { usePermission } from '../hooks/usePermission';
 
 interface Order {
   id: string;
@@ -49,22 +48,15 @@ export const CashierOrdersView: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { canViewOrders, canUpdateOrderStatus, loading: permissionLoading } = usePermission();
 
   useEffect(() => {
-    if (!permissionLoading && !canViewOrders()) {
-      setError('ليس لديك صلاحية لعرض الطلبات');
-      setLoading(false);
-      return;
-    }
-
     fetchOrders();
     subscribeToOrders();
 
     return () => {
       supabase.channel('orders').unsubscribe();
     };
-  }, [permissionLoading, canViewOrders]);
+  }, []);
 
   const fetchOrders = async () => {
     try {
@@ -164,11 +156,6 @@ export const CashierOrdersView: React.FC = () => {
   };
 
   const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
-    if (!canUpdateOrderStatus()) {
-      alert('ليس لديك صلاحية لتحديث حالة الطلب');
-      return;
-    }
-
     try {
       const { error: updateError } = await supabase
         .from('orders')
@@ -206,7 +193,7 @@ export const CashierOrdersView: React.FC = () => {
     return order.status === filterStatus;
   });
 
-  if (permissionLoading || loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
@@ -225,14 +212,12 @@ export const CashierOrdersView: React.FC = () => {
           <p className="text-red-700 font-semibold">خطأ</p>
         </div>
         <p className="text-red-600">{error}</p>
-        {canViewOrders() && (
-          <button
-            onClick={fetchOrders}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
-            إعادة المحاولة
-          </button>
-        )}
+        <button
+          onClick={fetchOrders}
+          className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        >
+          إعادة المحاولة
+        </button>
       </div>
     );
   }
@@ -381,7 +366,7 @@ export const CashierOrdersView: React.FC = () => {
               </p>
 
               {/* Actions */}
-              {nextStatus && canUpdateOrderStatus() && (
+              {nextStatus && (
                 <button
                   onClick={() => updateOrderStatus(order.id, nextStatus)}
                   className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
@@ -389,7 +374,7 @@ export const CashierOrdersView: React.FC = () => {
                   تحويل إلى: {STATUS_CONFIG[nextStatus].label}
                 </button>
               )}
-              {order.status === 'pending' && canUpdateOrderStatus() && (
+              {order.status === 'pending' && (
                 <button
                   onClick={() => updateOrderStatus(order.id, 'cancelled')}
                   className="w-full mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
