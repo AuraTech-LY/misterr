@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation, useParams } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
 import { Header } from '../components/Header';
 import { CategoryFilter } from '../components/CategoryFilter';
 import { Menu } from '../components/Menu';
@@ -225,18 +224,18 @@ export const BranchMenuPage: React.FC = () => {
     );
   }
 
-  // Redirect to restaurants page if branch not found
+  // Show error if branch not found
   if (!effectiveBranchId || !branch) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-4" dir="rtl">
         <div className="max-w-md w-full mx-auto text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">الفرع غير موجود</h1>
-          <p className="text-gray-600 mb-6">الفرع المطلوب غير متوفر حالياً</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">حدث خطأ في تحميل البيانات</h1>
+          <p className="text-gray-600 mb-6">يرجى المحاولة مرة أخرى</p>
           <button
-            onClick={() => navigate('/restaurants')}
+            onClick={() => window.location.reload()}
             className="bg-[#781220] hover:bg-[#5c0d18] text-white py-3 px-6 rounded-full font-bold transition-all duration-300 inline-block"
           >
-            العودة إلى المطاعم
+            إعادة المحاولة
           </button>
         </div>
       </div>
@@ -249,12 +248,6 @@ export const BranchMenuPage: React.FC = () => {
     : menuItems.filter(item => item.category === selectedCategory);
 
 
-  const handleBackToRestaurants = () => {
-    // Clear localStorage and redirect to root
-    localStorage.removeItem('selectedRestaurantId');
-    localStorage.removeItem('selectedBranchId');
-    window.location.href = '/';
-  };
 
   return (
     <div 
@@ -270,7 +263,6 @@ export const BranchMenuPage: React.FC = () => {
         onCartClick={openCart}
         selectedRestaurant={restaurant}
         selectedBranch={branch}
-        onBranchChange={() => navigate('/branches')}
         cartTotal={getTotalPrice()}
         isCartOpen={isCartOpen}
       />
@@ -278,23 +270,7 @@ export const BranchMenuPage: React.FC = () => {
       <main className="container mx-auto px-4 py-4 sm:py-8 lg:px-16 xl:px-32 2xl:px-48">
         {/* Add top padding to account for fixed header */}
         <div className="pt-20 sm:pt-24">
-        {/* Back Button */}
-        <div className="mb-6">
-          <button
-            onClick={handleBackToRestaurants}
-            className={`flex items-center gap-2 text-gray-600 transition-colors duration-300 py-2 ${
-              branch?.name?.includes('مستر كريسبي') 
-                ? 'hover:text-[#55421A]' 
-                : branch?.name?.includes('مستر برجريتو')
-                  ? 'hover:text-[#E59F49]'
-                  : 'hover:text-[#781220]'
-            }`}
-          >
-            <ArrowRight className="w-5 h-5" />
-            <span className="text-sm font-medium">العودة إلى اختيار المطعم</span>
-          </button>
-        </div>
-        
+
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-4">قائمة الطعام</h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
