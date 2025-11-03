@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, RefreshCw, Package, Clock, CheckCircle, XCircle, Truck, AlertCircle } from 'lucide-react';
+import { Bell, RefreshCw, Package, Clock, CheckCircle, XCircle, Truck, AlertCircle, Maximize, Minimize } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Order {
@@ -45,6 +45,7 @@ export const CashierOrdersView: React.FC = () => {
   const [orderItems, setOrderItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -148,6 +149,30 @@ export const CashierOrdersView: React.FC = () => {
       });
     }
   };
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Error toggling fullscreen:', error);
+      alert('حدث خطأ في تفعيل وضع ملء الشاشة');
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
@@ -263,6 +288,14 @@ export const CashierOrdersView: React.FC = () => {
           </span>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={toggleFullscreen}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            title={isFullscreen ? 'الخروج من ملء الشاشة' : 'ملء الشاشة'}
+          >
+            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            <span>{isFullscreen ? 'عادي' : 'ملء الشاشة'}</span>
+          </button>
           <button
             onClick={requestNotificationPermission}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
