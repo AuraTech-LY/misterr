@@ -48,8 +48,10 @@ export const usePermission = () => {
       setError(null);
 
       const { data: { user } } = await supabase.auth.getUser();
+      console.log('Fetching user role for:', user?.id);
 
       if (!user?.id) {
+        console.log('No user ID found');
         setUserRole(null);
         setLoading(false);
         return;
@@ -63,9 +65,11 @@ export const usePermission = () => {
         .maybeSingle();
 
       if (roleError) {
+        console.error('Role fetch error:', roleError);
         throw roleError;
       }
 
+      console.log('User role fetched:', data);
       setUserRole(data);
     } catch (err) {
       console.error('Error fetching user role:', err);
@@ -77,9 +81,18 @@ export const usePermission = () => {
   };
 
   const hasPermission = (permission: Permission): boolean => {
-    if (!userRole || !userRole.is_active) return false;
-    if (userRole.is_owner) return true;
-    return userRole[permission] === true;
+    console.log('Checking permission:', permission, 'UserRole:', userRole);
+    if (!userRole || !userRole.is_active) {
+      console.log('Permission denied: No role or inactive');
+      return false;
+    }
+    if (userRole.is_owner) {
+      console.log('Permission granted: User is owner');
+      return true;
+    }
+    const hasPermission = userRole[permission] === true;
+    console.log('Permission', permission, ':', hasPermission);
+    return hasPermission;
   };
 
   const isOwner = (): boolean => {

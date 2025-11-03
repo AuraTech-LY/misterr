@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
 import { AdminCategories } from './AdminCategories';
@@ -10,11 +10,6 @@ import { AdminUserManagement } from './AdminUserManagement';
 import { AdminAuditLogs } from './AdminAuditLogs';
 import { CashierOrdersView } from './CashierOrdersView';
 import { usePermission } from '../hooks/usePermission';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 interface Category {
   id: string;

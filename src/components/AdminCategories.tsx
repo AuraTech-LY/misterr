@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Save, X, GripVertical, AlertCircle } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import { usePermission } from '../hooks/usePermission';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 interface Category {
   id: string;
@@ -30,11 +25,17 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
   const [error, setError] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
-  const { canManageCategories, loading: permissionLoading } = usePermission();
+  const { canManageCategories, loading: permissionLoading, userRole } = usePermission();
 
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    console.log('AdminCategories - Permission loading:', permissionLoading);
+    console.log('AdminCategories - User role:', userRole);
+    console.log('AdminCategories - Can manage categories:', canManageCategories());
+  }, [permissionLoading, userRole]);
 
   const fetchCategories = async () => {
     try {
