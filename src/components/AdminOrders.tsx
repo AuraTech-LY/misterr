@@ -131,25 +131,25 @@ export const AdminOrders: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-3 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="flex-1 relative">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="text"
-              placeholder="البحث برقم الطلب، اسم العميل، أو رقم الهاتف..."
+              placeholder="البحث..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pr-10 pl-4 py-3 border-2 border-gray-200 rounded-full focus:border-[#7A1120] transition-all"
+              className="w-full pr-9 pl-3 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-full focus:border-[#7A1120] transition-all"
             />
           </div>
-          <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-gray-500" />
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 flex-shrink-0" />
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value as OrderStatus | 'all')}
-              className="px-4 py-3 border-2 border-gray-200 rounded-full focus:border-[#7A1120] transition-all bg-white"
+              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-full focus:border-[#7A1120] transition-all bg-white"
             >
               <option value="all">جميع الطلبات</option>
               <option value="pending">قيد الانتظار</option>
@@ -163,56 +163,56 @@ export const AdminOrders: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="bg-yellow-50 p-4 rounded-xl">
-            <div className="text-2xl font-bold text-yellow-800">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+          <div className="bg-yellow-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
+            <div className="text-xl sm:text-2xl font-bold text-yellow-800">
               {orders.filter(o => o.status === 'pending').length}
             </div>
-            <div className="text-sm text-yellow-600">قيد الانتظار</div>
+            <div className="text-xs sm:text-sm text-yellow-600">قيد الانتظار</div>
           </div>
-          <div className="bg-blue-50 p-4 rounded-xl">
-            <div className="text-2xl font-bold text-blue-800">
+          <div className="bg-blue-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
+            <div className="text-xl sm:text-2xl font-bold text-blue-800">
               {orders.filter(o => o.status === 'confirmed' || o.status === 'preparing').length}
             </div>
-            <div className="text-sm text-blue-600">قيد التحضير</div>
+            <div className="text-xs sm:text-sm text-blue-600">قيد التحضير</div>
           </div>
-          <div className="bg-green-50 p-4 rounded-xl">
-            <div className="text-2xl font-bold text-green-800">
+          <div className="bg-green-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
+            <div className="text-xl sm:text-2xl font-bold text-green-800">
               {orders.filter(o => o.status === 'ready' || o.status === 'out_for_delivery').length}
             </div>
-            <div className="text-sm text-green-600">جاهز/في الطريق</div>
+            <div className="text-xs sm:text-sm text-green-600">جاهز/في الطريق</div>
           </div>
-          <div className="bg-gray-50 p-4 rounded-xl">
-            <div className="text-2xl font-bold text-gray-800">
+          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
+            <div className="text-xl sm:text-2xl font-bold text-gray-800">
               {orders.filter(o => o.status === 'completed').length}
             </div>
-            <div className="text-sm text-gray-600">مكتمل</div>
+            <div className="text-xs sm:text-sm text-gray-600">مكتمل</div>
           </div>
         </div>
       </div>
 
       {filteredOrders.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-          <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">لا توجد طلبات</p>
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-8 sm:p-12 text-center">
+          <Package className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto mb-3 sm:mb-4" />
+          <p className="text-gray-500 text-base sm:text-lg">لا توجد طلبات</p>
         </div>
       ) : (
         <div className="space-y-4">
           {filteredOrders.map((order) => (
-            <div key={order.id} className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div key={order.id} className="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
               <div
-                className="p-4 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                className="p-3 sm:p-6 cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-gray-800">{order.order_number}</h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${statusColors[order.status]}`}>
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-800">{order.order_number}</h3>
+                      <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-semibold ${statusColors[order.status]}`}>
                         {statusLabels[order.status]}
                       </span>
                     </div>
-                    <div className="space-y-1 text-sm text-gray-600">
+                    <div className="space-y-1 text-xs sm:text-sm text-gray-600">
                       <div className="flex items-center gap-2">
                         <Package className="w-4 h-4" />
                         <span>{order.restaurant_name}</span>
@@ -223,29 +223,29 @@ export const AdminOrders: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <div className="text-left">
-                      <div className="text-2xl font-black text-[#7A1120]">
+                      <div className="text-xl sm:text-2xl font-black text-[#7A1120]">
                         {Math.round(order.total_amount)}
-                        <span className="text-base font-normal text-gray-600"> د.ل</span>
+                        <span className="text-sm sm:text-base font-normal text-gray-600"> د.ل</span>
                       </div>
-                      <div className="text-sm text-gray-500">{order.items.length} عناصر</div>
+                      <div className="text-xs sm:text-sm text-gray-500">{order.items.length} عناصر</div>
                     </div>
                     {expandedOrderId === order.id ? (
-                      <ChevronUp className="w-6 h-6 text-gray-400" />
+                      <ChevronUp className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                     ) : (
-                      <ChevronDown className="w-6 h-6 text-gray-400" />
+                      <ChevronDown className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400" />
                     )}
                   </div>
                 </div>
               </div>
 
               {expandedOrderId === order.id && (
-                <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
-                  <div className="grid md:grid-cols-2 gap-6">
+                <div className="border-t border-gray-200 p-3 sm:p-6 bg-gray-50">
+                  <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
-                      <h4 className="font-bold text-gray-800 mb-3">معلومات العميل</h4>
-                      <div className="space-y-2 text-sm">
+                      <h4 className="font-bold text-gray-800 mb-2 sm:mb-3 text-sm sm:text-base">معلومات العميل</h4>
+                      <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                         <div className="flex items-start gap-2">
                           <span className="font-semibold text-gray-700">الاسم:</span>
                           <span className="text-gray-600">{order.customer_name}</span>
@@ -289,8 +289,8 @@ export const AdminOrders: React.FC = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-bold text-gray-800 mb-3">تفاصيل الطلب</h4>
-                      <div className="space-y-2">
+                      <h4 className="font-bold text-gray-800 mb-2 sm:mb-3 text-sm sm:text-base">تفاصيل الطلب</h4>
+                      <div className="space-y-1.5 sm:space-y-2">
                         {order.items.map((item) => (
                           <div key={item.id} className="flex justify-between text-sm">
                             <span className="text-gray-700">
@@ -322,21 +322,21 @@ export const AdminOrders: React.FC = () => {
                   </div>
 
                   {getNextStatuses(order.status).length > 0 && (
-                    <div className="mt-6 pt-6 border-t border-gray-300">
-                      <h4 className="font-bold text-gray-800 mb-3">تحديث حالة الطلب</h4>
+                    <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-300">
+                      <h4 className="font-bold text-gray-800 mb-2 sm:mb-3 text-sm sm:text-base">تحديث حالة الطلب</h4>
                       <div className="flex flex-wrap gap-2">
                         {getNextStatuses(order.status).map((status) => (
                           <button
                             key={status}
                             onClick={() => handleStatusChange(order.id, status)}
                             disabled={updatingStatus === order.id}
-                            className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
+                            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-semibold text-xs sm:text-sm transition-all ${
                               updatingStatus === order.id
                                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 : 'bg-[#7A1120] text-white hover:bg-[#5c0d18] shadow-lg hover:shadow-xl transform hover:scale-105'
                             }`}
                           >
-                            {updatingStatus === order.id ? 'جاري التحديث...' : `تحديث إلى: ${statusLabels[status]}`}
+                            {updatingStatus === order.id ? 'جاري التحديث...' : `${statusLabels[status]}`}
                           </button>
                         ))}
                       </div>

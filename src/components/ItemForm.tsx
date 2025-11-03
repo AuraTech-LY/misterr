@@ -38,45 +38,45 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
   const [previewContrast, setPreviewContrast] = React.useState(item.image_contrast || 1.1);
 
   return (
-    <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="bg-gray-50 p-3 sm:p-6 rounded-lg sm:rounded-xl space-y-3 sm:space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">اسم العنصر</label>
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">اسم العنصر</label>
           <input
             type="text"
             value={item.name}
             onChange={(e) => onChange({ ...item, name: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right"
+            className="w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right"
             placeholder="أدخل اسم العنصر"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">السعر (د.ل)</label>
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">السعر (د.ل)</label>
           <input
             type="number"
             step="0.01"
             value={item.price}
             onChange={(e) => onChange({ ...item, price: parseFloat(e.target.value) || 0 })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right"
+            className="w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right"
             placeholder="0.00"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">الوصف</label>
+        <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">الوصف</label>
         <textarea
           value={item.description}
           onChange={(e) => onChange({ ...item, description: e.target.value })}
           rows={3}
-          className="w-full p-3 border border-gray-300 rounded-2xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right resize-none"
+          className="w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-xl sm:rounded-2xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right resize-none"
           placeholder="أدخل وصف العنصر"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">الفئة</label>
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">الفئة</label>
           <CustomSelect
             value={item.category}
             onChange={(value) => onChange({ ...item, category: value })}
@@ -88,12 +88,12 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">رابط الصورة</label>
+          <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">رابط الصورة</label>
           <input
             type="url"
             value={item.image_url}
             onChange={(e) => onChange({ ...item, image_url: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right"
+            className="w-full p-2.5 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-full focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-right"
             placeholder="https://example.com/image.jpg"
           />
         </div>

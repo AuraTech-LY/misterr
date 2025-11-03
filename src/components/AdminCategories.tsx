@@ -232,16 +232,16 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">إدارة الفئات</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">إدارة الفئات</h2>
         <button
           onClick={() => setShowAddForm(true)}
-          className="bg-[#55421A] hover:bg-[#3d2f12] text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+          className="bg-[#55421A] hover:bg-[#3d2f12] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full sm:w-auto justify-center"
         >
-          <Plus className="w-5 h-5" />
-          إضافة فئة جديدة
+          <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>إضافة فئة جديدة</span>
         </button>
       </div>
 
@@ -254,9 +254,9 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
 
       {/* Add New Category Form */}
       {showAddForm && (
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-800">إضافة فئة جديدة</h3>
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6">
+          <div className="flex justify-between items-center mb-3 sm:mb-4">
+            <h3 className="text-base sm:text-lg font-bold text-gray-800">إضافة فئة جديدة</h3>
             <button
               onClick={() => {
                 setShowAddForm(false);
@@ -268,33 +268,33 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
               <X className="w-6 h-6" />
             </button>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <input
               type="text"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="اسم الفئة الجديدة"
-              className="flex-1 p-3 border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
+              className="flex-1 p-2.5 sm:p-3 text-sm sm:text-base border border-gray-300 rounded-full focus:border-[#7A1120] text-right"
               onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
             />
             <button
               onClick={handleAddCategory}
               disabled={saving || !newCategoryName.trim()}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
+              className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base w-full sm:w-auto ${
                 saving || !newCategoryName.trim()
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   : 'bg-[#55421A] hover:bg-[#3d2f12] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
               }`}
             >
               <Save className="w-4 h-4" />
-              {saving ? 'جاري الحفظ...' : 'حفظ'}
+              <span>{saving ? 'جاري الحفظ...' : 'حفظ'}</span>
             </button>
           </div>
         </div>
       )}
 
       {/* Categories List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {categories.map((category) => (
           <div 
             key={category.id} 

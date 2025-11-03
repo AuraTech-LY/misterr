@@ -338,98 +338,105 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-3 sm:px-8">
-          <div className="flex gap-1">
+      <div className="bg-white shadow-sm border-b sticky top-0 z-40">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-px">
+            {/* Custom scrollbar hiding and smooth scroll */}
+            <style dangerouslySetInnerHTML={{__html: `.scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; scroll-behavior: smooth; }`}} />
             <button
               onClick={() => setActiveTab('menu')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'menu'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <Menu className="w-5 h-5" />
-              إدارة المنتجات
+              <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden xs:inline">إدارة المنتجات</span>
+              <span className="xs:hidden">المنتجات</span>
             </button>
             <button
               onClick={() => setActiveTab('categories')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'categories'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <Tag className="w-5 h-5" />
-              إدارة الفئات
+              <Tag className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>الفئات</span>
             </button>
             <button
               onClick={() => setActiveTab('hours')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'hours'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              أوقات العمل
+              <span className="hidden xs:inline">أوقات العمل</span>
+              <span className="xs:hidden">الأوقات</span>
             </button>
             <button
               onClick={() => setActiveTab('restaurants')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'restaurants'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <Store className="w-5 h-5" />
-              إدارة المطاعم والفروع
+              <Store className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden xs:inline">المطاعم والفروع</span>
+              <span className="xs:hidden">المطاعم</span>
             </button>
             <button
               onClick={() => setActiveTab('orders')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'orders'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <ShoppingCart className="w-5 h-5" />
-              إدارة الطلبات
+              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>الطلبات</span>
             </button>
             <button
               onClick={() => setActiveTab('cashier')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'cashier'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <Bell className="w-5 h-5" />
-              الطلبات المباشرة
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden xs:inline">الطلبات المباشرة</span>
+              <span className="xs:hidden">مباشر</span>
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'users'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <Users className="w-5 h-5" />
-              المستخدمون
+              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>المستخدمون</span>
             </button>
             <button
               onClick={() => setActiveTab('logs')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+              className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'logs'
                   ? 'text-[#55421A] border-[#55421A] bg-red-50'
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              <FileText className="w-5 h-5" />
-              سجل التدقيق
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden xs:inline">سجل التدقيق</span>
+              <span className="xs:hidden">السجل</span>
             </button>
           </div>
         </div>
@@ -453,14 +460,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         ) : (
           <>
             {/* Restaurant Sub-tabs */}
-            <div className="bg-white shadow-sm border-b mb-6">
-              <div className="container mx-auto px-3 sm:px-8">
-                <div className="flex gap-1 overflow-x-auto">
+            <div className="bg-white shadow-sm border-b mb-4 sm:mb-6 sticky top-[52px] sm:top-[60px] z-30">
+              <div className="container mx-auto px-3 sm:px-4">
+                <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-px">
                   {restaurants.map((restaurant) => (
                     <button
                       key={restaurant.id}
                       onClick={() => setSelectedRestaurantId(restaurant.id)}
-                      className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 whitespace-nowrap ${
+                      className={`px-3 sm:px-6 py-2.5 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                         selectedRestaurantId === restaurant.id
                           ? `border-[${restaurant.primary_color}] bg-red-50`
                           : 'text-gray-600 border-transparent hover:border-gray-300'
@@ -477,10 +484,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
             </div>
 
             {/* Controls */}
-            <div className="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-3 sm:p-6 mb-4 sm:mb-8">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 sm:gap-4">
+                <div className="w-full sm:w-auto">
+                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                     تصفية حسب الفرع
                   </label>
                   <CustomSelect
@@ -503,11 +510,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 </div>
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base w-full md:w-auto justify-center"
+                  className="text-white px-4 py-2.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base w-full sm:w-auto justify-center"
                   style={{ backgroundColor: selectedRestaurant?.primary_color || '#781220' }}
                 >
-                  <Plus className="w-5 h-5" />
-                  إضافة عنصر جديد
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span>إضافة عنصر جديد</span>
                 </button>
               </div>
             </div>
