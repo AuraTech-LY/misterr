@@ -409,32 +409,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               <Bell className="w-5 h-5" />
               الطلبات المباشرة
             </button>
-            {canManageUsers() && (
-              <button
-                onClick={() => setActiveTab('users')}
-                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                  activeTab === 'users'
-                    ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                    : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
-                }`}
-              >
-                <Users className="w-5 h-5" />
-                المستخدمون
-              </button>
-            )}
-            {isOwner() && (
-              <button
-                onClick={() => setActiveTab('logs')}
-                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                  activeTab === 'logs'
-                    ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                    : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
-                }`}
-              >
-                <FileText className="w-5 h-5" />
-                سجل التدقيق
-              </button>
-            )}
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'users'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+              }`}
+            >
+              <Users className="w-5 h-5" />
+              المستخدمون
+            </button>
+            <button
+              onClick={() => setActiveTab('logs')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'logs'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+              }`}
+            >
+              <FileText className="w-5 h-5" />
+              سجل التدقيق
+            </button>
           </div>
         </div>
       </div>
