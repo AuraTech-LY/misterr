@@ -31,13 +31,13 @@ interface OrderItem {
 }
 
 const STATUS_CONFIG = {
-  pending: { label: 'معلق', color: 'bg-yellow-100 text-yellow-700 border-yellow-300', icon: Clock, nextLabel: 'تأكيد' },
-  confirmed: { label: 'مؤكد', color: 'bg-blue-100 text-blue-700 border-blue-300', icon: CheckCircle, nextLabel: 'بدء التحضير' },
-  preparing: { label: 'قيد التحضير', color: 'bg-purple-100 text-purple-700 border-purple-300', icon: Package, nextLabel: 'جاهز' },
-  ready: { label: 'جاهز', color: 'bg-green-100 text-green-700 border-green-300', icon: CheckCircle, nextLabel: 'في الطريق' },
-  out_for_delivery: { label: 'في الطريق', color: 'bg-indigo-100 text-indigo-700 border-indigo-300', icon: Truck, nextLabel: 'مكتمل' },
-  completed: { label: 'مكتمل', color: 'bg-gray-100 text-gray-700 border-gray-300', icon: CheckCircle, nextLabel: '' },
-  cancelled: { label: 'ملغي', color: 'bg-red-100 text-red-700 border-red-300', icon: XCircle, nextLabel: '' },
+  pending: { label: 'معلق', color: 'bg-amber-50 text-amber-800 border-amber-200', icon: Clock, nextLabel: 'تأكيد', buttonColor: 'from-amber-600 to-amber-500', activeColor: 'bg-amber-600' },
+  confirmed: { label: 'مؤكد', color: 'bg-sky-50 text-sky-800 border-sky-200', icon: CheckCircle, nextLabel: 'بدء التحضير', buttonColor: 'from-sky-600 to-sky-500', activeColor: 'bg-sky-600' },
+  preparing: { label: 'قيد التحضير', color: 'bg-violet-50 text-violet-800 border-violet-200', icon: Package, nextLabel: 'جاهز', buttonColor: 'from-violet-600 to-violet-500', activeColor: 'bg-violet-600' },
+  ready: { label: 'جاهز', color: 'bg-emerald-50 text-emerald-800 border-emerald-200', icon: CheckCircle, nextLabel: 'في الطريق', buttonColor: 'from-emerald-600 to-emerald-500', activeColor: 'bg-emerald-600' },
+  out_for_delivery: { label: 'في الطريق', color: 'bg-cyan-50 text-cyan-800 border-cyan-200', icon: Truck, nextLabel: 'مكتمل', buttonColor: 'from-cyan-600 to-cyan-500', activeColor: 'bg-cyan-600' },
+  completed: { label: 'مكتمل', color: 'bg-slate-50 text-slate-700 border-slate-200', icon: CheckCircle, nextLabel: '', buttonColor: 'from-slate-600 to-slate-500', activeColor: 'bg-slate-600' },
+  cancelled: { label: 'ملغي', color: 'bg-rose-50 text-rose-800 border-rose-200', icon: XCircle, nextLabel: '', buttonColor: 'from-rose-600 to-rose-500', activeColor: 'bg-rose-600' },
 };
 
 export const CashierOrdersView: React.FC = () => {
@@ -298,7 +298,7 @@ export const CashierOrdersView: React.FC = () => {
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">جاري تحميل الطلبات...</p>
+          <p className="text-slate-600">جاري تحميل الطلبات...</p>
         </div>
       </div>
     );
@@ -314,7 +314,7 @@ export const CashierOrdersView: React.FC = () => {
         <p className="text-red-600">{error}</p>
         <button
           onClick={fetchOrders}
-          className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          className="mt-4 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700"
         >
           إعادة المحاولة
         </button>
@@ -323,34 +323,34 @@ export const CashierOrdersView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
+    <div className="min-h-screen bg-slate-50" dir="rtl">
       <audio ref={audioRef} src="/notification.mp3" preload="auto" />
 
       {/* Mobile-Optimized Sticky Header */}
-      <div className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200">
+      <div className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
         <div className="px-3 py-3">
           {/* Top Row - Title and Count */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <Bell className="w-5 h-5 text-blue-600" />
+              <div className="bg-slate-100 p-2 rounded-lg">
+                <Bell className="w-5 h-5 text-slate-700" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-800">الطلبات المباشرة</h1>
-                <p className="text-xs text-gray-500">{filteredOrders.length} طلب نشط</p>
+                <h1 className="text-lg font-bold text-slate-900">الطلبات المباشرة</h1>
+                <p className="text-xs text-slate-500">{filteredOrders.length} طلب نشط</p>
               </div>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={toggleFullscreen}
-                className="p-2 bg-gray-100 rounded-lg active:bg-gray-200"
+                className="p-2 bg-slate-100 rounded-lg active:bg-slate-200 transition-colors"
                 title={isFullscreen ? 'خروج' : 'ملء الشاشة'}
               >
-                {isFullscreen ? <Minimize className="w-5 h-5 text-gray-700" /> : <Maximize className="w-5 h-5 text-gray-700" />}
+                {isFullscreen ? <Minimize className="w-5 h-5 text-slate-700" /> : <Maximize className="w-5 h-5 text-slate-700" />}
               </button>
               <button
                 onClick={fetchOrders}
-                className="p-2 bg-blue-600 rounded-lg active:bg-blue-700"
+                className="p-2 bg-slate-800 rounded-lg active:bg-slate-900 transition-colors"
               >
                 <RefreshCw className="w-5 h-5 text-white" />
               </button>
@@ -362,16 +362,16 @@ export const CashierOrdersView: React.FC = () => {
             <style dangerouslySetInnerHTML={{__html: `.hide-scrollbar::-webkit-scrollbar { display: none; } .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}} />
             <button
               onClick={() => setFilterStatus('all')}
-              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap text-xs flex-shrink-0 ${
-                filterStatus === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap text-xs flex-shrink-0 transition-colors ${
+                filterStatus === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-700'
               }`}
             >
               الكل
             </button>
             <button
               onClick={() => setFilterStatus('active')}
-              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap text-xs flex-shrink-0 ${
-                filterStatus === 'active' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap text-xs flex-shrink-0 transition-colors ${
+                filterStatus === 'active' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-700'
               }`}
             >
               النشطة
@@ -380,8 +380,8 @@ export const CashierOrdersView: React.FC = () => {
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap text-xs flex-shrink-0 ${
-                  filterStatus === status ? config.color.replace('100', '600').replace('text-', 'text-white ') : 'bg-gray-100 text-gray-700'
+                className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap text-xs flex-shrink-0 transition-colors ${
+                  filterStatus === status ? config.activeColor + ' text-white' : 'bg-slate-100 text-slate-700'
                 }`}
               >
                 {config.label}
@@ -392,11 +392,11 @@ export const CashierOrdersView: React.FC = () => {
       </div>
 
       {/* Orders List - Optimized for Touch */}
-      <div className="p-3 space-y-3">
+      <div className="p-3 space-y-3 bg-slate-50">
         {filteredOrders.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-xl">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">لا توجد طلبات</p>
+          <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+            <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+            <p className="text-slate-500">لا توجد طلبات</p>
           </div>
         ) : (
           filteredOrders.map(order => {
@@ -409,18 +409,18 @@ export const CashierOrdersView: React.FC = () => {
             return (
               <div
                 key={order.id}
-                className={`bg-white rounded-xl shadow-sm border-2 p-4 transition-all ${
+                className={`bg-white rounded-xl shadow-sm border-2 p-4 transition-all hover:shadow-md ${
                   isNew
-                    ? 'border-green-400 shadow-green-100 animate-pulse'
-                    : statusConfig.color.includes('border-') ? statusConfig.color : 'border-gray-200'
+                    ? 'border-emerald-400 shadow-emerald-100 animate-pulse'
+                    : 'border-slate-200'
                 }`}
                 onClick={() => setSelectedOrder(order)}
               >
                 {/* Order Header */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-800 mb-1">{order.order_number}</h3>
-                    <p className="text-sm text-gray-600">{order.restaurant_name}</p>
+                    <h3 className="text-xl font-bold text-slate-900 mb-1">{order.order_number}</h3>
+                    <p className="text-sm text-slate-600">{order.restaurant_name}</p>
                   </div>
                   <span className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${statusConfig.color}`}>
                     <StatusIcon className="w-3.5 h-3.5" />
@@ -429,41 +429,41 @@ export const CashierOrdersView: React.FC = () => {
                 </div>
 
                 {/* Customer Info - Compact */}
-                <div className="mb-3 p-3 bg-gray-50 rounded-lg">
+                <div className="mb-3 p-3 bg-slate-50 rounded-lg">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-gray-800">{order.customer_name}</span>
+                    <span className="text-sm font-semibold text-slate-800">{order.customer_name}</span>
                     <a
                       href={`tel:${order.customer_phone}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1 text-blue-600 font-medium text-sm"
+                      className="flex items-center gap-1 text-slate-700 bg-slate-200 px-2 py-1 rounded-lg font-medium text-xs hover:bg-slate-300 transition-colors"
                     >
-                      <Phone className="w-4 h-4" />
+                      <Phone className="w-3.5 h-3.5" />
                       <span>اتصال</span>
                     </a>
                   </div>
-                  <p className="text-xs text-gray-600">{order.customer_phone}</p>
+                  <p className="text-xs text-slate-600">{order.customer_phone}</p>
                   {order.delivery_method === 'delivery' && order.delivery_area && (
-                    <p className="text-xs text-gray-600 mt-1">📍 {order.delivery_area}</p>
+                    <p className="text-xs text-slate-600 mt-1">📍 {order.delivery_area}</p>
                   )}
                   {order.delivery_method === 'pickup' && (
-                    <p className="text-xs text-blue-600 font-semibold mt-1">🏪 استلام من الفرع</p>
+                    <p className="text-xs text-slate-700 font-semibold mt-1 bg-slate-200 inline-block px-2 py-0.5 rounded">🏪 استلام من الفرع</p>
                   )}
                 </div>
 
                 {/* Items Count & Total - Prominent */}
-                <div className="flex items-center justify-between mb-3 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+                <div className="flex items-center justify-between mb-3 p-3 bg-slate-100 rounded-lg border border-slate-200">
                   <div>
-                    <p className="text-xs text-gray-600">المجموع</p>
-                    <p className="text-2xl font-black text-blue-600">{order.total_amount.toFixed(0)} د.ل</p>
+                    <p className="text-xs text-slate-600">المجموع</p>
+                    <p className="text-2xl font-black text-slate-900">{order.total_amount.toFixed(0)} <span className="text-base font-normal text-slate-600">د.ل</span></p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-gray-600">العناصر</p>
-                    <p className="text-lg font-bold text-gray-800">{items.length}</p>
+                    <p className="text-xs text-slate-600">العناصر</p>
+                    <p className="text-lg font-bold text-slate-800">{items.length}</p>
                   </div>
                 </div>
 
                 {/* Time */}
-                <p className="text-xs text-gray-500 mb-3">
+                <p className="text-xs text-slate-500 mb-3">
                   ⏰ {new Date(order.created_at).toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })}
                 </p>
 
@@ -474,7 +474,7 @@ export const CashierOrdersView: React.FC = () => {
                       e.stopPropagation();
                       updateOrderStatus(order.id, nextStatus);
                     }}
-                    className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-base active:scale-98 transform transition-transform shadow-md"
+                    className={`w-full py-3.5 bg-gradient-to-r ${STATUS_CONFIG[nextStatus].buttonColor} text-white rounded-xl font-bold text-base active:scale-98 transform transition-all shadow-sm hover:shadow-md`}
                   >
                     {statusConfig.nextLabel} ←
                   </button>
@@ -488,7 +488,7 @@ export const CashierOrdersView: React.FC = () => {
                         updateOrderStatus(order.id, 'cancelled');
                       }
                     }}
-                    className="w-full mt-2 py-2.5 bg-red-600 text-white rounded-xl font-semibold text-sm active:scale-98 transform transition-transform"
+                    className="w-full mt-2 py-2.5 border-2 border-rose-600 text-rose-600 rounded-xl font-semibold text-sm active:scale-98 transform transition-all hover:bg-rose-50"
                   >
                     ✕ إلغاء الطلب
                   </button>
@@ -511,21 +511,21 @@ export const CashierOrdersView: React.FC = () => {
           >
             {/* Drag Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+              <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
             </div>
 
             <div className="p-5">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-800">{selectedOrder.order_number}</h3>
-                  <p className="text-sm text-gray-600">{selectedOrder.restaurant_name}</p>
+                  <h3 className="text-2xl font-bold text-slate-900">{selectedOrder.order_number}</h3>
+                  <p className="text-sm text-slate-600">{selectedOrder.restaurant_name}</p>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:bg-gray-100 rounded-full"
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 >
-                  <XCircle className="w-6 h-6 text-gray-400" />
+                  <XCircle className="w-6 h-6 text-slate-400" />
                 </button>
               </div>
 
@@ -538,40 +538,40 @@ export const CashierOrdersView: React.FC = () => {
               </div>
 
               {/* Customer */}
-              <div className="mb-4 p-4 bg-gray-50 rounded-xl">
-                <h4 className="font-bold text-gray-800 mb-2">معلومات العميل</h4>
-                <p className="text-lg font-semibold text-gray-800">{selectedOrder.customer_name}</p>
-                <a href={`tel:${selectedOrder.customer_phone}`} className="text-blue-600 font-medium flex items-center gap-2 mt-1">
+              <div className="mb-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                <h4 className="font-bold text-slate-800 mb-2">معلومات العميل</h4>
+                <p className="text-lg font-semibold text-slate-900">{selectedOrder.customer_name}</p>
+                <a href={`tel:${selectedOrder.customer_phone}`} className="text-slate-700 font-medium flex items-center gap-2 mt-1 hover:text-slate-900 transition-colors">
                   <Phone className="w-4 h-4" />
                   {selectedOrder.customer_phone}
                 </a>
                 {selectedOrder.delivery_method === 'delivery' && selectedOrder.delivery_area && (
-                  <p className="text-sm text-gray-600 mt-2">📍 {selectedOrder.delivery_area}</p>
+                  <p className="text-sm text-slate-600 mt-2">📍 {selectedOrder.delivery_area}</p>
                 )}
               </div>
 
               {/* Items */}
               <div className="mb-4">
-                <h4 className="font-bold text-gray-800 mb-3">العناصر</h4>
+                <h4 className="font-bold text-slate-800 mb-3">العناصر</h4>
                 <div className="space-y-2">
                   {(orderItems[selectedOrder.id] || []).map(item => (
-                    <div key={item.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <span className="font-medium text-gray-800">
+                    <div key={item.id} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-200">
+                      <span className="font-medium text-slate-800">
                         {item.quantity}x {item.item_name}
                       </span>
-                      <span className="font-bold text-gray-900">{item.subtotal.toFixed(0)} د.ل</span>
+                      <span className="font-bold text-slate-900">{item.subtotal.toFixed(0)} د.ل</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Total */}
-              <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
+              <div className="mb-6 p-4 bg-slate-100 rounded-xl border-2 border-slate-200">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-bold text-gray-800">المجموع الكلي</span>
-                  <span className="text-3xl font-black text-blue-600">{selectedOrder.total_amount.toFixed(0)} د.ل</span>
+                  <span className="text-lg font-bold text-slate-800">المجموع الكلي</span>
+                  <span className="text-3xl font-black text-slate-900">{selectedOrder.total_amount.toFixed(0)} <span className="text-xl text-slate-600">د.ل</span></span>
                 </div>
-                <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
+                <div className="flex items-center justify-between mt-2 text-sm text-slate-600">
                   <span>{selectedOrder.payment_method === 'cash' ? '💵 نقداً' : '💳 بطاقة'}</span>
                   {selectedOrder.delivery_price > 0 && (
                     <span>توصيل: {selectedOrder.delivery_price.toFixed(0)} د.ل</span>
@@ -588,7 +588,7 @@ export const CashierOrdersView: React.FC = () => {
                       updateOrderStatus(selectedOrder.id, nextStatus);
                       setSelectedOrder(null);
                     }}
-                    className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-bold text-lg active:scale-98 transform transition-transform shadow-lg"
+                    className={`w-full py-4 bg-gradient-to-r ${STATUS_CONFIG[nextStatus].buttonColor} text-white rounded-xl font-bold text-lg active:scale-98 transform transition-all shadow-sm hover:shadow-md`}
                   >
                     {STATUS_CONFIG[selectedOrder.status].nextLabel} ←
                   </button>
