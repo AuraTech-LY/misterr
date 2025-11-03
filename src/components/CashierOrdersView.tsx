@@ -58,9 +58,17 @@ export const CashierOrdersView: React.FC = () => {
 
   useEffect(() => {
     console.log('🚀 CashierOrdersView mounted, initializing...');
-    fetchOrders();
-    const channel = subscribeToOrders();
-    requestNotificationPermission();
+
+    const initializeView = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('🔐 Session check:', session?.user?.email || 'Not authenticated');
+
+      await fetchOrders();
+      subscribeToOrders();
+      requestNotificationPermission();
+    };
+
+    initializeView();
 
     return () => {
       console.log('🛑 CashierOrdersView unmounting, cleaning up...');
@@ -131,8 +139,14 @@ export const CashierOrdersView: React.FC = () => {
   };
 
   const subscribeToOrders = () => {
+    console.log('📶 Setting up realtime subscription...');
     const channel = supabase
-      .channel('orders-realtime')
+      .channel('orders-realtime-channel', {
+        config: {
+          broadcast: { self: true },
+          presence: { key: 'cashier' },
+        },
+      })
       .on(
         'postgres_changes',
         {
@@ -210,7 +224,7 @@ export const CashierOrdersView: React.FC = () => {
           }));
         }
       )
-      .subscribe((status, err) => {
+      .subscribe(async (status, err) => {
         console.log('📡 Realtime subscription status:', status);
         if (status === 'SUBSCRIBED') {
           console.log('✅ Successfully subscribed to real-time orders');
@@ -218,6 +232,9 @@ export const CashierOrdersView: React.FC = () => {
             orders: 'INSERT, UPDATE',
             order_items: 'INSERT, UPDATE'
           });
+          const { data: { session } } = await supabase.auth.getSession();
+          console.log('🔑 User authenticated:', session?.user?.email || 'Not authenticated');
+          console.log('🌐 WebSocket URL:', import.meta.env.VITE_SUPABASE_URL?.replace('https://', 'wss://') + '/realtime/v1');
           setRealtimeStatus('connected');
         } else if (status === 'CHANNEL_ERROR') {
           console.error('❌ Error subscribing to real-time orders:', err);
