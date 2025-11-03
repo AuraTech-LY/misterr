@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
@@ -7,6 +7,10 @@ import { AdminCategories } from './AdminCategories';
 import { AdminOperatingHours } from './AdminOperatingHours';
 import { AdminRestaurants } from './AdminRestaurants';
 import { AdminOrders } from './AdminOrders';
+import { AdminUserManagement } from './AdminUserManagement';
+import { AdminAuditLogs } from './AdminAuditLogs';
+import { CashierOrdersView } from './CashierOrdersView';
+import { usePermission } from '../hooks/usePermission';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -51,11 +55,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'restaurants' | 'orders'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'restaurants' | 'orders' | 'cashier' | 'users' | 'logs'>('menu');
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [branches, setBranches] = useState<RestaurantBranch[]>([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>('');
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
+  const { isOwner, canManageUsers, loading: permissionLoading } = usePermission();
 
   const newItemTemplate: MenuItem = {
     name: '',
@@ -102,6 +108,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       onLogout();
+    } else {
+      setCurrentUserEmail(user.email || '');
     }
   };
 
@@ -390,6 +398,43 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               <ShoppingCart className="w-5 h-5" />
               إدارة الطلبات
             </button>
+            <button
+              onClick={() => setActiveTab('cashier')}
+              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                activeTab === 'cashier'
+                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+              }`}
+            >
+              <Bell className="w-5 h-5" />
+              الطلبات المباشرة
+            </button>
+            {canManageUsers() && (
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                  activeTab === 'users'
+                    ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                    : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                المستخدمون
+              </button>
+            )}
+            {isOwner() && (
+              <button
+                onClick={() => setActiveTab('logs')}
+                className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
+                  activeTab === 'logs'
+                    ? 'text-[#55421A] border-[#55421A] bg-red-50'
+                    : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                }`}
+              >
+                <FileText className="w-5 h-5" />
+                سجل التدقيق
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -403,6 +448,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminRestaurants onRestaurantsChange={fetchData} />
         ) : activeTab === 'orders' ? (
           <AdminOrders />
+        ) : activeTab === 'cashier' ? (
+          <CashierOrdersView />
+        ) : activeTab === 'users' ? (
+          <AdminUserManagement currentUserEmail={currentUserEmail} />
+        ) : activeTab === 'logs' ? (
+          <AdminAuditLogs />
         ) : (
           <>
             {/* Restaurant Sub-tabs */}
