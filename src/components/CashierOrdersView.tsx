@@ -149,9 +149,36 @@ export const CashierOrdersView: React.FC = () => {
     }
   };
 
-  const requestNotificationPermission = () => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) {
+      alert('المتصفح الخاص بك لا يدعم الإشعارات');
+      return;
+    }
+
+    if (Notification.permission === 'granted') {
+      alert('الإشعارات مفعلة بالفعل! ✅');
+      return;
+    }
+
+    if (Notification.permission === 'denied') {
+      alert('الإشعارات محظورة. يرجى تفعيلها من إعدادات المتصفح:\n\n1. انقر على أيقونة القفل بجانب عنوان الموقع\n2. ابحث عن "الإشعارات" أو "Notifications"\n3. اختر "السماح" أو "Allow"');
+      return;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        alert('تم تفعيل الإشعارات بنجاح! ✅');
+        new Notification('طلبات مباشرة', {
+          body: 'سيتم إشعارك بالطلبات الجديدة',
+          icon: '/favicon.ico',
+        });
+      } else {
+        alert('تم رفض الإشعارات. يمكنك تفعيلها لاحقاً من إعدادات المتصفح.');
+      }
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+      alert('حدث خطأ في طلب إذن الإشعارات');
     }
   };
 
