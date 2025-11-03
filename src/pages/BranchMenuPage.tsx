@@ -407,16 +407,16 @@ export const BranchMenuPage: React.FC = () => {
           <p className="text-gray-400 text-lg mb-6">{restaurant?.description || 'مطعم الوجبات السريعة الأفضل'}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <h4 className={`font-bold mb-2 ${branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : branch.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>الفرع الحالي</h4>
+              <h4 className="font-bold mb-2" style={{ color: primaryColor }}>الفرع الحالي</h4>
               <p className="text-gray-300">{restaurant?.name}</p>
               <p className="text-gray-400 text-sm">{branch.address}</p>
             </div>
             <div>
-              <h4 className={`font-bold mb-2 ${branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : branch.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>ساعات العمل</h4>
+              <h4 className="font-bold mb-2" style={{ color: primaryColor }}>ساعات العمل</h4>
               <p className="text-gray-300">{workingHours}</p>
             </div>
             <div>
-              <h4 className={`font-bold mb-2 ${branch.name?.includes('مستر كريسبي') ? 'text-[#55421A]' : branch.name?.includes('مستر برجريتو') ? 'text-[#E59F49]' : 'text-[#781220]'}`}>الهاتف</h4>
+              <h4 className="font-bold mb-2" style={{ color: primaryColor }}>الهاتف</h4>
               <p className="text-gray-300">
                 {branch.id === 'burgerito-airport' ? 
                   branch.phone.replace(/(\d{3})(\d{7})/, '$1-$2') : 
