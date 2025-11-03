@@ -119,21 +119,25 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
     const isEditing = editingUser?.id === user.id;
     const value = isEditing ? editingUser[permission] : user[permission];
     const isBoolean = typeof value === 'boolean';
+    const isEditingSelf = user.user_email === currentUserEmail;
 
     if (!isBoolean) return null;
 
     return (
       <label className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
-        isEditing ? 'hover:bg-gray-50 cursor-pointer' : 'cursor-default'
-      } ${disabled ? 'opacity-50' : ''}`}>
+        isEditing && !isEditingSelf ? 'hover:bg-gray-50 cursor-pointer' : 'cursor-default'
+      } ${disabled || isEditingSelf ? 'opacity-50' : ''}`}>
         <input
           type="checkbox"
           checked={value as boolean}
           onChange={() => togglePermission(user, permission)}
-          disabled={!isEditing || disabled}
+          disabled={!isEditing || disabled || isEditingSelf}
           className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <span className="text-sm text-gray-700">{label}</span>
+        {isEditingSelf && isEditing && (
+          <span className="text-xs text-gray-500 mr-auto">(لا يمكن تعديل صلاحياتك الخاصة)</span>
+        )}
       </label>
     );
   };
@@ -323,12 +327,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 <PermissionCheckbox user={user} permission="can_manage_branches" label="إدارة الفروع" />
                 <PermissionCheckbox user={user} permission="can_view_reports" label="عرض التقارير" />
                 <PermissionCheckbox user={user} permission="can_manage_users" label="إدارة المستخدمين" />
-                <PermissionCheckbox
-                  user={user}
-                  permission="is_owner"
-                  label="مالك (جميع الصلاحيات)"
-                  disabled={user.user_email === currentUserEmail}
-                />
+                <PermissionCheckbox user={user} permission="is_owner" label="مالك (جميع الصلاحيات)" />
                 <PermissionCheckbox user={user} permission="is_active" label="نشط" />
               </div>
             </div>
