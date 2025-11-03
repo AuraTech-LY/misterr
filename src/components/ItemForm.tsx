@@ -210,7 +210,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             id={`popular-${isNew ? 'new' : item.id}`}
             checked={item.is_popular}
             onChange={(e) => onChange({ ...item, is_popular: e.target.checked })}
-            className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-5 h-5 text-[#fcb946] border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           />
           <label htmlFor={`popular-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700">
             الأكثر طلباً
@@ -222,7 +222,7 @@ export const ItemForm: React.FC<ItemFormProps> = ({ item, onChange, categories, 
             id={`available-${isNew ? 'new' : item.id}`}
             checked={item.is_available}
             onChange={(e) => onChange({ ...item, is_available: e.target.checked })}
-            className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-5 h-5 text-[#fcb946] border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           />
           <label htmlFor={`available-${isNew ? 'new' : item.id}`} className="text-sm text-gray-700">
             متوفر

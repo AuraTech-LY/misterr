@@ -528,7 +528,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       ...restaurantBranches.map(branch => ({
                         value: branch.id,
                         label: branch.area,
-                        icon: <MapPin className="w-4 h-4 text-blue-500" />
+                        icon: <MapPin className="w-4 h-4 text-[#fcb946]" />
                       }))
                     ]}
                     placeholder="اختر الفرع"
@@ -641,7 +641,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                             </div>
                             <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
                               {item.branch_id ? (
-                                <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                <span className="bg-[#fcb946]/10 text-[#fcb946] px-2 py-1 rounded-full font-semibold">
                                   {branches.find(b => b.id === item.branch_id)?.area || 'فرع محدد'}
                                 </span>
                               ) : (
@@ -722,7 +722,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           <div className="flex gap-2 self-end sm:self-start">
                             <button
                               onClick={() => setEditingItem(item)}
-                              className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                              className="p-3 text-[#fcb946] hover:bg-[#fcb946]/10 rounded-full transition-all duration-300 transform hover:scale-110"
                             >
                               <Edit className="w-5 h-5" />
                             </button>

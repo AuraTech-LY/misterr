@@ -510,7 +510,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   {!customerLocation && (
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                       <div className="text-center">
-                        <MapPin className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                        <MapPin className="w-8 h-8 text-[#fcb946] mx-auto mb-2" />
                         <h4 className="font-semibold text-blue-800 mb-2">تحديد موقعك للتوصيل</h4>
                         <p className="text-blue-700 text-sm mb-4">نحتاج لموقعك لحساب سعر التوصيل</p>
                         
@@ -521,7 +521,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                           className={`w-full py-3 rounded-full font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                             isLocating
                               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                              : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                              : 'bg-[#fcb946] hover:bg-[#f5a623] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
                           }`}
                         >
                           {isLocating ? (
@@ -544,7 +544,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                             <button
                               type="button"
                               onClick={handleGetLocation}
-                              className="mt-2 text-blue-600 hover:text-blue-800 text-sm underline"
+                              className="mt-2 text-[#fcb946] hover:text-[#f5a623] text-sm underline"
                             >
                               المحاولة مرة أخرى
                             </button>

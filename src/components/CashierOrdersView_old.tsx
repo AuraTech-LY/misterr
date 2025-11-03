@@ -352,7 +352,7 @@ export const CashierOrdersView: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Bell className="w-6 h-6 text-blue-600" />
+          <Bell className="w-6 h-6 text-[#fcb946]" />
           <h2 className="text-2xl font-bold text-gray-800">الطلبات المباشرة</h2>
           <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold">
             {filteredOrders.length} طلب
@@ -375,7 +375,7 @@ export const CashierOrdersView: React.FC = () => {
           </button>
           <button
             onClick={fetchOrders}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#fcb946] text-white rounded-lg hover:bg-[#f5a623] transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
             <span>تحديث</span>
@@ -388,7 +388,7 @@ export const CashierOrdersView: React.FC = () => {
         <button
           onClick={() => setFilterStatus('all')}
           className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-            filterStatus === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            filterStatus === 'all' ? 'bg-[#fcb946] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
           الكل
@@ -396,7 +396,7 @@ export const CashierOrdersView: React.FC = () => {
         <button
           onClick={() => setFilterStatus('active')}
           className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-            filterStatus === 'active' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            filterStatus === 'active' ? 'bg-[#fcb946] text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
           }`}
         >
           النشطة
@@ -451,7 +451,7 @@ export const CashierOrdersView: React.FC = () => {
                   </p>
                 )}
                 {order.delivery_method === 'pickup' && (
-                  <p className="text-sm text-blue-600 font-semibold mt-1">استلام من الفرع</p>
+                  <p className="text-sm text-[#fcb946] font-semibold mt-1">استلام من الفرع</p>
                 )}
               </div>
 
@@ -500,7 +500,7 @@ export const CashierOrdersView: React.FC = () => {
               {nextStatus && (
                 <button
                   onClick={() => updateOrderStatus(order.id, nextStatus)}
-                  className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                  className="w-full px-4 py-2 bg-[#fcb946] text-white rounded-lg hover:bg-[#f5a623] transition-colors font-semibold"
                 >
                   تحويل إلى: {STATUS_CONFIG[nextStatus].label}
                 </button>

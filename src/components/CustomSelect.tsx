@@ -48,8 +48,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full p-3 bg-white border-2 border-gray-200 rounded-full text-right flex items-center justify-between transition-all duration-300 hover:border-[#781220] focus:border-[#781220] focus:outline-none ${
-          isOpen ? 'border-[#781220] shadow-lg' : ''
+        className={`w-full p-3 bg-white border-2 border-gray-200 rounded-full text-right flex items-center justify-between transition-all duration-300 hover:border-[#fcb946] focus:border-[#fcb946] focus:outline-none ${
+          isOpen ? 'border-[#fcb946] shadow-lg' : ''
         }`}
       >
         <div className="flex items-center gap-3">
@@ -72,16 +72,16 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               key={option.value}
               type="button"
               onClick={() => handleSelect(option.value)}
-              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#781220] hover:text-white ${
-                value === option.value 
-                  ? 'bg-red-50 text-[#781220] font-semibold' 
+              className={`w-full p-3 text-right flex items-center gap-3 transition-all duration-200 hover:bg-[#fcb946] hover:text-white ${
+                value === option.value
+                  ? 'bg-[#fcb946]/10 text-[#fcb946] font-semibold'
                   : 'text-gray-700'
               }`}
             >
               {option.icon}
               <span>{option.label}</span>
               {value === option.value && (
-                <div className="mr-auto w-2 h-2 bg-[#781220] rounded-full"></div>
+                <div className="mr-auto w-2 h-2 bg-[#fcb946] rounded-full"></div>
               )}
             </button>
           ))}

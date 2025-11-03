@@ -351,7 +351,7 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditingCategory(category)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                    className="p-2 text-[#fcb946] hover:bg-[#fcb946]/5 rounded-full transition-all duration-300 transform hover:scale-110"
                   >
                     <Edit className="w-5 h-5" />
                   </button>

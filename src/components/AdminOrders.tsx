@@ -6,8 +6,8 @@ import { usePermission } from '../hooks/usePermission';
 
 const statusColors: Record<OrderStatus, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  preparing: 'bg-purple-100 text-purple-800',
+  confirmed: 'bg-[#fcb946]/10 text-[#f5a623]',
+  preparing: 'bg-[#fcb946]/20 text-purple-800',
   ready: 'bg-green-100 text-green-800',
   out_for_delivery: 'bg-indigo-100 text-indigo-800',
   completed: 'bg-gray-100 text-gray-800',
@@ -170,11 +170,11 @@ export const AdminOrders: React.FC = () => {
             </div>
             <div className="text-xs sm:text-sm text-yellow-600">قيد الانتظار</div>
           </div>
-          <div className="bg-blue-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
-            <div className="text-xl sm:text-2xl font-bold text-blue-800">
+          <div className="bg-[#fcb946]/5 p-3 sm:p-4 rounded-lg sm:rounded-xl">
+            <div className="text-xl sm:text-2xl font-bold text-[#f5a623]">
               {orders.filter(o => o.status === 'confirmed' || o.status === 'preparing').length}
             </div>
-            <div className="text-xs sm:text-sm text-blue-600">قيد التحضير</div>
+            <div className="text-xs sm:text-sm text-[#fcb946]">قيد التحضير</div>
           </div>
           <div className="bg-green-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
             <div className="text-xl sm:text-2xl font-bold text-green-800">
@@ -252,7 +252,7 @@ export const AdminOrders: React.FC = () => {
                         </div>
                         <div className="flex items-start gap-2">
                           <Phone className="w-4 h-4 text-gray-500 mt-0.5" />
-                          <a href={`tel:${order.customer_phone}`} className="text-blue-600 hover:underline">
+                          <a href={`tel:${order.customer_phone}`} className="text-[#fcb946] hover:underline">
                             {order.customer_phone}
                           </a>
                         </div>
@@ -276,7 +276,7 @@ export const AdminOrders: React.FC = () => {
                                   href={`https://www.google.com/maps/search/?api=1&query=${order.customer_latitude},${order.customer_longitude}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-blue-600 hover:underline flex items-center gap-1"
+                                  className="text-[#fcb946] hover:underline flex items-center gap-1"
                                 >
                                   <ExternalLink className="w-4 h-4" />
                                   عرض الموقع على الخريطة

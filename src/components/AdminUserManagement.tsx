@@ -159,7 +159,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
           checked={value as boolean}
           onChange={() => togglePermission(user, permission)}
           disabled={!isEditing || disabled || isEditingSelf}
-          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="w-4 h-4 rounded border-gray-300 text-[#fcb946] focus:ring-[#fcb946]"
         />
         <span className="text-sm text-gray-700">{label}</span>
         {isEditingSelf && isEditing && (
@@ -173,7 +173,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fcb946] mx-auto mb-4"></div>
           <p className="text-gray-600">جاري تحميل المستخدمين...</p>
         </div>
       </div>
@@ -199,12 +199,12 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Users className="w-6 h-6 text-blue-600" />
+          <Users className="w-6 h-6 text-[#fcb946]" />
           <h2 className="text-2xl font-bold text-gray-800">إدارة المستخدمين والصلاحيات</h2>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-[#fcb946] text-white rounded-lg hover:bg-[#f5a623] transition-colors"
         >
           <Plus className="w-5 h-5" />
           <span>إضافة مستخدم</span>
@@ -213,7 +213,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
 
       {/* Add User Form */}
       {showAddForm && (
-        <div className="bg-white border-2 border-blue-200 rounded-lg p-6 shadow-lg">
+        <div className="bg-white border-2 border-[#fcb946]/30 rounded-lg p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-800">إضافة مستخدم جديد</h3>
             <button
@@ -236,7 +236,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 type="email"
                 value={newUser.user_email}
                 onChange={(e) => setNewUser({ ...newUser, user_email: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent"
                 placeholder="user@example.com"
               />
             </div>
@@ -248,7 +248,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 type="text"
                 value={newUser.user_name}
                 onChange={(e) => setNewUser({ ...newUser, user_name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent"
                 placeholder="الاسم الكامل"
               />
             </div>
@@ -260,7 +260,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 type="tel"
                 value={newUser.user_phone}
                 onChange={(e) => setNewUser({ ...newUser, user_phone: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent"
                 placeholder="0912345678"
               />
             </div>
@@ -273,7 +273,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                   type={showPassword ? 'text' : 'password'}
                   value={newUser.password}
                   onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent pr-12"
                   placeholder="كلمة المرور (6 أحرف على الأقل)"
                   minLength={6}
                 />
@@ -290,7 +290,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
             <div className="flex gap-3">
               <button
                 onClick={handleAddUser}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex-1 px-4 py-2 bg-[#fcb946] text-white rounded-lg hover:bg-[#f5a623] transition-colors"
               >
                 إضافة
               </button>
@@ -315,18 +315,18 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
           <div
             key={user.id}
             className={`bg-white rounded-lg shadow-md border-2 transition-all ${
-              editingUser?.id === user.id ? 'border-blue-500' : 'border-gray-200'
+              editingUser?.id === user.id ? 'border-[#fcb946]' : 'border-gray-200'
             }`}
           >
             <div className="p-6">
               {/* User Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`p-3 rounded-full ${user.is_owner ? 'bg-purple-100' : 'bg-blue-100'}`}>
+                  <div className={`p-3 rounded-full ${user.is_owner ? 'bg-[#fcb946]/20' : 'bg-[#fcb946]/10'}`}>
                     {user.is_owner ? (
                       <Shield className="w-6 h-6 text-purple-600" />
                     ) : (
-                      <Users className="w-6 h-6 text-blue-600" />
+                      <Users className="w-6 h-6 text-[#fcb946]" />
                     )}
                   </div>
                   <div>
@@ -339,7 +339,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                 </div>
                 <div className="flex items-center gap-2">
                   {user.is_owner && (
-                    <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold">
+                    <span className="px-3 py-1 bg-[#fcb946]/20 text-purple-700 rounded-full text-sm font-semibold">
                       مالك
                     </span>
                   )}
@@ -366,7 +366,7 @@ export const AdminUserManagement: React.FC<AdminUserManagementProps> = ({ curren
                   ) : (
                     <button
                       onClick={() => setEditingUser(user)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="px-4 py-2 bg-[#fcb946] text-white rounded-lg hover:bg-[#f5a623]"
                     >
                       تعديل
                     </button>
