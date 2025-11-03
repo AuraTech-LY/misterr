@@ -287,7 +287,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#7A1120]"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#fcb946]"></div>
           <p className="mt-4 text-gray-600">جاري تحميل البيانات...</p>
         </div>
       </div>
@@ -297,7 +297,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   return (
     <div className="min-h-screen bg-gray-100" dir="rtl">
       {/* Header */}
-      <header className="bg-[#781220] text-white shadow-lg">
+      <header className="bg-[#fcb946] text-white shadow-lg">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -310,7 +310,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-black">لوحة التحكم</h1>
-                <p className="text-xs sm:text-sm opacity-90">إدارة قائمة مطعم المستر</p>
               </div>
             </div>
             <button
@@ -347,8 +346,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('menu')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'menu'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -359,8 +358,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('categories')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'categories'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <Tag className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -370,8 +369,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('hours')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'hours'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -384,8 +383,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('restaurants')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'restaurants'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <Store className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -396,8 +395,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('orders')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'orders'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -407,8 +406,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('cashier')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'cashier'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -419,8 +418,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('users')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'users'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <Users className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -430,8 +429,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               onClick={() => setActiveTab('logs')}
               className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                 activeTab === 'logs'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
+                  ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                  : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
               }`}
             >
               <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -469,7 +468,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       onClick={() => setSelectedRestaurantId(restaurant.id)}
                       className={`px-3 sm:px-6 py-2.5 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
                         selectedRestaurantId === restaurant.id
-                          ? `border-[${restaurant.primary_color}] bg-red-50`
+                          ? `border-[${restaurant.primary_color}] bg-amber-50`
                           : 'text-gray-600 border-transparent hover:border-gray-300'
                       }`}
                       style={{
@@ -511,7 +510,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <button
                   onClick={() => setShowAddForm(true)}
                   className="text-white px-4 py-2.5 sm:px-6 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 text-xs sm:text-base w-full sm:w-auto justify-center"
-                  style={{ backgroundColor: selectedRestaurant?.primary_color || '#781220' }}
+                  style={{ backgroundColor: selectedRestaurant?.primary_color || '#fcb946' }}
                 >
                   <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span>إضافة عنصر جديد</span>
@@ -537,7 +536,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     onClick={handleAddItem}
                     disabled={saving || !newItem.name || !newItem.description}
                     className="px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base text-white shadow-lg hover:shadow-xl transform hover:scale-105 rounded-full"
-                    style={{ backgroundColor: saving || !newItem.name || !newItem.description ? '#d1d5db' : selectedRestaurant?.primary_color || '#781220' }}
+                    style={{ backgroundColor: saving || !newItem.name || !newItem.description ? '#d1d5db' : selectedRestaurant?.primary_color || '#fcb946' }}
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'جاري الحفظ...' : 'حفظ العنصر'}
@@ -573,7 +572,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                           onClick={() => handleSaveItem(editingItem)}
                           disabled={saving}
                           className="px-4 sm:px-6 py-3 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-                          style={{ backgroundColor: saving ? '#d1d5db' : selectedRestaurant?.primary_color || '#781220' }}
+                          style={{ backgroundColor: saving ? '#d1d5db' : selectedRestaurant?.primary_color || '#fcb946' }}
                         >
                           <Save className="w-4 h-4" />
                           {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
@@ -608,7 +607,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                             <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
                             <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
                               <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
-                              <span className="font-bold text-sm sm:text-base" style={{ color: selectedRestaurant?.primary_color || '#781220' }}>{item.price.toFixed(2)} د.ل</span>
+                              <span className="font-bold text-sm sm:text-base" style={{ color: selectedRestaurant?.primary_color || '#fcb946' }}>{item.price.toFixed(2)} د.ل</span>
                               {!item.is_available && (
                                 <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
                               )}

@@ -51,7 +51,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#781220] via-[#8B1538] to-[#781220] flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-br from-[#fcb946] via-[#f5a623] to-[#fcb946] flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full blur-3xl animate-pulse"></div>
@@ -62,7 +62,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
       <div className={`max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden backdrop-blur-sm border border-white/20 transition-all duration-700 transform ${
         isAnimated ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-8'
       }`}>
-        <div className="bg-gradient-to-r from-[#781220] to-[#8B1538] text-white p-6 text-center relative overflow-hidden">
+        <div className="bg-gradient-to-r from-[#fcb946] to-[#f5a623] text-white p-6 text-center relative overflow-hidden">
           {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent"></div>
           <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
@@ -73,7 +73,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               <Lock className="w-8 h-8 text-white drop-shadow-lg" />
             </div>
             <h1 className="text-2xl font-black mb-2 drop-shadow-lg">لوحة التحكم</h1>
-            <p className="text-base opacity-90 font-medium">مطعم المستر - إدارة القائمة</p>
             <div className="mt-3 w-16 h-1 bg-white/50 rounded-full mx-auto"></div>
           </div>
         </div>
@@ -81,7 +80,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-              <User className="w-5 h-5 text-[#781220]" />
+              <User className="w-5 h-5 text-[#fcb946]" />
               البريد الإلكتروني
             </label>
             <div className="relative">
@@ -89,7 +88,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 pr-4 pl-12 border-2 border-gray-200 rounded-full focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
+                className="w-full p-3 pr-4 pl-12 border-2 border-gray-200 rounded-full focus:border-[#fcb946] focus:ring-4 focus:ring-[#fcb946]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
                 placeholder="أدخل البريد الإلكتروني"
                 required
               />
@@ -101,14 +100,14 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
           <div>
             <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-              <Lock className="w-5 h-5 text-[#781220]" />
+              <Lock className="w-5 h-5 text-[#fcb946]" />
               كلمة المرور
             </label>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute left-12 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-[#781220] transition-colors duration-200 z-10"
+                className="absolute left-12 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-[#fcb946] transition-colors duration-200 z-10"
               >
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>
@@ -116,7 +115,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 pr-4 pl-20 border-2 border-gray-200 rounded-full focus:border-[#781220] focus:ring-4 focus:ring-[#781220]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
+                className="w-full p-3 pr-4 pl-20 border-2 border-gray-200 rounded-full focus:border-[#fcb946] focus:ring-4 focus:ring-[#fcb946]/20 text-right transition-all duration-300 bg-gray-50 focus:bg-white hover:border-gray-300"
                 placeholder="أدخل كلمة المرور"
                 required
               />
@@ -143,8 +142,8 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             className={`w-full py-3 rounded-2xl font-bold text-base transition-all duration-300 relative overflow-hidden group ${
               isLoading
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-gradient-to-r from-[#781220] to-[#8B1538] hover:from-[#8B1538] hover:to-[#781220] text-white shadow-lg hover:shadow-2xl transform hover:scale-105 active:scale-95'
-            } shadow-[#781220]/25`}
+                : 'bg-gradient-to-r from-[#fcb946] to-[#f5a623] hover:from-[#f5a623] hover:to-[#fcb946] text-white shadow-lg hover:shadow-2xl transform hover:scale-105 active:scale-95'
+            } shadow-[#fcb946]/25`}
             style={{ borderRadius: '9999px' }}
           >
             {!isLoading && (
