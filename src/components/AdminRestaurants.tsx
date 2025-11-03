@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Save, X, Store, ChevronDown, ChevronUp, MapPin, Phone, Navigation, DollarSign, Clock, Upload, Image as ImageIcon, Power, PowerOff } from 'lucide-react';
+import { Plus, Edit, Save, X, Store, ChevronDown, ChevronUp, MapPin, Phone, Navigation, DollarSign, Clock, Upload, Image as ImageIcon, Power, PowerOff, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Restaurant, RestaurantBranch } from '../types/restaurant';
 import { AdminBranchOperatingHours } from './AdminBranchOperatingHours';
+import { usePermission } from '../hooks/usePermission';
 
 interface AdminRestaurantsProps {
   onRestaurantsChange: () => void;
@@ -139,6 +140,7 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
   const [expandedBranchId, setExpandedBranchId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const { canManageRestaurants, canManageBranches, loading: permissionLoading } = usePermission();
 
   const newRestaurantTemplate: Partial<Restaurant> = {
     name: '',
@@ -533,12 +535,24 @@ export const AdminRestaurants: React.FC<AdminRestaurantsProps> = ({ onRestaurant
     }
   };
 
-  if (loading) {
+  if (permissionLoading || loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#781220]"></div>
           <p className="mt-4 text-gray-600">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canManageRestaurants()) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center bg-red-50 border-2 border-red-200 rounded-lg p-8">
+          <AlertCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-red-800 mb-2">ليس لديك صلاحية</h3>
+          <p className="text-red-600">ليس لديك صلاحية لإدارة المطاعم. يرجى التواصل مع المسؤول.</p>
         </div>
       </div>
     );

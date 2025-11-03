@@ -18,8 +18,9 @@
   - RLS ensures only owners can view logs
 
 ### 2. Database Functions (COMPLETE)
-- ✅ `check_user_permission()`: Check if user has specific permission
-- ✅ `is_user_owner()`: Quick owner status check
+- ✅ `check_user_permission(user_email, permission_name)`: Check if user has specific permission (SECURITY DEFINER)
+- ✅ `get_user_role(user_email)`: Get complete user role object (SECURITY DEFINER)
+- ✅ `is_user_owner(user_email)`: Quick owner status check (SECURITY DEFINER)
 - ✅ `audit_trigger_function()`: Automatic audit logging trigger
 - ✅ `get_audit_logs()`: Query audit logs with filters
 - ✅ `get_recent_changes()`: Get latest changes
@@ -84,12 +85,18 @@ All critical tables now have automatic audit logging:
 
 ## Security Features Implemented 🔒
 
-1. **Row-Level Security (RLS)**
+1. **Row-Level Security (RLS) with Permission Checks**
    - ✅ Enabled on user_roles table
    - ✅ Enabled on audit_logs table
+   - ✅ **UPDATED: All tables now check user_roles for permissions**
+     - orders: Checks can_view_orders, can_update_order_status, can_delete_orders
+     - menu_items: Checks can_manage_menu_items
+     - categories: Checks can_manage_categories
+     - restaurants: Checks can_manage_restaurants
+     - restaurant_branches: Checks can_manage_branches
    - ✅ Owners can manage all roles
    - ✅ Users can only view their own role
-   - ✅ Permission checks at database level
+   - ✅ Permission checks at database level using helper functions
 
 2. **Immutable Audit Logs**
    - ✅ Triggers prevent UPDATE operations
@@ -102,7 +109,7 @@ All critical tables now have automatic audit logging:
    - ✅ Cannot remove last owner
    - ✅ Prevents system lockout
    - ✅ Automatic validation via trigger
-   - ✅ UI prevents self-demotion
+   - ✅ **NEW: UI prevents owners from editing their own permissions**
 
 4. **Automatic Logging**
    - ✅ All changes logged via triggers
@@ -120,6 +127,10 @@ All critical tables now have automatic audit logging:
 1. ✅ `create_user_roles_and_permissions.sql`
 2. ✅ `create_audit_logging_system.sql`
 3. ✅ `apply_audit_triggers.sql`
+4. ✅ **NEW: `create_role_helper_functions.sql`** - Database helper functions
+5. ✅ **NEW: `update_orders_rls_policies_with_permissions.sql`**
+6. ✅ **NEW: `update_menu_items_rls_policies_with_permissions.sql`**
+7. ✅ **NEW: `update_remaining_tables_rls_policies_with_permissions.sql`**
 
 All applied to the correct Supabase database instance.
 
@@ -135,6 +146,12 @@ All applied to the correct Supabase database instance.
 
 ### Modified:
 1. `src/components/AdminDashboard.tsx` - Added 3 new tabs and integrations
+2. **NEW: `src/components/AdminUserManagement.tsx`** - Added self-edit protection
+3. **NEW: `src/components/CashierOrdersView.tsx`** - Removed strict permission checks for accessibility
+4. **NEW: `src/components/AdminOrders.tsx`** - Added permission guards
+5. **NEW: `src/components/AdminCategories.tsx`** - Added permission guards
+6. **NEW: `src/components/AdminRestaurants.tsx`** - Added permission guards
+7. **NEW: `src/components/AdminBranches.tsx`** - Added permission guards
 
 ## Features Summary 🎯
 

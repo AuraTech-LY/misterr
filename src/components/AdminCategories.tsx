@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, GripVertical } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, GripVertical, AlertCircle } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { usePermission } from '../hooks/usePermission';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -29,6 +30,7 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
   const [error, setError] = useState<string | null>(null);
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [dragOverItem, setDragOverItem] = useState<string | null>(null);
+  const { canManageCategories, loading: permissionLoading } = usePermission();
 
   useEffect(() => {
     fetchCategories();
@@ -208,11 +210,23 @@ export const AdminCategories: React.FC<AdminCategoriesProps> = ({ onCategoriesCh
     setDragOverItem(null);
   };
 
-  if (loading) {
+  if (permissionLoading || loading) {
     return (
       <div className="text-center py-12">
         <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#7A1120]"></div>
         <p className="mt-4 text-gray-600">جاري تحميل الفئات...</p>
+      </div>
+    );
+  }
+
+  if (!canManageCategories()) {
+    return (
+      <div className="text-center py-12">
+        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-8 inline-block">
+          <AlertCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-red-800 mb-2">ليس لديك صلاحية</h3>
+          <p className="text-red-600">ليس لديك صلاحية لإدارة الفئات. يرجى التواصل مع المسؤول.</p>
+        </div>
       </div>
     );
   }

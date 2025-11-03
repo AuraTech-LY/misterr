@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Phone, MapPin, Clock, ChevronDown, ChevronUp, Search, Filter, ExternalLink } from 'lucide-react';
+import { Package, Phone, MapPin, Clock, ChevronDown, ChevronUp, Search, Filter, ExternalLink, AlertCircle } from 'lucide-react';
 import { OrderWithItems, OrderStatus } from '../types';
 import { orderService } from '../services/orderService';
+import { usePermission } from '../hooks/usePermission';
 
 const statusColors: Record<OrderStatus, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -30,6 +31,7 @@ export const AdminOrders: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+  const { canViewOrders, canUpdateOrderStatus, canDeleteOrders, loading: permissionLoading } = usePermission();
 
   useEffect(() => {
     fetchOrders();
@@ -50,6 +52,11 @@ export const AdminOrders: React.FC = () => {
   };
 
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+    if (!canUpdateOrderStatus()) {
+      alert('ليس لديك صلاحية لتحديث حالة الطلب');
+      return;
+    }
+
     setUpdatingStatus(orderId);
     const success = await orderService.updateOrderStatus(orderId, newStatus);
     if (success) {
@@ -100,12 +107,24 @@ export const AdminOrders: React.FC = () => {
     return statusFlow[currentStatus] || [];
   };
 
-  if (loading) {
+  if (permissionLoading || loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#7A1120]"></div>
           <p className="mt-4 text-gray-600">جاري تحميل الطلبات...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!canViewOrders()) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center bg-red-50 border-2 border-red-200 rounded-lg p-8">
+          <AlertCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-red-800 mb-2">ليس لديك صلاحية</h3>
+          <p className="text-red-600">ليس لديك صلاحية لعرض الطلبات. يرجى التواصل مع المسؤول.</p>
         </div>
       </div>
     );
