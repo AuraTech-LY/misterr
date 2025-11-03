@@ -51,11 +51,11 @@ export const AdminAuditLogs: React.FC = () => {
       case 'INSERT':
         return 'bg-green-100 text-green-700';
       case 'UPDATE':
-        return 'bg-blue-100 text-blue-700';
+        return 'bg-[#fcb946]/10 text-[#fcb946]';
       case 'DELETE':
         return 'bg-red-100 text-red-700';
       case 'ROLE_CHANGE':
-        return 'bg-purple-100 text-purple-700';
+        return 'bg-[#fcb946]/20 text-purple-700';
       default:
         return 'bg-gray-100 text-gray-700';
     }
@@ -111,7 +111,7 @@ export const AdminAuditLogs: React.FC = () => {
     return (
       <div className="flex items-center justify-center p-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#fcb946] mx-auto mb-4"></div>
           <p className="text-gray-600">جاري تحميل سجل التدقيق...</p>
         </div>
       </div>
@@ -137,13 +137,13 @@ export const AdminAuditLogs: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <FileText className="w-6 h-6 text-blue-600" />
+          <FileText className="w-6 h-6 text-[#fcb946]" />
           <h2 className="text-2xl font-bold text-gray-800">سجل التدقيق (Audit Logs)</h2>
         </div>
         <div className="flex gap-2">
           <button
             onClick={fetchLogs}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-[#fcb946] text-white rounded-lg hover:bg-[#f5a623] transition-colors"
           >
             <RefreshCw className="w-5 h-5" />
             <span>تحديث</span>
@@ -159,8 +159,8 @@ export const AdminAuditLogs: React.FC = () => {
       </div>
 
       {/* Info Box */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+      <div className="bg-[#fcb946]/5 border border-[#fcb946]/30 rounded-lg p-4">
+        <p className="text-sm text-[#f5a623]">
           <strong>ملاحظة:</strong> سجل التدقيق غير قابل للحذف أو التعديل. جميع التغييرات مسجلة بشكل دائم.
         </p>
       </div>
@@ -177,7 +177,7 @@ export const AdminAuditLogs: React.FC = () => {
             <select
               value={filterTable}
               onChange={(e) => setFilterTable(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent"
             >
               <option value="">الكل</option>
               {uniqueTables.map((table) => (
@@ -192,7 +192,7 @@ export const AdminAuditLogs: React.FC = () => {
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent"
             >
               <option value="">الكل</option>
               <option value="INSERT">إضافة</option>

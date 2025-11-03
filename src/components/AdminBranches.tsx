@@ -540,7 +540,7 @@ export const AdminBranches: React.FC<AdminBranchesProps> = ({ onBranchesChange }
                     </button>
                     <button
                       onClick={() => setEditingBranch(branch)}
-                      className="p-3 text-blue-600 hover:bg-blue-50 rounded-full transition-all duration-300"
+                      className="p-3 text-[#fcb946] hover:bg-[#fcb946]/5 rounded-full transition-all duration-300"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
