@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 
 export interface UserRole {
   id: string;
+  user_id: string;
   user_email: string;
   user_name: string;
   user_phone?: string;
@@ -48,7 +49,7 @@ export const usePermission = () => {
 
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user?.email) {
+      if (!user?.id) {
         setUserRole(null);
         setLoading(false);
         return;
@@ -57,7 +58,7 @@ export const usePermission = () => {
       const { data, error: roleError } = await supabase
         .from('user_roles')
         .select('*')
-        .eq('user_email', user.email)
+        .eq('user_id', user.id)
         .eq('is_active', true)
         .maybeSingle();
 

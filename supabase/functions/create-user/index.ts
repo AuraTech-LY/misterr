@@ -49,7 +49,7 @@ Deno.serve(async (req: Request) => {
     const { data: currentUserRole, error: roleError } = await supabaseAdmin
       .from('user_roles')
       .select('can_manage_users, is_owner')
-      .eq('user_email', currentUser.email)
+      .eq('user_id', currentUser.id)
       .maybeSingle();
 
     if (roleError || !currentUserRole || (!currentUserRole.can_manage_users && !currentUserRole.is_owner)) {
@@ -83,6 +83,7 @@ Deno.serve(async (req: Request) => {
     const { error: roleInsertError } = await supabaseAdmin
       .from('user_roles')
       .insert([{
+        user_id: authData.user.id,
         user_email: email,
         user_name: name,
         user_phone: phone || null,
