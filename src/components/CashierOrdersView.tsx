@@ -562,56 +562,64 @@ export const CashierOrdersView: React.FC = () => {
             return (
               <div
                 key={order.id}
-                className={`bg-white rounded-lg shadow-sm border-2 p-3 transition-all hover:shadow-md ${
+                className={`bg-white rounded-lg shadow-sm border-2 p-3 transition-all hover:shadow-md cursor-pointer ${
                   isNew
                     ? 'border-emerald-400 shadow-emerald-100 animate-pulse'
                     : 'border-slate-200'
                 }`}
                 onClick={() => setSelectedOrder(order)}
               >
-                {/* Compact Header - Single Line */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <h3 className="text-base font-bold text-slate-900 truncate">{order.order_number}</h3>
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 flex-shrink-0 ${statusConfig.color}`}>
-                      <StatusIcon className="w-3 h-3" />
-                      <span className="hidden sm:inline">{statusConfig.label}</span>
-                    </span>
-                  </div>
-                  <div className="text-right flex-shrink-0 ml-2">
-                    <p className="text-lg font-black text-slate-900">{order.total_amount.toFixed(0)} <span className="text-xs font-normal text-slate-600">د.ل</span></p>
-                  </div>
-                </div>
-
-                {/* Customer & Info Row - Compact */}
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-800 truncate">{order.customer_name}</p>
-                    <div className="flex items-center gap-2 text-xs text-slate-600">
-                      <span className="truncate">{order.customer_phone}</span>
-                      {order.delivery_method === 'pickup' && (
-                        <span className="bg-slate-200 px-1.5 py-0.5 rounded text-xs flex-shrink-0">🏪 استلام</span>
-                      )}
-                    </div>
-                  </div>
-                  <a
-                    href={`tel:${order.customer_phone}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1 text-slate-700 bg-slate-200 px-2 py-1 rounded-lg font-medium text-xs hover:bg-slate-300 transition-colors flex-shrink-0"
-                  >
-                    <Phone className="w-3 h-3" />
-                  </a>
-                </div>
-
-                {/* Meta Info - Condensed */}
-                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+                {/* Header: Order ID, Time, Status */}
+                <div className="flex items-center justify-between mb-2 pb-2 border-b border-slate-200">
                   <div className="flex items-center gap-2">
-                    <span>⏰ {new Date(order.created_at).toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })}</span>
-                    <span>• {items.length} عنصر</span>
+                    <h3 className="text-base font-bold text-slate-900">{order.order_number}</h3>
+                    <span className="text-xs text-slate-500">⏰ {new Date(order.created_at).toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
-                  {order.delivery_method === 'delivery' && order.delivery_area && (
-                    <span className="truncate max-w-[120px]">📍 {order.delivery_area}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 flex-shrink-0 ${statusConfig.color}`}>
+                    <StatusIcon className="w-3 h-3" />
+                  </span>
+                </div>
+
+                {/* Mini Receipt: Items Preview */}
+                <div className="mb-2 space-y-1">
+                  {items.slice(0, 3).map(item => (
+                    <div key={item.id} className="flex justify-between text-xs">
+                      <span className="text-slate-700 truncate flex-1">{item.quantity}x {item.item_name}</span>
+                      <span className="text-slate-600 font-medium ml-2">{item.subtotal.toFixed(0)}</span>
+                    </div>
+                  ))}
+                  {items.length > 3 && (
+                    <div className="text-xs text-slate-500 italic">... و {items.length - 3} عناصر أخرى</div>
                   )}
+                </div>
+
+                {/* Order Info: Type, Payment, Delivery Area */}
+                <div className="flex items-center gap-2 mb-2 text-xs flex-wrap">
+                  <span className={`px-2 py-0.5 rounded font-semibold ${
+                    order.delivery_method === 'pickup'
+                      ? 'bg-slate-200 text-slate-700'
+                      : 'bg-sky-100 text-sky-800'
+                  }`}>
+                    {order.delivery_method === 'pickup' ? '🏪 استلام' : '🚚 توصيل'}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded font-semibold ${
+                    order.payment_method === 'cash'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {order.payment_method === 'cash' ? '💵 نقداً' : '💳 بطاقة'}
+                  </span>
+                  {order.delivery_method === 'delivery' && order.delivery_area && (
+                    <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold truncate max-w-[140px]">
+                      📍 {order.delivery_area}
+                    </span>
+                  )}
+                </div>
+
+                {/* Total */}
+                <div className="flex items-center justify-between mb-2 pt-2 border-t border-slate-200">
+                  <span className="text-xs font-semibold text-slate-700">المجموع:</span>
+                  <span className="text-lg font-black text-slate-900">{order.total_amount.toFixed(0)} <span className="text-xs font-normal text-slate-600">د.ل</span></span>
                 </div>
 
                 {/* Action Button - Compact */}
