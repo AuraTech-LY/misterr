@@ -545,7 +545,7 @@ export const CashierOrdersView: React.FC = () => {
       </div>
 
       {/* Orders List - Optimized for Touch */}
-      <div className="p-3 space-y-3 bg-slate-50">
+      <div className="p-2 space-y-2 bg-slate-50">
         {filteredOrders.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl shadow-sm">
             <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
@@ -562,72 +562,66 @@ export const CashierOrdersView: React.FC = () => {
             return (
               <div
                 key={order.id}
-                className={`bg-white rounded-xl shadow-sm border-2 p-4 transition-all hover:shadow-md ${
+                className={`bg-white rounded-lg shadow-sm border-2 p-3 transition-all hover:shadow-md ${
                   isNew
                     ? 'border-emerald-400 shadow-emerald-100 animate-pulse'
                     : 'border-slate-200'
                 }`}
                 onClick={() => setSelectedOrder(order)}
               >
-                {/* Order Header */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-slate-900 mb-1">{order.order_number}</h3>
-                    <p className="text-sm text-slate-600">{order.restaurant_name}</p>
+                {/* Compact Header - Single Line */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <h3 className="text-base font-bold text-slate-900 truncate">{order.order_number}</h3>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 flex-shrink-0 ${statusConfig.color}`}>
+                      <StatusIcon className="w-3 h-3" />
+                      <span className="hidden sm:inline">{statusConfig.label}</span>
+                    </span>
                   </div>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${statusConfig.color}`}>
-                    <StatusIcon className="w-3.5 h-3.5" />
-                    <span>{statusConfig.label}</span>
-                  </span>
+                  <div className="text-right flex-shrink-0 ml-2">
+                    <p className="text-lg font-black text-slate-900">{order.total_amount.toFixed(0)} <span className="text-xs font-normal text-slate-600">د.ل</span></p>
+                  </div>
                 </div>
 
-                {/* Customer Info - Compact */}
-                <div className="mb-3 p-3 bg-slate-50 rounded-lg">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-slate-800">{order.customer_name}</span>
-                    <a
-                      href={`tel:${order.customer_phone}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-1 text-slate-700 bg-slate-200 px-2 py-1 rounded-lg font-medium text-xs hover:bg-slate-300 transition-colors"
-                    >
-                      <Phone className="w-3.5 h-3.5" />
-                      <span>اتصال</span>
-                    </a>
+                {/* Customer & Info Row - Compact */}
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-800 truncate">{order.customer_name}</p>
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
+                      <span className="truncate">{order.customer_phone}</span>
+                      {order.delivery_method === 'pickup' && (
+                        <span className="bg-slate-200 px-1.5 py-0.5 rounded text-xs flex-shrink-0">🏪 استلام</span>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-600">{order.customer_phone}</p>
+                  <a
+                    href={`tel:${order.customer_phone}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 text-slate-700 bg-slate-200 px-2 py-1 rounded-lg font-medium text-xs hover:bg-slate-300 transition-colors flex-shrink-0"
+                  >
+                    <Phone className="w-3 h-3" />
+                  </a>
+                </div>
+
+                {/* Meta Info - Condensed */}
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+                  <div className="flex items-center gap-2">
+                    <span>⏰ {new Date(order.created_at).toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>• {items.length} عنصر</span>
+                  </div>
                   {order.delivery_method === 'delivery' && order.delivery_area && (
-                    <p className="text-xs text-slate-600 mt-1">📍 {order.delivery_area}</p>
-                  )}
-                  {order.delivery_method === 'pickup' && (
-                    <p className="text-xs text-slate-700 font-semibold mt-1 bg-slate-200 inline-block px-2 py-0.5 rounded">🏪 استلام من الفرع</p>
+                    <span className="truncate max-w-[120px]">📍 {order.delivery_area}</span>
                   )}
                 </div>
 
-                {/* Items Count & Total - Prominent */}
-                <div className="flex items-center justify-between mb-3 p-3 bg-slate-100 rounded-lg border border-slate-200">
-                  <div>
-                    <p className="text-xs text-slate-600">المجموع</p>
-                    <p className="text-2xl font-black text-slate-900">{order.total_amount.toFixed(0)} <span className="text-base font-normal text-slate-600">د.ل</span></p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-slate-600">العناصر</p>
-                    <p className="text-lg font-bold text-slate-800">{items.length}</p>
-                  </div>
-                </div>
-
-                {/* Time */}
-                <p className="text-xs text-slate-500 mb-3">
-                  ⏰ {new Date(order.created_at).toLocaleTimeString('ar-LY', { hour: '2-digit', minute: '2-digit' })}
-                </p>
-
-                {/* Action Button - Large Touch Target */}
+                {/* Action Button - Compact */}
                 {nextStatus && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       updateOrderStatus(order.id, nextStatus);
                     }}
-                    className={`w-full py-3.5 bg-gradient-to-r ${STATUS_CONFIG[nextStatus].buttonColor} text-white rounded-xl font-bold text-base active:scale-98 transform transition-all shadow-sm hover:shadow-md`}
+                    className={`w-full py-2 bg-gradient-to-r ${STATUS_CONFIG[nextStatus].buttonColor} text-white rounded-lg font-bold text-sm active:scale-98 transform transition-all shadow-sm hover:shadow-md`}
                   >
                     {statusConfig.nextLabel} ←
                   </button>
@@ -641,9 +635,9 @@ export const CashierOrdersView: React.FC = () => {
                         updateOrderStatus(order.id, 'cancelled');
                       }
                     }}
-                    className="w-full mt-2 py-2.5 border-2 border-rose-600 text-rose-600 rounded-xl font-semibold text-sm active:scale-98 transform transition-all hover:bg-rose-50"
+                    className="w-full mt-1.5 py-1.5 border border-rose-600 text-rose-600 rounded-lg font-semibold text-xs active:scale-98 transform transition-all hover:bg-rose-50"
                   >
-                    ✕ إلغاء الطلب
+                    ✕ إلغاء
                   </button>
                 )}
               </div>
