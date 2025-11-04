@@ -88,6 +88,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleAddToCart = () => {
+    if ('vibrate' in navigator) navigator.vibrate(100);
     for (let i = 0; i < quantity; i++) {
       onAddToCart(item);
     }
@@ -108,12 +109,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   };
 
   const handleDesktopAddToCart = () => {
-    // Trigger press animation if item is already in cart
+    if ('vibrate' in navigator) navigator.vibrate(100);
     if (isInCart) {
       setIsPressing(true);
       setTimeout(() => setIsPressing(false), 200);
     }
-    
+
     for (let i = 0; i < desktopQuantity; i++) {
       onAddToCart(item);
     }
@@ -122,13 +123,13 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
   const handleMobileQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    // Trigger press animation for the whole item
+    if ('vibrate' in navigator) navigator.vibrate(100);
+
     setIsPressing(true);
     setTimeout(() => setIsPressing(false), 150);
-    
+
     onAddToCart(item);
-    
+
   };
 
 
@@ -386,7 +387,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
           <div className="flex items-center justify-between mb-3 h-8">
             <button
               onClick={() => {
-                // Trigger press animation if item is already in cart
+                if ('vibrate' in navigator) navigator.vibrate(100);
                 if (isInCart) {
                   setIsPressing(true);
                   setTimeout(() => setIsPressing(false), 200);
