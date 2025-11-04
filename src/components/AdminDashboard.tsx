@@ -613,125 +613,196 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 p-4 sm:p-6">
-                      <img
-                        src={item.image_url}
-                        alt={item.name}
-                        className="w-full h-32 sm:w-24 sm:h-24 object-cover rounded-lg"
-                        style={{
-                          filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
-                        }}
-                      />
-                      <div className="flex-1">
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                          <div>
-                            <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-lg sm:text-xl font-bold text-gray-800">{item.name}</h3>
-                              {item.is_popular && (
-                                <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs sm:text-sm">الأكثر طلباً</span>
-                              )}
-                            </div>
-                            <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
-                            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
-                              <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
-                              <span className="font-bold text-sm sm:text-base" style={{ color: selectedRestaurant?.primary_color || '#fcb946' }}>{item.price.toFixed(2)} د.ل</span>
-                              {!item.is_available && (
-                                <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
-                              )}
-                            </div>
-                            <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
-                              {item.branch_id ? (
-                                <span className="bg-[#fcb946]/10 text-[#fcb946] px-2 py-1 rounded-full font-semibold">
-                                  {branches.find(b => b.id === item.branch_id)?.area || 'فرع محدد'}
-                                </span>
-                              ) : (
-                                <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full">جميع الفروع</span>
-                              )}
-                            </div>
-                            
-                            {/* Image Controls */}
-                            <div className="mt-4 space-y-3 bg-gray-50 p-3 rounded-lg">
-                              <h4 className="text-sm font-semibold text-gray-700">إعدادات الصورة</h4>
-                              
-                              {/* Brightness Control */}
-                              <div className="space-y-1">
-                                <div className="flex justify-between items-center">
-                                  <label className="text-xs font-medium text-gray-600">السطوع</label>
-                                  <span className="text-xs text-gray-500">{(item.image_brightness || 1.2).toFixed(1)}</span>
-                                </div>
-                                <input
-                                  type="range"
-                                  min="0.5"
-                                  max="2.0"
-                                  step="0.1"
-                                  value={item.image_brightness || 1.2}
-                                  onChange={(e) => {
-                                    const newBrightness = parseFloat(e.target.value);
-                                    const updatedItem = { ...item, image_brightness: newBrightness };
-                                    setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
-                                    // Auto-save after a short delay
-                                    clearTimeout((window as any)[`brightness_timeout_${item.id}`]);
-                                    (window as any)[`brightness_timeout_${item.id}`] = setTimeout(() => {
-                                      handleSaveItem(updatedItem);
-                                    }, 1000);
-                                  }}
-                                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-200"
-                                />
-                              </div>
-
-                              {/* Contrast Control */}
-                              <div className="space-y-1">
-                                <div className="flex justify-between items-center">
-                                  <label className="text-xs font-medium text-gray-600">التباين</label>
-                                  <span className="text-xs text-gray-500">{(item.image_contrast || 1.1).toFixed(1)}</span>
-                                </div>
-                                <input
-                                  type="range"
-                                  min="0.5"
-                                  max="2.0"
-                                  step="0.1"
-                                  value={item.image_contrast || 1.1}
-                                  onChange={(e) => {
-                                    const newContrast = parseFloat(e.target.value);
-                                    const updatedItem = { ...item, image_contrast: newContrast };
-                                    setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
-                                    // Auto-save after a short delay
-                                    clearTimeout((window as any)[`contrast_timeout_${item.id}`]);
-                                    (window as any)[`contrast_timeout_${item.id}`] = setTimeout(() => {
-                                      handleSaveItem(updatedItem);
-                                    }, 1000);
-                                  }}
-                                  className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-200"
-                                />
-                              </div>
-
-                              {/* Reset Button */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  const updatedItem = { ...item, image_brightness: 1.2, image_contrast: 1.1 };
-                                  setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
-                                  handleSaveItem(updatedItem);
-                                }}
-                                className="text-xs text-gray-600 hover:text-gray-800 underline"
-                              >
-                                إعادة تعيين
-                              </button>
+                    <div className="p-4 sm:p-6">
+                      {/* Mobile: Horizontal Layout like MenuItem */}
+                      <div className="md:hidden">
+                        <div className="flex items-center gap-4 h-32 mb-3">
+                          {/* Price Section - Left */}
+                          <div className="flex flex-col items-center justify-center min-w-[50px] flex-shrink-0">
+                            <div className="text-xl whitespace-nowrap" style={{ color: selectedRestaurant?.primary_color || '#fcb946' }}>
+                              <span className="font-black">{Math.round(item.price)}</span>
+                              <span className="font-normal text-xs opacity-70"> د.ل</span>
                             </div>
                           </div>
-                          <div className="flex gap-2 self-end sm:self-start">
-                            <button
-                              onClick={() => setEditingItem(item)}
-                              className="p-3 text-[#fcb946] hover:bg-[#fcb946]/10 rounded-full transition-all duration-300 transform hover:scale-110"
-                            >
-                              <Edit className="w-5 h-5" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteItem(item.id)}
-                              className="p-3 text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 transform hover:scale-110"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
+
+                          {/* Content Section - Middle */}
+                          <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+                            <div className="flex items-start justify-between mb-1">
+                              <h3 className="text-sm font-bold text-gray-800 truncate flex-1 min-w-0">{item.name}</h3>
+                              {item.is_popular && (
+                                <div className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1 ml-2 flex-shrink-0">
+                                  <span>⭐</span>
+                                </div>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-1">{item.description}</p>
+                            <div className="flex flex-wrap items-center gap-1 text-xs">
+                              <span className="bg-gray-100 px-2 py-0.5 rounded-full text-gray-700">{item.category}</span>
+                              {!item.is_available && (
+                                <span className="bg-red-100 text-red-800 px-2 py-0.5 rounded-full">غير متوفر</span>
+                              )}
+                              {item.branch_id && (
+                                <span className="bg-[#fcb946]/10 text-[#fcb946] px-2 py-0.5 rounded-full font-semibold">
+                                  {branches.find(b => b.id === item.branch_id)?.area || 'فرع'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Image Section - Right */}
+                          <div className="relative w-24 h-24 flex-shrink-0">
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="w-24 h-24 object-cover rounded-xl"
+                              style={{
+                                filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Action Buttons - Mobile */}
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => setEditingItem(item)}
+                            className="px-4 py-2 text-sm text-white rounded-full transition-all duration-300 flex items-center gap-2"
+                            style={{ backgroundColor: selectedRestaurant?.primary_color || '#fcb946' }}
+                          >
+                            <Edit className="w-4 h-4" />
+                            <span>تعديل</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteItem(item.id)}
+                            className="px-4 py-2 text-sm bg-red-600 text-white rounded-full transition-all duration-300 flex items-center gap-2"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            <span>حذف</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Desktop: Original Layout */}
+                      <div className="hidden md:block">
+                        <div className="flex items-start sm:items-center gap-4 sm:gap-6">
+                          <img
+                            src={item.image_url}
+                            alt={item.name}
+                            className="w-24 h-24 object-cover rounded-lg"
+                            style={{
+                              filter: `brightness(${item.image_brightness || 1.2}) contrast(${item.image_contrast || 1.1})`
+                            }}
+                          />
+                          <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                              <div>
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h3 className="text-lg sm:text-xl font-bold text-gray-800">{item.name}</h3>
+                                  {item.is_popular && (
+                                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs sm:text-sm">الأكثر طلباً</span>
+                                  )}
+                                </div>
+                                <p className="text-gray-600 mb-2 text-sm sm:text-base">{item.description}</p>
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
+                                  <span className="bg-gray-100 px-2 sm:px-3 py-1 rounded-full">{item.category}</span>
+                                  <span className="font-bold text-sm sm:text-base" style={{ color: selectedRestaurant?.primary_color || '#fcb946' }}>{item.price.toFixed(2)} د.ل</span>
+                                  {!item.is_available && (
+                                    <span className="bg-red-100 text-red-800 px-2 sm:px-3 py-1 rounded-full">غير متوفر</span>
+                                  )}
+                                </div>
+                                <div className="flex flex-wrap items-center gap-1 sm:gap-2 mt-2 text-xs">
+                                  {item.branch_id ? (
+                                    <span className="bg-[#fcb946]/10 text-[#fcb946] px-2 py-1 rounded-full font-semibold">
+                                      {branches.find(b => b.id === item.branch_id)?.area || 'فرع محدد'}
+                                    </span>
+                                  ) : (
+                                    <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full">جميع الفروع</span>
+                                  )}
+                                </div>
+
+                                {/* Image Controls */}
+                                <div className="mt-4 space-y-3 bg-gray-50 p-3 rounded-lg">
+                                  <h4 className="text-sm font-semibold text-gray-700">إعدادات الصورة</h4>
+
+                                  {/* Brightness Control */}
+                                  <div className="space-y-1">
+                                    <div className="flex justify-between items-center">
+                                      <label className="text-xs font-medium text-gray-600">السطوع</label>
+                                      <span className="text-xs text-gray-500">{(item.image_brightness || 1.2).toFixed(1)}</span>
+                                    </div>
+                                    <input
+                                      type="range"
+                                      min="0.5"
+                                      max="2.0"
+                                      step="0.1"
+                                      value={item.image_brightness || 1.2}
+                                      onChange={(e) => {
+                                        const newBrightness = parseFloat(e.target.value);
+                                        const updatedItem = { ...item, image_brightness: newBrightness };
+                                        setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                        clearTimeout((window as any)[`brightness_timeout_${item.id}`]);
+                                        (window as any)[`brightness_timeout_${item.id}`] = setTimeout(() => {
+                                          handleSaveItem(updatedItem);
+                                        }, 1000);
+                                      }}
+                                      className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-200"
+                                    />
+                                  </div>
+
+                                  {/* Contrast Control */}
+                                  <div className="space-y-1">
+                                    <div className="flex justify-between items-center">
+                                      <label className="text-xs font-medium text-gray-600">التباين</label>
+                                      <span className="text-xs text-gray-500">{(item.image_contrast || 1.1).toFixed(1)}</span>
+                                    </div>
+                                    <input
+                                      type="range"
+                                      min="0.5"
+                                      max="2.0"
+                                      step="0.1"
+                                      value={item.image_contrast || 1.1}
+                                      onChange={(e) => {
+                                        const newContrast = parseFloat(e.target.value);
+                                        const updatedItem = { ...item, image_contrast: newContrast };
+                                        setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                        clearTimeout((window as any)[`contrast_timeout_${item.id}`]);
+                                        (window as any)[`contrast_timeout_${item.id}`] = setTimeout(() => {
+                                          handleSaveItem(updatedItem);
+                                        }, 1000);
+                                      }}
+                                      className="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-200"
+                                    />
+                                  </div>
+
+                                  {/* Reset Button */}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const updatedItem = { ...item, image_brightness: 1.2, image_contrast: 1.1 };
+                                      setMenuItems(prev => prev.map(i => i.id === item.id ? updatedItem : i));
+                                      handleSaveItem(updatedItem);
+                                    }}
+                                    className="text-xs text-gray-600 hover:text-gray-800 underline"
+                                  >
+                                    إعادة تعيين
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 self-end sm:self-start">
+                                <button
+                                  onClick={() => setEditingItem(item)}
+                                  className="p-3 text-[#fcb946] hover:bg-[#fcb946]/10 rounded-full transition-all duration-300 transform hover:scale-110"
+                                >
+                                  <Edit className="w-5 h-5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteItem(item.id)}
+                                  className="p-3 text-red-600 hover:bg-red-50 rounded-full transition-all duration-300 transform hover:scale-110"
+                                >
+                                  <Trash2 className="w-5 h-5" />
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
