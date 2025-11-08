@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Clock, MapPin } from 'lucide-react';
+import { Save, Clock } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
-import { getAllBranches } from '../data/restaurantsData';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -21,53 +20,56 @@ interface OperatingHours {
 }
 
 const AdminOperatingHours: React.FC = () => {
-  const [operatingHours, setOperatingHours] = useState<Record<string, OperatingHours>>({});
+  const [operatingHours, setOperatingHours] = useState<OperatingHours | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState<Record<string, boolean>>({});
-  const [selectedRestaurant, setSelectedRestaurant] = useState<'mister-shish' | 'mister-crispy' | 'mister-burgerito'>('mister-shish');
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const allBranches = getAllBranches();
+  const [branchInfo, setBranchInfo] = useState<{ id: string; name: string; area: string } | null>(null);
 
   useEffect(() => {
-    fetchOperatingHours();
+    fetchBranchAndHours();
   }, []);
 
-  const fetchOperatingHours = async () => {
+  const fetchBranchAndHours = async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const { data, error } = await supabase
+
+      // Fetch Al-Baron branch
+      const { data: branchData, error: branchError } = await supabase
+        .from('restaurant_branches')
+        .select('id, name, area, restaurants!inner(slug)')
+        .eq('restaurants.slug', 'albaron')
+        .single();
+
+      if (branchError) throw branchError;
+
+      setBranchInfo({
+        id: branchData.id,
+        name: branchData.name,
+        area: branchData.area
+      });
+
+      // Fetch operating hours for this branch
+      const { data: hoursData, error: hoursError } = await supabase
         .from('operating_hours')
-        .select('*');
+        .select('*')
+        .eq('branch_id', branchData.id)
+        .maybeSingle();
 
-      if (error) throw error;
+      if (hoursError) throw hoursError;
 
-      // Convert array to object keyed by branch_id
-      const hoursMap: Record<string, OperatingHours> = {};
-      
-      // Initialize with default values for all branches
-      allBranches.forEach(branch => {
-        const defaultClosingTime = branch.id === 'dollar' ? '03:00' : '23:59';
-        hoursMap[branch.id] = {
-          branch_id: branch.id,
-          opening_time: '11:00',
-          closing_time: defaultClosingTime,
-          is_24_hours: false,
-          is_closed: false,
-          delivery_start_time: null,
-          delivery_end_time: null,
-          delivery_available: true,
-        };
+      // Set hours or default values
+      setOperatingHours(hoursData || {
+        branch_id: branchData.id,
+        opening_time: '11:00',
+        closing_time: '23:59',
+        is_24_hours: false,
+        is_closed: false,
+        delivery_start_time: null,
+        delivery_end_time: null,
+        delivery_available: true,
       });
-
-      // Override with database values
-      data?.forEach(item => {
-        hoursMap[item.branch_id] = item;
-      });
-
-      setOperatingHours(hoursMap);
     } catch (error) {
       console.error('Error fetching operating hours:', error);
       setError('فشل في تحميل أوقات العمل');
@@ -76,136 +78,90 @@ const AdminOperatingHours: React.FC = () => {
     }
   };
 
-  const handleSave = async (branchId: string) => {
+  const handleSave = async () => {
     try {
-      setSaving(prev => ({ ...prev, [branchId]: true }));
+      setSaving(true);
       setError(null);
-      
-      const hours = operatingHours[branchId];
-      if (!hours) return;
+
+      if (!operatingHours || !branchInfo) return;
 
       const { data, error } = await supabase
         .from('operating_hours')
         .upsert({
-         ...(hours.id && { id: hours.id }),
-          branch_id: branchId,
-          opening_time: hours.opening_time,
-          closing_time: hours.closing_time,
-          is_24_hours: hours.is_24_hours,
-          is_closed: hours.is_closed,
-          delivery_start_time: hours.delivery_start_time,
-          delivery_end_time: hours.delivery_end_time,
-          delivery_available: hours.delivery_available,
+         ...(operatingHours.id && { id: operatingHours.id }),
+          branch_id: branchInfo.id,
+          opening_time: operatingHours.opening_time,
+          closing_time: operatingHours.closing_time,
+          is_24_hours: operatingHours.is_24_hours,
+          is_closed: operatingHours.is_closed,
+          delivery_start_time: operatingHours.delivery_start_time,
+          delivery_end_time: operatingHours.delivery_end_time,
+          delivery_available: operatingHours.delivery_available,
         }, { onConflict: 'branch_id' })
         .select()
         .single();
 
       if (error) throw error;
 
-      // Update local state with returned data
-      setOperatingHours(prev => ({
-        ...prev,
-        [branchId]: data
-      }));
+      setOperatingHours(data);
 
     } catch (error) {
       console.error('Error saving operating hours:', error);
       setError('حدث خطأ في حفظ أوقات العمل');
     } finally {
-      setSaving(prev => ({ ...prev, [branchId]: false }));
+      setSaving(false);
     }
   };
 
-  const updateHours = (branchId: string, field: keyof OperatingHours, value: any) => {
-    setOperatingHours(prev => ({
+  const updateHours = (field: keyof OperatingHours, value: any) => {
+    setOperatingHours(prev => prev ? {
       ...prev,
-      [branchId]: {
-        ...prev[branchId],
-        [field]: value
-      }
-    }));
+      [field]: value
+    } : null);
   };
 
-  const getFilteredBranches = () => {
-    if (selectedRestaurant === 'mister-shish') {
-      return allBranches.filter(branch => branch.id === 'airport' || branch.id === 'balaoun');
-    } else if (selectedRestaurant === 'mister-crispy') {
-      return allBranches.filter(branch => branch.id === 'dollar');
-    } else {
-      return allBranches.filter(branch => branch.id === 'burgerito-airport');
-    }
-  };
+  const getCurrentStatus = () => {
+    if (!operatingHours) return 'غير محدد';
 
-  const getCurrentStatus = (branchId: string) => {
-    const hours = operatingHours[branchId];
-    if (!hours) return 'غير محدد';
-    
-    if (hours.is_closed) return 'مغلق';
-    if (hours.is_24_hours) return 'مفتوح 24 ساعة';
-    
-    let status = `${hours.opening_time} - ${hours.closing_time}`;
-    
-    if (!hours.delivery_available) {
+    if (operatingHours.is_closed) return 'مغلق';
+    if (operatingHours.is_24_hours) return 'مفتوح 24 ساعة';
+
+    let status = `${operatingHours.opening_time} - ${operatingHours.closing_time}`;
+
+    if (!operatingHours.delivery_available) {
       status += ' (استلام فقط)';
-    } else if (hours.delivery_start_time && hours.delivery_end_time) {
-      status += ` | توصيل: ${hours.delivery_start_time} - ${hours.delivery_end_time}`;
+    } else if (operatingHours.delivery_start_time && operatingHours.delivery_end_time) {
+      status += ` | توصيل: ${operatingHours.delivery_start_time} - ${operatingHours.delivery_end_time}`;
     }
-    
+
     return status;
   };
 
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#7A1120]"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#fcb946]"></div>
         <p className="mt-4 text-gray-600">جاري تحميل أوقات العمل...</p>
+      </div>
+    );
+  }
+
+  if (!branchInfo || !operatingHours) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-600">فشل في تحميل معلومات الفرع</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Restaurant Sub-tabs */}
-      <div className="bg-white shadow-sm border-b mb-6">
-        <div className="container mx-auto px-3 sm:px-8">
-          <div className="flex gap-1">
-            <button
-              onClick={() => setSelectedRestaurant('mister-shish')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                selectedRestaurant === 'mister-shish'
-                  ? 'text-[#781220] border-[#781220] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
-              }`}
-            >
-              البارون شيش
-            </button>
-            <button
-              onClick={() => setSelectedRestaurant('mister-crispy')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                selectedRestaurant === 'mister-crispy'
-                  ? 'text-[#55421A] border-[#55421A] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
-              }`}
-            >
-              البارون كريسبي
-            </button>
-            <button
-              onClick={() => setSelectedRestaurant('mister-burgerito')}
-              className={`px-4 sm:px-6 py-3 sm:py-4 font-semibold transition-all duration-300 flex items-center gap-2 text-sm sm:text-base border-b-2 ${
-                selectedRestaurant === 'mister-burgerito'
-                  ? 'text-[#E59F49] border-[#E59F49] bg-red-50'
-                  : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
-              }`}
-            >
-              البارون برجريتو
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Header */}
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-800">إدارة أوقات العمل</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">إدارة أوقات العمل - البارون</h2>
+          <p className="text-gray-600 mt-1">{branchInfo.name} - {branchInfo.area}</p>
+        </div>
       </div>
 
       {/* Error Message */}
@@ -215,188 +171,145 @@ const AdminOperatingHours: React.FC = () => {
         </div>
       )}
 
-      {/* Branch Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {getFilteredBranches().map((branch) => {
-          const hours = operatingHours[branch.id];
-          const isSaving = saving[branch.id];
-          
-          return (
-            <div key={branch.id} className="bg-white rounded-2xl shadow-lg p-6">
-              {/* Branch Header */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-12 h-12 ${
-                  selectedRestaurant === 'mister-crispy' ? 'bg-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'bg-[#E59F49]' : 'bg-[#781220]'
-                } rounded-xl flex items-center justify-center`}>
-                  <MapPin className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">{branch.name}</h3>
-                  <p className="text-sm text-gray-600">{branch.area}</p>
-                </div>
-              </div>
-
-              {/* Current Status */}
-              <div className="mb-4 p-3 bg-gray-50 rounded-xl">
-                <div className="flex items-center gap-2 mb-1">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm font-semibold text-gray-700">الحالة الحالية</span>
-                </div>
-                <p className="text-sm text-gray-600">{getCurrentStatus(branch.id)}</p>
-              </div>
-
-              {hours && (
-                <>
-                  {/* Status Toggles */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id={`closed-${branch.id}`}
-                        checked={hours.is_closed}
-                        onChange={(e) => updateHours(branch.id, 'is_closed', e.target.checked)}
-                        className={`w-5 h-5 ${
-                          selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : 'text-[#781220]'
-                        } border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2`}
-                      />
-                      <label htmlFor={`closed-${branch.id}`} className="text-sm font-medium text-gray-700">
-                        مغلق
-                      </label>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="checkbox"
-                        id={`24hours-${branch.id}`}
-                        checked={hours.is_24_hours}
-                        onChange={(e) => updateHours(branch.id, 'is_24_hours', e.target.checked)}
-                        disabled={hours.is_closed}
-                        className={`w-5 h-5 ${
-                          selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'text-[#E59F49]' : 'text-[#781220]'
-                        } border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 disabled:opacity-50`}
-                      />
-                      <label htmlFor={`24hours-${branch.id}`} className="text-sm font-medium text-gray-700">
-                        24 ساعة
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Time Inputs */}
-                {/* Delivery Settings */}
-                <div className="space-y-3 mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700">إعدادات التوصيل</h4>
-                  
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      id={`delivery-available-${branch.id}`}
-                      checked={hours.delivery_available}
-                      onChange={(e) => updateHours(branch.id, 'delivery_available', e.target.checked)}
-                      disabled={hours.is_closed}
-                      className={`w-5 h-5 ${
-                        selectedRestaurant === 'mister-crispy' ? 'text-[#55421A]' : selectedRestaurant === 'mister-burgerito' ? 'text-[#E59F49]' : 'text-[#781220]'
-                      } border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 disabled:opacity-50`}
-                    />
-                    <label htmlFor={`delivery-available-${branch.id}`} className="text-sm font-medium text-gray-700">
-                      التوصيل متاح
-                    </label>
-                  </div>
-                </div>
-                  {!hours.is_closed && !hours.is_24_hours && (
-                    <div className="space-y-3 mb-4">
-                      <h4 className="text-sm font-semibold text-gray-700">أوقات العمل</h4>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">
-                          وقت الفتح
-                        </label>
-                        <input
-                          type="time"
-                          value={hours.opening_time}
-                          onChange={(e) => updateHours(branch.id, 'opening_time', e.target.value)}
-                          className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                            selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
-                          } text-right`}
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">
-                          وقت الإغلاق
-                        </label>
-                        <input
-                          type="time"
-                          value={hours.closing_time}
-                          onChange={(e) => updateHours(branch.id, 'closing_time', e.target.value)}
-                          className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                            selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
-                          } text-right`}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                {/* Delivery Time Inputs */}
-                {!hours.is_closed && hours.delivery_available && (
-                  <div className="space-y-3 mb-4">
-                    <h4 className="text-sm font-semibold text-gray-700">أوقات التوصيل (اختياري)</h4>
-                    <p className="text-xs text-gray-500 mb-2">
-                      إذا لم تحدد أوقات التوصيل، سيكون التوصيل متاحاً خلال جميع ساعات العمل
-                    </p>
-                    
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        بداية التوصيل
-                      </label>
-                      <input
-                        type="time"
-                        value={hours.delivery_start_time || ''}
-                        onChange={(e) => updateHours(branch.id, 'delivery_start_time', e.target.value || null)}
-                        className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
-                        } text-right`}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1">
-                        نهاية التوصيل
-                      </label>
-                      <input
-                        type="time"
-                        value={hours.delivery_end_time || ''}
-                        onChange={(e) => updateHours(branch.id, 'delivery_end_time', e.target.value || null)}
-                        className={`w-full p-2 border border-gray-300 rounded-full focus:border-${
-                          selectedRestaurant === 'mister-crispy' ? '[#55421A]' : selectedRestaurant === 'mister-burgerito' ? '[#E59F49]' : '[#781220]'
-                        } text-right`}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                  {/* Save Button */}
-                  <button
-                    onClick={() => handleSave(branch.id)}
-                    disabled={isSaving}
-                    className={`w-full py-3 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                      isSaving
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                        : `${
-                            selectedRestaurant === 'mister-crispy' 
-                              ? 'bg-[#55421A] hover:bg-[#3d2f12]' 
-                              : selectedRestaurant === 'mister-burgerito'
-                                ? 'bg-[#E59F49] hover:bg-[#cc8a3d]'
-                                : 'bg-[#781220] hover:bg-[#5c0d18]'
-                          } text-white shadow-lg hover:shadow-xl transform hover:scale-105`
-                    }`}
-                  >
-                    <Save className="w-4 h-4" />
-                    {isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
-                  </button>
-                </>
-              )}
+      {/* Single Branch Card */}
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          {/* Current Status */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-5 h-5 text-gray-500" />
+              <span className="text-base font-semibold text-gray-700">الحالة الحالية</span>
             </div>
-          );
-        })}
+            <p className="text-base text-gray-600">{getCurrentStatus()}</p>
+          </div>
+
+          {/* Status Toggles */}
+          <div className="space-y-4 mb-6">
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="closed"
+                checked={operatingHours.is_closed}
+                onChange={(e) => updateHours('is_closed', e.target.checked)}
+                className="w-5 h-5 text-[#fcb946] border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2"
+              />
+              <label htmlFor="closed" className="text-base font-medium text-gray-700">
+                مغلق
+              </label>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="24hours"
+                checked={operatingHours.is_24_hours}
+                onChange={(e) => updateHours('is_24_hours', e.target.checked)}
+                disabled={operatingHours.is_closed}
+                className="w-5 h-5 text-[#fcb946] border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
+              />
+              <label htmlFor="24hours" className="text-base font-medium text-gray-700">
+                24 ساعة
+              </label>
+            </div>
+          </div>
+
+          {/* Delivery Settings */}
+          <div className="space-y-4 mb-6">
+            <h4 className="text-base font-semibold text-gray-700">إعدادات التوصيل</h4>
+
+            <div className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                id="delivery-available"
+                checked={operatingHours.delivery_available}
+                onChange={(e) => updateHours('delivery_available', e.target.checked)}
+                disabled={operatingHours.is_closed}
+                className="w-5 h-5 text-[#fcb946] border-2 border-gray-300 rounded focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
+              />
+              <label htmlFor="delivery-available" className="text-base font-medium text-gray-700">
+                التوصيل متاح
+              </label>
+            </div>
+          </div>
+
+          {/* Time Inputs */}
+          {!operatingHours.is_closed && !operatingHours.is_24_hours && (
+            <div className="space-y-4 mb-6">
+              <h4 className="text-base font-semibold text-gray-700">أوقات العمل</h4>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  وقت الفتح
+                </label>
+                <input
+                  type="time"
+                  value={operatingHours.opening_time}
+                  onChange={(e) => updateHours('opening_time', e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-[#fcb946] focus:ring-2 focus:ring-[#fcb946] text-right"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  وقت الإغلاق
+                </label>
+                <input
+                  type="time"
+                  value={operatingHours.closing_time}
+                  onChange={(e) => updateHours('closing_time', e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-[#fcb946] focus:ring-2 focus:ring-[#fcb946] text-right"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Delivery Time Inputs */}
+          {!operatingHours.is_closed && operatingHours.delivery_available && (
+            <div className="space-y-4 mb-6">
+              <h4 className="text-base font-semibold text-gray-700">أوقات التوصيل (اختياري)</h4>
+              <p className="text-sm text-gray-500 mb-3">
+                إذا لم تحدد أوقات التوصيل، سيكون التوصيل متاحاً خلال جميع ساعات العمل
+              </p>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  بداية التوصيل
+                </label>
+                <input
+                  type="time"
+                  value={operatingHours.delivery_start_time || ''}
+                  onChange={(e) => updateHours('delivery_start_time', e.target.value || null)}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-[#fcb946] focus:ring-2 focus:ring-[#fcb946] text-right"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  نهاية التوصيل
+                </label>
+                <input
+                  type="time"
+                  value={operatingHours.delivery_end_time || ''}
+                  onChange={(e) => updateHours('delivery_end_time', e.target.value || null)}
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-[#fcb946] focus:ring-2 focus:ring-[#fcb946] text-right"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Save Button */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+              saving
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-[#fcb946] hover:bg-[#e5a835] text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+            }`}
+          >
+            <Save className="w-5 h-5" />
+            {saving ? 'جاري الحفظ...' : 'حفظ التغييرات'}
+          </button>
+        </div>
       </div>
     </div>
   );
