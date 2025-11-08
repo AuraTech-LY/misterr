@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell, Power } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
@@ -9,6 +9,7 @@ import { AdminOrders } from './AdminOrders';
 import { AdminUserManagement } from './AdminUserManagement';
 import { AdminAuditLogs } from './AdminAuditLogs';
 import { CashierOrdersView } from './CashierOrdersView';
+import AdminItemAvailability from './AdminItemAvailability';
 import { usePermission } from '../hooks/usePermission';
 
 interface Category {
@@ -49,7 +50,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'orders' | 'cashier' | 'users' | 'logs'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'categories' | 'hours' | 'orders' | 'cashier' | 'users' | 'logs' | 'availability'>('menu');
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [branches, setBranches] = useState<RestaurantBranch[]>([]);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>('');
@@ -416,6 +417,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               </button>
             )}
 
+            {canManageMenuItems() && (
+              <button
+                onClick={() => setActiveTab('availability')}
+                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'availability'
+                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
+                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
+                }`}
+              >
+                <Power className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>التوفر</span>
+              </button>
+            )}
+
             {canViewOrders() && (
               <button
                 onClick={() => setActiveTab('cashier')}
@@ -476,6 +491,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminUserManagement currentUserEmail={currentUserEmail} />
         ) : activeTab === 'logs' && isOwner() ? (
           <AdminAuditLogs />
+        ) : activeTab === 'availability' && canManageMenuItems() ? (
+          <AdminItemAvailability />
         ) : activeTab === 'menu' && canManageMenuItems() ? (
           <>
             {/* Restaurant Sub-tabs */}

@@ -68,8 +68,8 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   }, [branchId]);
 
   const handleMobileItemClick = () => {
-    if (isOpen !== true) return;
-    
+    if (isOpen !== true || !item.is_available) return;
+
     setShowMobilePopup(true);
     setIsClosing(false);
     setIsAppearing(false);
@@ -142,22 +142,30 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
   return (
     <>
       {/* Mobile Layout - Horizontal/Rectangular */}
-      <div 
+      <div
         className={`md:hidden bg-white shadow-lg rounded-2xl overflow-hidden group w-full relative transition-all duration-150 transform ${
-          isPressing 
-            ? 'scale-95' 
+          isPressing
+            ? 'scale-95'
             : 'scale-100'
         } ${
-        isOpen === true ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
+        isOpen === true && item.is_available ? 'hover:shadow-xl cursor-pointer' : 'opacity-60 cursor-not-allowed'
         } ${
           isHighlighted || isInCart
             ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : isMisterBurgerito ? 'ring-[#E59F49]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-r from-[#55421A]/5 to-transparent' : isMisterBurgerito ? 'bg-gradient-to-r from-[#E59F49]/5 to-transparent' : 'bg-gradient-to-r from-[#781220]/5 to-transparent'} shadow-xl`
             : ''
         } ${
           hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+        } ${
+          !item.is_available ? 'bg-gray-100' : ''
         }`}
         onClick={handleMobileItemClick}
       >
+        {/* Unavailable Badge - Mobile */}
+        {!item.is_available && (
+          <div className="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10">
+            غير متوفر
+          </div>
+        )}
         {/* Trash button for items in cart - Mobile */}
         {isInCart && onRemoveFromCart && (
           <button
@@ -212,10 +220,10 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
             />
             <button
               onClick={handleMobileQuickAdd}
-              disabled={isOpen !== true}
+              disabled={isOpen !== true || !item.is_available}
               className={`absolute -bottom-1 -left-1 w-8 h-8 bg-white rounded-full shadow-lg transition-all duration-150 flex items-center justify-center z-10 ${
-                isOpen === true
-                  ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer' 
+                isOpen === true && item.is_available
+                  ? 'hover:shadow-xl transform hover:scale-110 active:scale-95 cursor-pointer'
                   : 'opacity-50 cursor-not-allowed'
               }`}
             >
@@ -322,16 +330,24 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
 
       {/* Desktop/Tablet Layout - Vertical Cards */}
       <div className={`hidden md:block bg-white rounded-2xl shadow-lg transition-all duration-300 overflow-hidden group h-80 flex flex-col ${
-        isOpen === true ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
+        isOpen === true && item.is_available ? 'hover:shadow-2xl transform hover:-translate-y-2' : 'opacity-60'
       } ${
-        isInCart 
+        isInCart
           ? `ring-2 ${isMisterCrispy ? 'ring-[#55421A]' : isMisterBurgerito ? 'ring-[#E59F49]' : 'ring-[#781220]'} ring-opacity-50 ${isMisterCrispy ? 'bg-gradient-to-b from-[#55421A]/5 to-transparent' : isMisterBurgerito ? 'bg-gradient-to-b from-[#E59F49]/5 to-transparent' : 'bg-gradient-to-b from-[#781220]/5 to-transparent'} shadow-xl`
           : ''
       } ${
         isPressing ? 'scale-95 shadow-inner bg-gray-50' : ''
       } ${
         hasAppeared ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      } ${
+        !item.is_available ? 'bg-gray-100' : ''
       }`}>
+        {/* Unavailable Badge - Desktop */}
+        {!item.is_available && (
+          <div className="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-20">
+            غير متوفر
+          </div>
+        )}
         {/* Trash button for items in cart - Desktop */}
         {isInCart && onRemoveFromCart && (
           <button
@@ -394,15 +410,15 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item, onAddToCart, onRemoveF
                 }
                 onAddToCart(item);
               }}
-              disabled={isOpen !== true}
+              disabled={isOpen !== true || !item.is_available}
               className={`w-full px-4 py-2 rounded-full font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm ${
-                isOpen === true
+                isOpen === true && item.is_available
                   ? 'text-white hover:shadow-xl transform hover:scale-105 active:scale-95'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
-              style={isOpen === true ? { backgroundColor: primaryColor } : {}}
+              style={isOpen === true && item.is_available ? { backgroundColor: primaryColor } : {}}
             >
-              {isOpen === true ? 'إضافة إلى السلة' : isOpen === false ? 'مغلق حالياً' : 'جاري التحقق...'}
+              {!item.is_available ? 'غير متوفر' : isOpen === true ? 'إضافة إلى السلة' : isOpen === false ? 'مغلق حالياً' : 'جاري التحقق...'}
             </button>
           </div>
         </div>

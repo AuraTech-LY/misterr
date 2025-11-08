@@ -6,6 +6,7 @@ export interface MenuItem {
   image: string;
   category: string;
   popular?: boolean;
+  is_available?: boolean;
   image_brightness?: number;
   image_contrast?: number;
 }
