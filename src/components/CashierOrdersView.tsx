@@ -674,7 +674,6 @@ export const CashierOrdersView: React.FC = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-2xl font-bold text-slate-900">{selectedOrder.order_number}</h3>
-                  <p className="text-sm text-slate-600">{selectedOrder.restaurant_name}</p>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
