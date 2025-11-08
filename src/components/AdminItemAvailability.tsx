@@ -13,58 +13,29 @@ interface MenuItem {
   branch_id: string | null;
 }
 
-interface Branch {
-  id: string;
-  name: string;
-  area: string;
-}
-
 export default function AdminItemAvailability() {
   const [items, setItems] = useState<MenuItem[]>([]);
-  const [branches, setBranches] = useState<Branch[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedBranch, setSelectedBranch] = useState<string>('all');
   const [categories, setCategories] = useState<string[]>([]);
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    fetchBranches();
     fetchItems();
-  }, [selectedBranch]);
-
-  const fetchBranches = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('restaurant_branches')
-        .select('id, name, area')
-        .eq('is_active', true)
-        .order('name');
-
-      if (error) throw error;
-      setBranches(data || []);
-    } catch (error) {
-      console.error('Error fetching branches:', error);
-    }
-  };
+  }, []);
 
   const fetchItems = async () => {
     try {
       setLoading(true);
-      let query = supabase
-        .from('menu_items')
-        .select('*')
-        .order('category')
-        .order('name');
 
-      if (selectedBranch !== 'all') {
-        query = query.eq('branch_id', selectedBranch);
-      }
+      // Albaron branch ID (مستر شيش - بلعون)
+      const albaronBranchId = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
 
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
+        .eq('branch_id', albaronBranchId)
         .order('category')
         .order('name');
 
@@ -158,13 +129,13 @@ export default function AdminItemAvailability() {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-[#781220] to-[#9a1929] text-white p-6 rounded-2xl">
-        <h2 className="text-2xl font-bold mb-2">إدارة توفر المنتجات</h2>
+        <h2 className="text-2xl font-bold mb-2">إدارة توفر المنتجات - فرع بلعون</h2>
         <p className="text-white/90">
-          تحكم سريع في توفر المنتجات. يتم إعادة تعيين جميع المنتجات تلقائياً إلى "متوفر" في بداية كل يوم.
+          تحكم سريع في توفر المنتجات لفرع بلعون. يتم إعادة تعيين جميع المنتجات تلقائياً إلى "متوفر" في بداية كل يوم.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="relative">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
@@ -187,22 +158,6 @@ export default function AdminItemAvailability() {
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="relative">
-          <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <select
-            value={selectedBranch}
-            onChange={(e) => setSelectedBranch(e.target.value)}
-            className="w-full pr-10 pl-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#781220] appearance-none cursor-pointer"
-          >
-            <option value="all">جميع الفروع</option>
-            {branches.map((branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.name} - {branch.area}
               </option>
             ))}
           </select>
