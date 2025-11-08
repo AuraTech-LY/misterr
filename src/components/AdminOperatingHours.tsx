@@ -177,7 +177,7 @@ const AdminOperatingHours: React.FC = () => {
                   : 'text-gray-600 border-transparent hover:text-[#781220] hover:border-gray-300'
               }`}
             >
-              مستر شيش
+              البارون شيش
             </button>
             <button
               onClick={() => setSelectedRestaurant('mister-crispy')}
@@ -187,7 +187,7 @@ const AdminOperatingHours: React.FC = () => {
                   : 'text-gray-600 border-transparent hover:text-[#55421A] hover:border-gray-300'
               }`}
             >
-              مستر كريسبي
+              البارون كريسبي
             </button>
             <button
               onClick={() => setSelectedRestaurant('mister-burgerito')}
@@ -197,7 +197,7 @@ const AdminOperatingHours: React.FC = () => {
                   : 'text-gray-600 border-transparent hover:text-[#E59F49] hover:border-gray-300'
               }`}
             >
-              مستر برجريتو
+              البارون برجريتو
             </button>
           </div>
         </div>

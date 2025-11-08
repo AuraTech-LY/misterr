@@ -321,13 +321,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center">
-                <img 
-                  src="/New Element 88 [8BACFE9].png" 
-                  alt="مطعم المستر" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-black">لوحة التحكم</h1>
               </div>
