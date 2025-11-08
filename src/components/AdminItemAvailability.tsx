@@ -29,13 +29,13 @@ export default function AdminItemAvailability() {
     try {
       setLoading(true);
 
-      // Albaron branch ID (مستر شيش - بلعون)
-      const albaronBranchId = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+      // Albaron restaurant ID (البارون)
+      const albaronRestaurantId = 'ee02cd3e-1336-4f52-b223-be9396e1b9f1';
 
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
-        .eq('branch_id', albaronBranchId)
+        .eq('restaurant_id', albaronRestaurantId)
         .order('category')
         .order('name');
 
@@ -129,9 +129,9 @@ export default function AdminItemAvailability() {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-[#781220] to-[#9a1929] text-white p-6 rounded-2xl">
-        <h2 className="text-2xl font-bold mb-2">إدارة توفر المنتجات - فرع بلعون</h2>
+        <h2 className="text-2xl font-bold mb-2">إدارة توفر المنتجات - البارون</h2>
         <p className="text-white/90">
-          تحكم سريع في توفر المنتجات لفرع بلعون. يتم إعادة تعيين جميع المنتجات تلقائياً إلى "متوفر" في بداية كل يوم.
+          تحكم سريع في توفر المنتجات للبارون. يتم إعادة تعيين جميع المنتجات تلقائياً إلى "متوفر" في بداية كل يوم.
         </p>
       </div>
 
