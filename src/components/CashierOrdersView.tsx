@@ -52,6 +52,9 @@ export const CashierOrdersView: React.FC = () => {
   const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   const [notificationOrder, setNotificationOrder] = useState<Order | null>(null);
   const [realtimeStatus, setRealtimeStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting');
+  const [isClosing, setIsClosing] = useState(false);
+  const [dragStartY, setDragStartY] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
@@ -257,6 +260,38 @@ export const CashierOrdersView: React.FC = () => {
 
     channelRef.current = channel;
     return channel;
+  };
+
+  const handleCloseDrawer = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setSelectedOrder(null);
+      setIsClosing(false);
+      setDragOffset(0);
+    }, 300);
+  };
+
+  const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    setDragStartY(clientY);
+  };
+
+  const handleDragMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (dragStartY === null) return;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    const diff = clientY - dragStartY;
+    if (diff > 0) {
+      setDragOffset(diff);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (dragOffset > 150) {
+      handleCloseDrawer();
+    } else {
+      setDragOffset(0);
+    }
+    setDragStartY(null);
   };
 
   const playNotificationSound = () => {
@@ -657,15 +692,34 @@ export const CashierOrdersView: React.FC = () => {
       {/* Order Details Bottom Sheet */}
       {selectedOrder && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end"
-          onClick={() => setSelectedOrder(null)}
+          className="fixed inset-0 bg-black z-50 flex items-end transition-all duration-300 ease-out"
+          style={{
+            backgroundColor: `rgba(0, 0, 0, ${isClosing ? 0 : 0.5})`,
+            opacity: isClosing ? 0 : 1
+          }}
+          onClick={handleCloseDrawer}
         >
           <div
-            className="bg-white w-full rounded-t-3xl shadow-2xl max-h-[85vh] overflow-y-auto animate-slide-up"
+            className="bg-white w-full rounded-t-3xl shadow-2xl max-h-[85vh] overflow-y-auto transition-all duration-300 ease-out touch-none"
+            style={{
+              transform: `translateY(${isClosing ? '100%' : `${dragOffset}px`})`,
+              animation: isClosing ? 'none' : 'slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1)'
+            }}
             onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleDragStart}
+            onTouchMove={handleDragMove}
+            onTouchEnd={handleDragEnd}
+            onMouseDown={handleDragStart}
+            onMouseMove={handleDragMove}
+            onMouseUp={handleDragEnd}
+            onMouseLeave={handleDragEnd}
           >
             {/* Drag Handle */}
-            <div className="flex justify-center pt-3 pb-2">
+            <div
+              className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
+              onTouchStart={handleDragStart}
+              onMouseDown={handleDragStart}
+            >
               <div className="w-12 h-1.5 bg-slate-300 rounded-full"></div>
             </div>
 
@@ -676,7 +730,7 @@ export const CashierOrdersView: React.FC = () => {
                   <h3 className="text-2xl font-bold text-slate-900">{selectedOrder.order_number}</h3>
                 </div>
                 <button
-                  onClick={() => setSelectedOrder(null)}
+                  onClick={handleCloseDrawer}
                   className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 >
                   <XCircle className="w-6 h-6 text-slate-400" />
