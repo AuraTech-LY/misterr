@@ -65,16 +65,19 @@ export default function AdminItemAvailability() {
         })
         .eq('id', itemId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating availability:', error);
+        alert(`فشل في تحديث حالة المنتج: ${error.message}`);
+        throw error;
+      }
 
       setItems((prev) =>
         prev.map((item) =>
           item.id === itemId ? { ...item, is_available: !currentStatus } : item
         )
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating availability:', error);
-      alert('فشل في تحديث حالة المنتج');
     } finally {
       setUpdating((prev) => ({ ...prev, [itemId]: false }));
     }
