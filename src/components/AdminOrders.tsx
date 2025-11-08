@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Phone, MapPin, Clock, ChevronDown, ChevronUp, Search, Filter, ExternalLink, AlertCircle } from 'lucide-react';
+import { Phone, MapPin, Clock, ChevronDown, ChevronUp, Search, Filter, ExternalLink, AlertCircle } from 'lucide-react';
 import { OrderWithItems, OrderStatus } from '../types';
 import { orderService } from '../services/orderService';
 import { usePermission } from '../hooks/usePermission';
@@ -213,10 +213,6 @@ export const AdminOrders: React.FC = () => {
                       </span>
                     </div>
                     <div className="space-y-1 text-xs sm:text-sm text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Package className="w-4 h-4" />
-                        <span>{order.restaurant_name}</span>
-                      </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
                         <span>{formatDate(order.created_at)}</span>
