@@ -57,13 +57,16 @@ export default function AdminItemAvailability() {
   const toggleAvailability = async (itemId: string, currentStatus: boolean) => {
     setUpdating((prev) => ({ ...prev, [itemId]: true }));
     try {
-      const { error } = await supabase
+      const { data: session } = await supabase.auth.getSession();
+      console.log('Current session:', session);
+
+      const { data, error } = await supabase
         .from('menu_items')
-        .update({
-          is_available: !currentStatus,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', itemId);
+        .update({ is_available: !currentStatus })
+        .eq('id', itemId)
+        .select();
+
+      console.log('Update result:', { data, error });
 
       if (error) {
         console.error('Error updating availability:', error);
