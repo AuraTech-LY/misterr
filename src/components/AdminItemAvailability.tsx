@@ -234,7 +234,7 @@ export default function AdminItemAvailability() {
                         <button
                           onClick={() => toggleAvailability(item.id, item.is_available)}
                           disabled={updating[item.id]}
-                          className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 ${
+                          className={`relative inline-flex h-8 w-14 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 ${
                             updating[item.id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                           } ${
                             item.is_available ? 'bg-green-500' : 'bg-red-500'
@@ -245,7 +245,7 @@ export default function AdminItemAvailability() {
                           ) : (
                             <span
                               className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform ${
-                                item.is_available ? 'translate-x-7' : 'translate-x-1'
+                                item.is_available ? 'translate-x-[26px]' : 'translate-x-[2px]'
                               }`}
                             />
                           )}
