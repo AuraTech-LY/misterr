@@ -82,24 +82,43 @@ export const Header: React.FC<HeaderProps> = ({
   // Update operating status every minute with branch-specific hours
   React.useEffect(() => {
     const updateStatus = async () => {
-      // Clear cache for debugging - remove this in production
-      if (selectedBranch?.id === 'burgerito-airport') {
-        const { clearOperatingHoursCache } = await import('../utils/timeUtils');
-        clearOperatingHoursCache();
-      }
-      
       const branchIsOpen = await isWithinOperatingHours(selectedBranch?.id);
       const timeUntilClose = await getTimeUntilClosing(selectedBranch?.id);
       setIsOpen(branchIsOpen);
       setTimeUntilClosing(timeUntilClose);
     };
-    
+
     updateStatus();
     const interval = setInterval(() => {
       updateStatus();
     }, 60000);
 
     return () => clearInterval(interval);
+  }, [selectedBranch?.id]);
+
+  // Subscribe to real-time changes for operating hours
+  React.useEffect(() => {
+    if (!selectedBranch?.id) return;
+
+    const { supabase } = require('../lib/supabase');
+    const { clearBranchOperatingHoursCache } = require('../utils/timeUtils');
+
+    const subscription = supabase
+      .channel('operating_hours_changes')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'operating_hours', filter: `branch_id=eq.${selectedBranch.id}` },
+        () => {
+          console.log('Operating hours changed, clearing cache and updating...');
+          clearBranchOperatingHoursCache(selectedBranch.id);
+          isWithinOperatingHours(selectedBranch.id).then(branchIsOpen => setIsOpen(branchIsOpen));
+          getTimeUntilClosing(selectedBranch.id).then(timeUntilClose => setTimeUntilClosing(timeUntilClose));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [selectedBranch?.id]);
 
   const handleBranchChange = () => {
