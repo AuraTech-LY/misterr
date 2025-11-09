@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 // Cache configuration
-const CACHE_EXPIRATION_MINUTES = 1; // Cache operating hours for 1 minute for faster updates
+const CACHE_EXPIRATION_MINUTES = 30; // Cache operating hours for 30 minutes
 const CACHE_KEY_PREFIX = 'operating_hours_';
 
 interface CachedOperatingHours {
@@ -500,18 +500,6 @@ export const isTimeWithinOperatingHours = (
   }
   
   return true;
-};
-
-/**
- * Clear cached operating hours for a specific branch
- */
-export const clearBranchOperatingHoursCache = (branchId: string): void => {
-  try {
-    const cacheKey = `${CACHE_KEY_PREFIX}${branchId}`;
-    localStorage.removeItem(cacheKey);
-  } catch (error) {
-    console.error('Error clearing operating hours cache for branch:', error);
-  }
 };
 
 /**

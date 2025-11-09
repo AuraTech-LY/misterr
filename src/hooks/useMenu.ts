@@ -103,35 +103,6 @@ export const useMenu = (branchId?: string, restaurantId?: string) => {
     };
 
     fetchData();
-
-    // Subscribe to real-time changes for menu items
-    const menuSubscription = supabase
-      .channel('menu_items_changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'menu_items' },
-        () => {
-          console.log('Menu items changed, refetching...');
-          fetchData();
-        }
-      )
-      .subscribe();
-
-    // Subscribe to real-time changes for categories
-    const categoriesSubscription = supabase
-      .channel('categories_changes')
-      .on('postgres_changes',
-        { event: '*', schema: 'public', table: 'categories' },
-        () => {
-          console.log('Categories changed, refetching...');
-          fetchData();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      menuSubscription.unsubscribe();
-      categoriesSubscription.unsubscribe();
-    };
   }, [branchId, restaurantId]);
 
   // Filter categories to only include those that have items
