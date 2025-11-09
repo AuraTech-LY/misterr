@@ -97,7 +97,7 @@ export const Cart: React.FC<CartProps> = ({
     }
   };
 
-  const submitOrderWithItems = async (orderData: any, cartItems: CartItem[]) => {
+  const submitOrderWithItems = async (orderData: any, cartItems: CartItem[], removedItemIds: string[] = []) => {
     setIsSubmitting(true);
 
     try {
@@ -131,10 +131,10 @@ export const Cart: React.FC<CartProps> = ({
         setOrderNumber(result.orderNumber);
         setShowCheckout(false);
         setShowSuccessModal(true);
-        unavailableItemsModal.unavailableItems.forEach(unavailableItem => {
-          onRemoveItem(unavailableItem.id);
+        removedItemIds.forEach(itemId => {
+          onRemoveItem(itemId);
         });
-        if (cartItems.length === 0) {
+        if (removedItemIds.length === 0) {
           onClearCart();
         }
       } else {
@@ -194,8 +194,9 @@ export const Cart: React.FC<CartProps> = ({
             {!allItemsUnavailable && (
               <button
                 onClick={() => {
+                  const removedIds = unavailableItems.map(item => item.id);
                   setUnavailableItemsModal({ show: false, unavailableItems: [], availableItems: [], orderData: null });
-                  submitOrderWithItems(orderData, availableItems);
+                  submitOrderWithItems(orderData, availableItems, removedIds);
                 }}
                 className="w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all text-white shadow-lg hover:shadow-xl transform hover:scale-105 hover:opacity-90"
                 style={{ backgroundColor: primaryColor }}
