@@ -131,9 +131,11 @@ export const AdminBranchOperatingHours: React.FC<AdminBranchOperatingHoursProps>
       </div>
 
       <div className="space-y-3">
-        {DAYS_OF_WEEK.map((day, index) => {
+        {DAYS_OF_WEEK.map((day) => {
           const hour = hours.find(h => h.day_of_week === day.value);
           if (!hour) return null;
+
+          const hourIndex = hours.findIndex(h => h.day_of_week === day.value);
 
           return (
             <div key={day.value} className="bg-white rounded-lg p-4 shadow-sm">
@@ -147,7 +149,7 @@ export const AdminBranchOperatingHours: React.FC<AdminBranchOperatingHoursProps>
                     <input
                       type="checkbox"
                       checked={hour.is_closed}
-                      onChange={(e) => updateHour(index, 'is_closed', e.target.checked)}
+                      onChange={(e) => updateHour(hourIndex, 'is_closed', e.target.checked)}
                       className="w-4 h-4"
                     />
                     <span className="text-sm text-gray-600">مغلق</span>
@@ -159,7 +161,7 @@ export const AdminBranchOperatingHours: React.FC<AdminBranchOperatingHoursProps>
                     <input
                       type="checkbox"
                       checked={hour.is_24_hours}
-                      onChange={(e) => updateHour(index, 'is_24_hours', e.target.checked)}
+                      onChange={(e) => updateHour(hourIndex, 'is_24_hours', e.target.checked)}
                       disabled={hour.is_closed}
                       className="w-4 h-4"
                     />
@@ -172,7 +174,7 @@ export const AdminBranchOperatingHours: React.FC<AdminBranchOperatingHoursProps>
                   <input
                     type="time"
                     value={hour.opening_time}
-                    onChange={(e) => updateHour(index, 'opening_time', e.target.value)}
+                    onChange={(e) => updateHour(hourIndex, 'opening_time', e.target.value)}
                     disabled={hour.is_closed || hour.is_24_hours}
                     className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220] disabled:bg-gray-100 text-sm"
                   />
@@ -183,7 +185,7 @@ export const AdminBranchOperatingHours: React.FC<AdminBranchOperatingHoursProps>
                   <input
                     type="time"
                     value={hour.closing_time}
-                    onChange={(e) => updateHour(index, 'closing_time', e.target.value)}
+                    onChange={(e) => updateHour(hourIndex, 'closing_time', e.target.value)}
                     disabled={hour.is_closed || hour.is_24_hours}
                     className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#781220] disabled:bg-gray-100 text-sm"
                   />
