@@ -20,30 +20,31 @@ export interface CreateOrderData {
 }
 
 export const orderService = {
+  async checkItemsAvailability(items: CartItem[]): Promise<{ unavailableItems: Array<{ id: string; name: string }>; availableItems: CartItem[] }> {
+    const itemIds = items.map(item => item.id);
+
+    const { data: menuItems, error: availabilityError } = await supabase
+      .from('menu_items')
+      .select('id, name, is_available')
+      .in('id', itemIds);
+
+    if (availabilityError) {
+      console.error('Error checking item availability:', availabilityError);
+      return { unavailableItems: [], availableItems: items };
+    }
+
+    const unavailableItems = menuItems?.filter(item => !item.is_available) || [];
+    const unavailableIds = new Set(unavailableItems.map(item => item.id));
+    const availableItems = items.filter(item => !unavailableIds.has(item.id));
+
+    return {
+      unavailableItems: unavailableItems.map(item => ({ id: item.id, name: item.name })),
+      availableItems
+    };
+  },
+
   async createOrder(orderData: CreateOrderData): Promise<{ success: boolean; orderId?: string; orderNumber?: string; error?: string }> {
     try {
-      const itemIds = orderData.items.map(item => item.id);
-
-      const { data: menuItems, error: availabilityError } = await supabase
-        .from('menu_items')
-        .select('id, name, is_available')
-        .in('id', itemIds);
-
-      if (availabilityError) {
-        console.error('Error checking item availability:', availabilityError);
-        return { success: false, error: 'فشل في التحقق من توفر المنتجات' };
-      }
-
-      const unavailableItems = menuItems?.filter(item => !item.is_available) || [];
-
-      if (unavailableItems.length > 0) {
-        const itemNames = unavailableItems.map(item => item.name).join('، ');
-        return {
-          success: false,
-          error: `المنتجات التالية غير متوفرة: ${itemNames}`
-        };
-      }
-
       const orderNumber = await this.generateOrderNumber();
       const orderId = crypto.randomUUID();
 

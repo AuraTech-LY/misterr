@@ -76,12 +76,38 @@ export const Cart: React.FC<CartProps> = ({
     setIsSubmitting(true);
 
     try {
+      const { unavailableItems, availableItems } = await orderService.checkItemsAvailability(cartItems);
+
+      if (unavailableItems.length > 0) {
+        setIsSubmitting(false);
+        setUnavailableItemsModal({
+          show: true,
+          unavailableItems,
+          availableItems,
+          orderData,
+        });
+        return;
+      }
+
+      await submitOrderWithItems(orderData, cartItems);
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert(`حدث خطأ في حفظ الطلب: ${error instanceof Error ? error.message : 'خطأ غير معروف'}`);
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitOrderWithItems = async (orderData: any, cartItems: CartItem[]) => {
+    setIsSubmitting(true);
+
+    try {
       const restaurantName = selectedBranch?.name?.includes('مستر شيش') ? 'مستر شيش' :
                             selectedBranch?.name?.includes('مستر كريسبي') ? 'مستر كريسبي' :
                             selectedBranch?.name?.includes('مستر برجريتو') ? 'مستر برجريتو' : 'المستر';
 
+      const itemsTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
       const deliveryPrice = orderData.deliveryMethod === 'delivery' ? (orderData.deliveryPrice || 0) : 0;
-      const totalAmount = total + deliveryPrice;
+      const totalAmount = itemsTotal + deliveryPrice;
 
       const result = await orderService.createOrder({
         branchId: selectedBranch?.id || 'unknown',
@@ -95,7 +121,7 @@ export const Cart: React.FC<CartProps> = ({
         customerLatitude: orderData.customerLocation?.latitude,
         customerLongitude: orderData.customerLocation?.longitude,
         paymentMethod: orderData.paymentMethod,
-        itemsTotal: total,
+        itemsTotal,
         deliveryPrice,
         totalAmount,
         items: cartItems,
@@ -105,7 +131,12 @@ export const Cart: React.FC<CartProps> = ({
         setOrderNumber(result.orderNumber);
         setShowCheckout(false);
         setShowSuccessModal(true);
-        onClearCart();
+        unavailableItemsModal.unavailableItems.forEach(unavailableItem => {
+          onRemoveItem(unavailableItem.id);
+        });
+        if (cartItems.length === 0) {
+          onClearCart();
+        }
       } else {
         console.error('Order creation failed:', result.error);
         alert(`حدث خطأ في حفظ الطلب: ${result.error || 'خطأ غير معروف'}`);
@@ -128,6 +159,66 @@ export const Cart: React.FC<CartProps> = ({
       setTimeout(() => setIsAnimating(true), 10);
     }, 300);
   };
+
+  // Show unavailable items modal
+  if (unavailableItemsModal.show) {
+    const { unavailableItems, availableItems, orderData } = unavailableItemsModal;
+    const allItemsUnavailable = availableItems.length === 0;
+
+    return (
+      <div className={`fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 transition-all duration-300 bg-black bg-opacity-50 backdrop-blur-sm`}>
+        <div className={`bg-white rounded-2xl max-w-md w-full shadow-2xl mx-2 sm:mx-0 p-6 sm:p-8 animate-fadeInUp`}>
+          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-10 h-10 text-orange-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+            {allItemsUnavailable ? 'المنتج غير متوفر' : 'بعض المنتجات غير متوفرة'}
+          </h2>
+
+          <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
+            <p className="font-semibold text-orange-800 mb-2">المنتجات غير المتوفرة:</p>
+            <ul className="space-y-1">
+              {unavailableItems.map(item => (
+                <li key={item.id} className="text-orange-700 text-sm">• {item.name}</li>
+              ))}
+            </ul>
+          </div>
+
+          {!allItemsUnavailable && (
+            <p className="text-gray-600 text-center mb-6">
+              هل تريد إكمال الطلب بالمنتجات المتوفرة فقط؟
+            </p>
+          )}
+
+          <div className="space-y-3">
+            {!allItemsUnavailable && (
+              <button
+                onClick={() => {
+                  setUnavailableItemsModal({ show: false, unavailableItems: [], availableItems: [], orderData: null });
+                  submitOrderWithItems(orderData, availableItems);
+                }}
+                className="w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all text-white shadow-lg hover:shadow-xl transform hover:scale-105 hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
+              >
+                نعم، أكمل الطلب
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                setUnavailableItemsModal({ show: false, unavailableItems: [], availableItems: [], orderData: null });
+                setShowCheckout(false);
+              }}
+              className="w-full py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all border-2 hover:bg-gray-50"
+              style={{ borderColor: primaryColor, color: primaryColor }}
+            >
+              {allItemsUnavailable ? 'حسناً' : 'إلغاء'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Show success modal
   if (showSuccessModal) {
