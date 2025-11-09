@@ -223,7 +223,7 @@ export default function AdminItemAvailability() {
                         />
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-900">{item.name}</h4>
-                          <p className="text-sm text-gray-600">{item.price} ر.س</p>
+                          <p className="text-sm text-gray-600">{item.price} د.ل</p>
                         </div>
                       </div>
 
