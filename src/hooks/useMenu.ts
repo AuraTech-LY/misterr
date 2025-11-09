@@ -85,6 +85,7 @@ export const useMenu = (branchId?: string, restaurantId?: string) => {
           image: item.image_url,
           category: item.category,
           popular: item.is_popular || false,
+          is_available: item.is_available,
           image_brightness: item.image_brightness || 1.2,
           image_contrast: item.image_contrast || 1.1
         }));
