@@ -41,6 +41,23 @@ export const Cart: React.FC<CartProps> = ({
     orderData: any;
   }>({ show: false, unavailableItems: [], availableItems: [], orderData: null });
 
+  // Check item availability when cart opens
+  React.useEffect(() => {
+    const checkAvailability = async () => {
+      if (isOpen && items.length > 0) {
+        const { unavailableItems } = await orderService.checkItemsAvailability(items);
+
+        if (unavailableItems.length > 0) {
+          unavailableItems.forEach(item => {
+            onRemoveItem(item.id);
+          });
+        }
+      }
+    };
+
+    checkAvailability();
+  }, [isOpen]);
+
   // Handle animation states
   React.useEffect(() => {
     if (isOpen) {
