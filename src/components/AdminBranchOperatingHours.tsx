@@ -90,6 +90,7 @@ export const AdminBranchOperatingHours: React.FC<AdminBranchOperatingHoursProps>
         if (error) throw error;
       }
 
+      await fetchOperatingHours();
       alert('تم حفظ أوقات العمل بنجاح');
     } catch (error) {
       console.error('Error saving operating hours:', error);

@@ -24,6 +24,7 @@ const AdminOperatingHours: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [branchInfo, setBranchInfo] = useState<{ id: string; name: string; area: string } | null>(null);
 
   useEffect(() => {
@@ -82,6 +83,7 @@ const AdminOperatingHours: React.FC = () => {
     try {
       setSaving(true);
       setError(null);
+      setSuccess(null);
 
       if (!operatingHours || !branchInfo) return;
 
@@ -104,6 +106,8 @@ const AdminOperatingHours: React.FC = () => {
       if (error) throw error;
 
       setOperatingHours(data);
+      setSuccess('تم حفظ أوقات العمل بنجاح');
+      setTimeout(() => setSuccess(null), 3000);
 
     } catch (error) {
       console.error('Error saving operating hours:', error);
@@ -168,6 +172,13 @@ const AdminOperatingHours: React.FC = () => {
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
           {error}
+        </div>
+      )}
+
+      {/* Success Message */}
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl">
+          {success}
         </div>
       )}
 
