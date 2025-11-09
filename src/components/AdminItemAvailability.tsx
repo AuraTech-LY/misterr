@@ -234,18 +234,18 @@ export default function AdminItemAvailability() {
                         <button
                           onClick={() => toggleAvailability(item.id, item.is_available)}
                           disabled={updating[item.id]}
-                          className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 ${
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 ${
                             updating[item.id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                           } ${
-                            item.is_available ? 'bg-green-500' : 'bg-red-500'
+                            item.is_available ? 'bg-green-500' : 'bg-gray-300'
                           }`}
                         >
                           {updating[item.id] ? (
                             <RefreshCw className="w-4 h-4 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin text-white" />
                           ) : (
                             <span
-                              className={`inline-block h-5 w-5 rounded-full bg-white shadow-lg transition-transform duration-200 ${
-                                item.is_available ? 'translate-x-[1px]' : 'translate-x-[23px]'
+                              className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition-transform ${
+                                item.is_available ? 'translate-x-6' : 'translate-x-0.5'
                               }`}
                             />
                           )}
