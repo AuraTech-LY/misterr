@@ -42,8 +42,7 @@ export const useMenu = (branchId?: string, restaurantId?: string) => {
         // Fetch menu items
         let query = supabase
           .from('menu_items')
-          .select('*')
-          .eq('is_available', true);
+          .select('*');
 
         // If restaurantId is provided, filter by restaurant
         if (restaurantId) {
