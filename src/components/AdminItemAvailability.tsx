@@ -227,29 +227,30 @@ export default function AdminItemAvailability() {
                         </div>
                       </div>
 
-                      <button
-                        onClick={() => toggleAvailability(item.id, item.is_available)}
-                        disabled={updating[item.id]}
-                        className={`px-6 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 ${
-                          item.is_available
-                            ? 'bg-green-500 text-white hover:bg-green-600'
-                            : 'bg-red-500 text-white hover:bg-red-600'
-                        } ${updating[item.id] ? 'opacity-50 cursor-not-allowed' : ''}`}
-                      >
-                        {updating[item.id] ? (
-                          <RefreshCw className="w-5 h-5 animate-spin" />
-                        ) : item.is_available ? (
-                          <>
-                            <Power className="w-5 h-5" />
-                            متوفر
-                          </>
-                        ) : (
-                          <>
-                            <PowerOff className="w-5 h-5" />
-                            غير متوفر
-                          </>
-                        )}
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-sm font-medium ${item.is_available ? 'text-green-600' : 'text-red-600'}`}>
+                          {item.is_available ? 'متوفر' : 'غير متوفر'}
+                        </span>
+                        <button
+                          onClick={() => toggleAvailability(item.id, item.is_available)}
+                          disabled={updating[item.id]}
+                          className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#781220] focus:ring-offset-2 ${
+                            updating[item.id] ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                          } ${
+                            item.is_available ? 'bg-green-500' : 'bg-red-500'
+                          }`}
+                        >
+                          {updating[item.id] ? (
+                            <RefreshCw className="w-4 h-4 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 animate-spin text-white" />
+                          ) : (
+                            <span
+                              className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform ${
+                                item.is_available ? 'translate-x-7' : 'translate-x-1'
+                              }`}
+                            />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
