@@ -245,7 +245,7 @@ export default function AdminItemAvailability() {
                           ) : (
                             <span
                               className={`inline-block h-5 w-5 rounded-full bg-white shadow-lg transition-transform duration-200 ${
-                                item.is_available ? 'translate-x-[20px]' : 'translate-x-0'
+                                item.is_available ? 'translate-x-0' : 'translate-x-[20px]'
                               }`}
                             />
                           )}
