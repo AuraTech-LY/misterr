@@ -34,6 +34,12 @@ export const Cart: React.FC<CartProps> = ({
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [orderNumber, setOrderNumber] = React.useState<string>('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [unavailableItemsModal, setUnavailableItemsModal] = React.useState<{
+    show: boolean;
+    unavailableItems: Array<{ id: string; name: string }>;
+    availableItems: CartItem[];
+    orderData: any;
+  }>({ show: false, unavailableItems: [], availableItems: [], orderData: null });
 
   // Handle animation states
   React.useEffect(() => {
