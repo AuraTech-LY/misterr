@@ -164,6 +164,8 @@ export const BranchMenuPage: React.FC = () => {
 
     const fetchWorkingHours = async () => {
       try {
+        clearBranchOperatingHoursCache(effectiveBranchId);
+
         const { data, error } = await supabase
           .from('operating_hours')
           .select('*')

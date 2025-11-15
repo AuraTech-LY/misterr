@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 // Cache configuration
-const CACHE_EXPIRATION_MINUTES = 2; // Cache operating hours for 2 minutes
+const CACHE_EXPIRATION_MINUTES = 0; // Disable caching - always fetch fresh data
 const CACHE_KEY_PREFIX = 'operating_hours_';
 
 interface CachedOperatingHours {
