@@ -158,7 +158,7 @@ export const BranchMenuPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [effectiveBranchId]);
 
-  // Fetch working hours from database
+  // Fetch working hours from database and subscribe to real-time updates
   useEffect(() => {
     if (!effectiveBranchId) return;
 
@@ -195,6 +195,28 @@ export const BranchMenuPage: React.FC = () => {
     };
 
     fetchWorkingHours();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel(`operating_hours:${effectiveBranchId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'operating_hours',
+          filter: `branch_id=eq.${effectiveBranchId}`,
+        },
+        () => {
+          console.log('Operating hours updated, refetching...');
+          fetchWorkingHours();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [effectiveBranchId]);
 
   // Helper function to format time from 24h to 12h format
