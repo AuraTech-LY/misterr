@@ -212,18 +212,6 @@ export const BranchMenuPage: React.FC = () => {
     }
   };
 
-  // Show loading state while fetching branch data
-  if (isLoadingBranch) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center" dir="rtl">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#781220]"></div>
-          <p className="mt-4 text-gray-600">جاري التحميل...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Show error if branch not found
   if (!effectiveBranchId || !branch) {
     return (
