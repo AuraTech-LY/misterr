@@ -19,50 +19,79 @@ interface OperatingHours {
   delivery_available: boolean;
 }
 
+interface Branch {
+  id: string;
+  name: string;
+  area: string;
+  restaurant_name: string;
+}
+
 const AdminOperatingHours: React.FC = () => {
   const [operatingHours, setOperatingHours] = useState<OperatingHours | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [branchInfo, setBranchInfo] = useState<{ id: string; name: string; area: string } | null>(null);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [selectedBranchId, setSelectedBranchId] = useState<string>('');
 
   useEffect(() => {
-    fetchBranchAndHours();
+    fetchBranches();
   }, []);
 
-  const fetchBranchAndHours = async () => {
+  useEffect(() => {
+    if (selectedBranchId) {
+      fetchOperatingHours();
+    }
+  }, [selectedBranchId]);
+
+  const fetchBranches = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Fetch Al-Baron branch
-      const { data: branchData, error: branchError } = await supabase
+      const { data: branchesData, error: branchError } = await supabase
         .from('restaurant_branches')
-        .select('id, name, area, restaurants!inner(slug)')
-        .eq('restaurants.slug', 'albaron')
-        .single();
+        .select('id, name, area, restaurants!inner(name)')
+        .eq('is_active', true);
 
       if (branchError) throw branchError;
 
-      setBranchInfo({
-        id: branchData.id,
-        name: branchData.name,
-        area: branchData.area
-      });
+      const formattedBranches = (branchesData || []).map((b: any) => ({
+        id: b.id,
+        name: b.name,
+        area: b.area,
+        restaurant_name: b.restaurants.name
+      }));
 
-      // Fetch operating hours for this branch
+      setBranches(formattedBranches);
+
+      if (formattedBranches.length > 0) {
+        setSelectedBranchId(formattedBranches[0].id);
+      }
+    } catch (error) {
+      console.error('Error fetching branches:', error);
+      setError('فشل في تحميل الفروع');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOperatingHours = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
       const { data: hoursData, error: hoursError } = await supabase
         .from('operating_hours')
         .select('*')
-        .eq('branch_id', branchData.id)
+        .eq('branch_id', selectedBranchId)
         .maybeSingle();
 
       if (hoursError) throw hoursError;
 
-      // Set hours or default values
       setOperatingHours(hoursData || {
-        branch_id: branchData.id,
+        branch_id: selectedBranchId,
         opening_time: '11:00',
         closing_time: '23:59',
         is_24_hours: false,
@@ -85,13 +114,13 @@ const AdminOperatingHours: React.FC = () => {
       setError(null);
       setSuccess(null);
 
-      if (!operatingHours || !branchInfo) return;
+      if (!operatingHours || !selectedBranchId) return;
 
       const { data, error } = await supabase
         .from('operating_hours')
         .upsert({
          ...(operatingHours.id && { id: operatingHours.id }),
-          branch_id: branchInfo.id,
+          branch_id: selectedBranchId,
           opening_time: operatingHours.opening_time,
           closing_time: operatingHours.closing_time,
           is_24_hours: operatingHours.is_24_hours,
@@ -150,22 +179,44 @@ const AdminOperatingHours: React.FC = () => {
     );
   }
 
-  if (!branchInfo || !operatingHours) {
+  if (branches.length === 0 || !operatingHours) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600">فشل في تحميل معلومات الفرع</p>
+        <p className="text-red-600">لا توجد فروع متاحة</p>
       </div>
     );
   }
+
+  const selectedBranch = branches.find(b => b.id === selectedBranchId);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">إدارة أوقات العمل - البارون</h2>
-          <p className="text-gray-600 mt-1">{branchInfo.name} - {branchInfo.area}</p>
+          <h2 className="text-2xl font-bold text-gray-800">إدارة أوقات العمل</h2>
+          {selectedBranch && (
+            <p className="text-gray-600 mt-1">{selectedBranch.restaurant_name} - {selectedBranch.name} - {selectedBranch.area}</p>
+          )}
         </div>
+      </div>
+
+      {/* Branch Selector */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          اختر الفرع
+        </label>
+        <select
+          value={selectedBranchId}
+          onChange={(e) => setSelectedBranchId(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#fcb946] focus:border-transparent"
+        >
+          {branches.map((branch) => (
+            <option key={branch.id} value={branch.id}>
+              {branch.restaurant_name} - {branch.name} - {branch.area}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Error Message */}
