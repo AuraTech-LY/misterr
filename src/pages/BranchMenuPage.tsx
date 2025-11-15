@@ -212,8 +212,8 @@ export const BranchMenuPage: React.FC = () => {
     }
   };
 
-  // Show error if branch not found
-  if (!effectiveBranchId || !branch) {
+  // Show error if branch not found (only after loading is complete)
+  if (!isLoadingBranch && (!effectiveBranchId || !branch)) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col justify-center p-4" dir="rtl">
         <div className="max-w-md w-full mx-auto text-center">
@@ -228,6 +228,11 @@ export const BranchMenuPage: React.FC = () => {
         </div>
       </div>
     );
+  }
+
+  // Don't render the main content until branch data is loaded
+  if (isLoadingBranch || !branch) {
+    return null;
   }
 
   // Filter menu items by category
