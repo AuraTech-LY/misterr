@@ -8,7 +8,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { getBranchById } from '../data/restaurantsData';
 import { Branch } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening, clearBranchOperatingHoursCache } from '../utils/timeUtils';
 import { createClient } from '@supabase/supabase-js';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -208,7 +208,8 @@ export const BranchMenuPage: React.FC = () => {
           filter: `branch_id=eq.${effectiveBranchId}`,
         },
         () => {
-          console.log('Operating hours updated, refetching...');
+          console.log('Operating hours updated, clearing cache and refetching...');
+          clearBranchOperatingHoursCache(effectiveBranchId);
           fetchWorkingHours();
         }
       )
