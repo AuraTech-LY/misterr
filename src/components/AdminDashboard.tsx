@@ -57,6 +57,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
   const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
   const {
     isOwner,
     canManageUsers,
@@ -125,6 +126,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       }
     }
   }, [permissionLoading]);
+
+  // Cleanup wake lock on unmount
+  useEffect(() => {
+    return () => {
+      if (wakeLock) {
+        wakeLock.release().catch(err => {
+          console.error('Failed to release wake lock on unmount:', err);
+        });
+      }
+    };
+  }, [wakeLock]);
 
   const checkAuthStatus = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -305,13 +317,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
+      try {
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+
+        // Request wake lock to keep screen on
+        if ('wakeLock' in navigator) {
+          try {
+            const lock = await navigator.wakeLock.request('screen');
+            setWakeLock(lock);
+            console.log('Wake Lock activated');
+
+            // Handle wake lock release
+            lock.addEventListener('release', () => {
+              console.log('Wake Lock released');
+              setWakeLock(null);
+            });
+          } catch (err) {
+            console.error('Wake Lock request failed:', err);
+          }
+        }
+      } catch (err) {
+        console.error('Fullscreen request failed:', err);
+      }
     } else {
-      document.exitFullscreen();
+      await document.exitFullscreen();
       setIsFullscreen(false);
+
+      // Release wake lock
+      if (wakeLock) {
+        try {
+          await wakeLock.release();
+          setWakeLock(null);
+          console.log('Wake Lock released manually');
+        } catch (err) {
+          console.error('Wake Lock release failed:', err);
+        }
+      }
     }
   };
 
