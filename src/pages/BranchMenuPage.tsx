@@ -11,6 +11,7 @@ import { Branch } from '../types';
 import { isWithinOperatingHours, getTimeUntilOpening, clearBranchOperatingHoursCache } from '../utils/timeUtils';
 import { createClient } from '@supabase/supabase-js';
 import { useTheme } from '../contexts/ThemeContext';
+import { restaurantService } from '../services/restaurantService';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -42,26 +43,21 @@ export const BranchMenuPage: React.FC = () => {
   useEffect(() => {
     const fetchBranchData = async () => {
       setIsLoadingBranch(true);
-      const { restaurantService } = await import('../services/restaurantService');
 
-      // If using new URL structure with branchId
       if (urlBranchId) {
         const data = await restaurantService.getBranchById(urlBranchId);
         if (data) {
           setBranchData(data);
         }
       } else {
-        // No branch ID provided - load default Albaron branch
         const restaurant = await restaurantService.getRestaurantBySlug('albaron');
         if (restaurant && restaurant.branches && restaurant.branches.length > 0) {
-          // Get first branch
           const firstBranch = restaurant.branches[0];
           const data = await restaurantService.getBranchById(firstBranch.id);
           if (data) {
             setBranchData(data);
           }
         } else {
-          // Fallback: try old branch ID system
           const branchId = getBranchIdFromPath(location.pathname);
           if (branchId) {
             const mapping = await restaurantService.getOldBranchIdMapping(branchId);
@@ -166,14 +162,15 @@ export const BranchMenuPage: React.FC = () => {
       try {
         clearBranchOperatingHoursCache(effectiveBranchId);
 
-        const { data, error } = await supabase
-          .from('operating_hours')
+        const dayOfWeek = new Date().getDay();
+        const { data, error} = await supabase
+          .from('branch_operating_hours')
           .select('*')
           .eq('branch_id', effectiveBranchId)
+          .eq('day_of_week', dayOfWeek)
           .limit(1);
 
         if (error || !data || data.length === 0) {
-          // Use default hours if no data found
           const defaultClosingTime = effectiveBranchId === 'dollar' || effectiveBranchId === 'cccccccc-cccc-cccc-cccc-cccccccccccc' ? '03:00' : '23:59';
           setWorkingHours(`يومياً من 11:00 ص إلى ${formatTime(defaultClosingTime)}`);
           return;

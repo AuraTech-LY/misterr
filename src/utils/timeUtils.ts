@@ -104,14 +104,17 @@ const setCachedOperatingHours = (branchId: string, data: Omit<CachedOperatingHou
  */
 const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOperatingHours | null> => {
   try {
+    const currentTime = getCurrentTime();
+    const dayOfWeek = currentTime.getDay();
+
     const { data, error } = await supabase
-      .from('operating_hours')
+      .from('branch_operating_hours')
       .select('*')
       .eq('branch_id', branchId)
+      .eq('day_of_week', dayOfWeek)
       .limit(1);
 
     if (error || !data || data.length === 0) {
-      // Use default hours if no data found
       const defaultClosingHour = branchId === 'dollar' ? '03:00' : '23:59';
       const defaultData = {
         opening_time: '11:00',
@@ -122,8 +125,7 @@ const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOper
         delivery_end_time: null,
         delivery_available: true
       };
-      
-      // Cache the default data
+
       setCachedOperatingHours(branchId, defaultData);
       return { ...defaultData, cached_at: Date.now() };
     }
@@ -134,14 +136,13 @@ const fetchAndCacheOperatingHours = async (branchId: string): Promise<CachedOper
       closing_time: operatingHoursData.closing_time,
       is_24_hours: operatingHoursData.is_24_hours,
       is_closed: operatingHoursData.is_closed,
-      delivery_start_time: operatingHoursData.delivery_start_time,
-      delivery_end_time: operatingHoursData.delivery_end_time,
-      delivery_available: operatingHoursData.delivery_available
+      delivery_start_time: null,
+      delivery_end_time: null,
+      delivery_available: true
     };
 
-    // Cache the fetched data
     setCachedOperatingHours(branchId, operatingHours);
-    
+
     return { ...operatingHours, cached_at: Date.now() };
   } catch (error) {
     console.error('Error fetching operating hours:', error);
