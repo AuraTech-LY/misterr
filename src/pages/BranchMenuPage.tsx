@@ -8,7 +8,7 @@ import { useMenu } from '../hooks/useMenu';
 import { useCart } from '../hooks/useCart';
 import { getBranchById } from '../data/restaurantsData';
 import { Branch } from '../types';
-import { isWithinOperatingHours, getTimeUntilOpening, clearBranchOperatingHoursCache } from '../utils/timeUtils';
+import { isWithinOperatingHours, getTimeUntilOpening, clearBranchOperatingHoursCache, getCurrentTime } from '../utils/timeUtils';
 import { createClient } from '@supabase/supabase-js';
 import { useTheme } from '../contexts/ThemeContext';
 import { restaurantService } from '../services/restaurantService';
@@ -162,7 +162,9 @@ export const BranchMenuPage: React.FC = () => {
       try {
         clearBranchOperatingHoursCache(effectiveBranchId);
 
-        const dayOfWeek = new Date().getDay();
+        const dayOfWeek = getCurrentTime().getDay();
+        console.log(`[BranchMenuPage] Fetching operating hours for branch: ${effectiveBranchId}, day: ${dayOfWeek}`);
+
         const { data, error} = await supabase
           .from('branch_operating_hours')
           .select('*')
@@ -170,7 +172,10 @@ export const BranchMenuPage: React.FC = () => {
           .eq('day_of_week', dayOfWeek)
           .limit(1);
 
+        console.log(`[BranchMenuPage] Query result:`, { data, error });
+
         if (error || !data || data.length === 0) {
+          console.log(`[BranchMenuPage] No operating hours found for branch ${effectiveBranchId}, using defaults`);
           const defaultClosingTime = effectiveBranchId === 'dollar' || effectiveBranchId === 'cccccccc-cccc-cccc-cccc-cccccccccccc' ? '03:00' : '23:59';
           setWorkingHours(`يومياً من 11:00 ص إلى ${formatTime(defaultClosingTime)}`);
           return;
