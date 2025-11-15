@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell, Power } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell, Power, Maximize, Minimize } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
@@ -56,6 +56,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string>('');
   const [successMessages, setSuccessMessages] = useState<SuccessMessage[]>([]);
   const [currentUserEmail, setCurrentUserEmail] = useState<string>('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const {
     isOwner,
     canManageUsers,
@@ -304,6 +305,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     }
   };
 
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -326,14 +337,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 <h1 className="text-xl sm:text-2xl font-black">لوحة التحكم</h1>
               </div>
             </div>
-            <button
-              onClick={onLogout}
-              className="bg-white bg-opacity-20 text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full font-semibold hover:bg-opacity-30 transition-all duration-300 flex items-center gap-2 text-sm sm:text-base"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">تسجيل الخروج</span>
-              <span className="sm:hidden">خروج</span>
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={toggleFullscreen}
+                className="bg-white bg-opacity-20 text-white p-2 sm:px-4 sm:py-3 rounded-full font-semibold hover:bg-opacity-30 transition-all duration-300 flex items-center gap-2"
+                title={isFullscreen ? 'خروج من وضع ملء الشاشة' : 'ملء الشاشة'}
+              >
+                {isFullscreen ? <Minimize className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize className="w-4 h-4 sm:w-5 sm:h-5" />}
+                <span className="hidden sm:inline">{isFullscreen ? 'خروج' : 'ملء الشاشة'}</span>
+              </button>
+              <button
+                onClick={onLogout}
+                className="bg-white bg-opacity-20 text-white px-3 py-2 sm:px-6 sm:py-3 rounded-full font-semibold hover:bg-opacity-30 transition-all duration-300 flex items-center gap-2 text-sm sm:text-base"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">تسجيل الخروج</span>
+                <span className="sm:hidden">خروج</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

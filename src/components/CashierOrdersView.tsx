@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, RefreshCw, Package, Clock, CheckCircle, XCircle, Truck, AlertCircle, Maximize, Minimize, Phone } from 'lucide-react';
+import { Bell, RefreshCw, Package, Clock, CheckCircle, XCircle, Truck, AlertCircle, Phone } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Order {
@@ -45,7 +45,6 @@ export const CashierOrdersView: React.FC = () => {
   const [orderItems, setOrderItems] = useState<Record<string, OrderItem[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>('active');
   const [newOrderIds, setNewOrderIds] = useState<Set<string>>(new Set());
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -384,15 +383,6 @@ export const CashierOrdersView: React.FC = () => {
     }
   };
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
-    }
-  };
 
   const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
     try {
@@ -529,13 +519,6 @@ export const CashierOrdersView: React.FC = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={toggleFullscreen}
-                className="p-2 bg-slate-100 rounded-lg active:bg-slate-200 transition-colors"
-                title={isFullscreen ? 'خروج' : 'ملء الشاشة'}
-              >
-                {isFullscreen ? <Minimize className="w-5 h-5 text-slate-700" /> : <Maximize className="w-5 h-5 text-slate-700" />}
-              </button>
               <button
                 onClick={fetchOrders}
                 className="p-2 bg-slate-800 rounded-lg active:bg-slate-900 transition-colors"
