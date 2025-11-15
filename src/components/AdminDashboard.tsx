@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, Store, ShoppingCart, Users, FileText, Bell, Power, Maximize, Minimize } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, LogOut, MapPin, Menu, Tag, ShoppingCart, Users, FileText, Power, Maximize, Minimize } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { CustomSelect } from './CustomSelect';
 import { ItemForm, MenuItem } from './ItemForm';
 import { AdminCategories } from './AdminCategories';
 import { AdminOperatingHours } from './AdminOperatingHours';
-import { AdminOrders } from './AdminOrders';
 import { AdminUserManagement } from './AdminUserManagement';
 import { AdminAuditLogs } from './AdminAuditLogs';
 import { CashierOrdersView } from './CashierOrdersView';
@@ -118,7 +117,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       } else if (canManageBranches()) {
         setActiveTab('hours');
       } else if (canViewOrders()) {
-        setActiveTab('orders');
+        setActiveTab('cashier');
       } else if (canManageUsers()) {
         setActiveTab('users');
       } else if (isOwner()) {
@@ -468,20 +467,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               </button>
             )}
 
-            {canViewOrders() && (
-              <button
-                onClick={() => setActiveTab('orders')}
-                className={`px-3 sm:px-6 py-3 font-semibold transition-all duration-300 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base border-b-2 whitespace-nowrap flex-shrink-0 ${
-                  activeTab === 'orders'
-                    ? 'text-[#fcb946] border-[#fcb946] bg-amber-50'
-                    : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
-                }`}
-              >
-                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span>الطلبات</span>
-              </button>
-            )}
-
             {canManageMenuItems() && (
               <button
                 onClick={() => setActiveTab('availability')}
@@ -505,9 +490,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     : 'text-gray-600 border-transparent hover:text-[#fcb946] hover:border-gray-300'
                 }`}
               >
-                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden xs:inline">الطلبات المباشرة</span>
-                <span className="xs:hidden">مباشر</span>
+                <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>الطلبات</span>
               </button>
             )}
 
@@ -548,8 +532,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           <AdminCategories onCategoriesChange={handleCategoriesChange} />
         ) : activeTab === 'hours' && canManageBranches() ? (
           <AdminOperatingHours />
-        ) : activeTab === 'orders' && canViewOrders() ? (
-          <AdminOrders />
         ) : activeTab === 'cashier' && canViewOrders() ? (
           <CashierOrdersView />
         ) : activeTab === 'users' && canManageUsers() ? (
