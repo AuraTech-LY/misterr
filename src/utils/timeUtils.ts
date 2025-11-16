@@ -85,9 +85,12 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
   }
 
   if (data.is_closed) {
-    console.log('[timeUtils] Branch is CLOSED for today');
+    console.log('[timeUtils] ⛔ Branch is CLOSED for today - is_closed flag is TRUE');
+    console.log('[timeUtils] ⛔ Returning FALSE to indicate branch is CLOSED');
     return false;
   }
+
+  console.log('[timeUtils] ✅ is_closed flag is FALSE, checking time-based hours');
 
   if (data.is_24_hours) {
     console.log('[timeUtils] Branch is 24 hours');

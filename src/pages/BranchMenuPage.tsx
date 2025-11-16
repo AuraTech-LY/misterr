@@ -146,8 +146,11 @@ export const BranchMenuPage: React.FC = () => {
     if (!effectiveBranchId) return;
 
     const updateStatus = async () => {
+      console.log('[BranchMenuPage] Updating status for branch:', effectiveBranchId);
       const branchIsOpen = await isWithinOperatingHours(effectiveBranchId);
+      console.log('[BranchMenuPage] ⭐ isWithinOperatingHours returned:', branchIsOpen);
       const timeUntilOpen = await getTimeUntilOpening(effectiveBranchId);
+      console.log('[BranchMenuPage] Setting isOpen state to:', branchIsOpen);
       setIsOpen(branchIsOpen);
       setTimeUntilOpening(timeUntilOpen);
     };
