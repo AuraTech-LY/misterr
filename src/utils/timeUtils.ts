@@ -63,6 +63,13 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
 
   console.log('[timeUtils] Checking operating hours:', { branchId, dayOfWeek, libyaTime: currentTime.toLocaleString() });
 
+  // Debug: Show ALL hours for this branch
+  const { data: allHours } = await supabase
+    .from('branch_operating_hours')
+    .select('*')
+    .eq('branch_id', branchId);
+  console.log('[timeUtils] ALL hours for this branch:', allHours);
+
   const { data, error } = await supabase
     .from('branch_operating_hours')
     .select('*')
@@ -70,7 +77,7 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
     .eq('day_of_week', dayOfWeek)
     .single();
 
-  console.log('[timeUtils] Query result:', { data, error });
+  console.log('[timeUtils] Query result for today (day ' + dayOfWeek + '):', { data, error });
 
   if (error || !data) {
     console.log('[timeUtils] No data found, defaulting to open');
