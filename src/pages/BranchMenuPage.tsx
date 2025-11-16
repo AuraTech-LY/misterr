@@ -160,37 +160,28 @@ export const BranchMenuPage: React.FC = () => {
 
     const fetchWorkingHours = async () => {
       try {
-        clearBranchOperatingHoursCache(effectiveBranchId);
-
         const dayOfWeek = getCurrentTime().getDay();
-        console.log(`[BranchMenuPage] Fetching operating hours for branch: ${effectiveBranchId}, day: ${dayOfWeek}`);
 
         const { data, error} = await supabase
           .from('branch_operating_hours')
           .select('*')
           .eq('branch_id', effectiveBranchId)
           .eq('day_of_week', dayOfWeek)
-          .limit(1);
+          .single();
 
-        console.log(`[BranchMenuPage] Query result:`, { data, error });
-
-        if (error || !data || data.length === 0) {
-          console.log(`[BranchMenuPage] No operating hours found for branch ${effectiveBranchId}, using defaults`);
-          const defaultClosingTime = effectiveBranchId === 'dollar' || effectiveBranchId === 'cccccccc-cccc-cccc-cccc-cccccccccccc' ? '03:00' : '23:59';
-          setWorkingHours(`يومياً من 11:00 ص إلى ${formatTime(defaultClosingTime)}`);
+        if (error || !data) {
+          setWorkingHours('يومياً من 11:00 ص إلى 11:59 م');
           return;
         }
 
-        const hours = data[0];
-
-        if (hours.is_closed) {
-          setWorkingHours('مغلق حالياً');
-        } else if (hours.is_24_hours) {
+        if (data.is_closed) {
+          setWorkingHours('مغلق اليوم');
+        } else if (data.is_24_hours) {
           setWorkingHours('مفتوح 24 ساعة');
         } else {
-          const openingTime = formatTime(hours.opening_time);
-          const closingTime = formatTime(hours.closing_time);
-          setWorkingHours(`يومياً من ${openingTime} إلى ${closingTime}`);
+          const openingTime = formatTime(data.opening_time);
+          const closingTime = formatTime(data.closing_time);
+          setWorkingHours(`${openingTime} - ${closingTime}`);
         }
       } catch (error) {
         console.error('Error fetching working hours:', error);
