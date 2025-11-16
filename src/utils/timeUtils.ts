@@ -54,11 +54,14 @@ const isTimeWithinOperatingHours = (
 
 export const isWithinOperatingHours = async (branchId?: string): Promise<boolean> => {
   if (!branchId) {
+    console.log('[timeUtils] No branchId provided, using default hours');
     return isTimeWithinOperatingHours(11, 0, 23, 59);
   }
 
   const currentTime = getCurrentTime();
   const dayOfWeek = currentTime.getDay();
+
+  console.log('[timeUtils] Checking operating hours:', { branchId, dayOfWeek, libyaTime: currentTime.toLocaleString() });
 
   const { data, error } = await supabase
     .from('branch_operating_hours')
@@ -67,17 +70,30 @@ export const isWithinOperatingHours = async (branchId?: string): Promise<boolean
     .eq('day_of_week', dayOfWeek)
     .single();
 
+  console.log('[timeUtils] Query result:', { data, error });
+
   if (error || !data) {
+    console.log('[timeUtils] No data found, defaulting to open');
     return isTimeWithinOperatingHours(11, 0, 23, 59);
   }
 
-  if (data.is_closed) return false;
-  if (data.is_24_hours) return true;
+  if (data.is_closed) {
+    console.log('[timeUtils] Branch is CLOSED for today');
+    return false;
+  }
+
+  if (data.is_24_hours) {
+    console.log('[timeUtils] Branch is 24 hours');
+    return true;
+  }
 
   const [openHour, openMinute] = data.opening_time.split(':').map(Number);
   const [closeHour, closeMinute] = data.closing_time.split(':').map(Number);
 
-  return isTimeWithinOperatingHours(openHour, openMinute, closeHour, closeMinute);
+  const isOpen = isTimeWithinOperatingHours(openHour, openMinute, closeHour, closeMinute);
+  console.log('[timeUtils] Branch hours:', { openHour, openMinute, closeHour, closeMinute, isOpen });
+
+  return isOpen;
 };
 
 export const isDeliveryAvailable = async (branchId?: string): Promise<boolean> => {

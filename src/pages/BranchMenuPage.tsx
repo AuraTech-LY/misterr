@@ -45,16 +45,22 @@ export const BranchMenuPage: React.FC = () => {
       setIsLoadingBranch(true);
 
       if (urlBranchId) {
+        console.log('[BranchMenuPage] Loading branch by URL ID:', urlBranchId);
         const data = await restaurantService.getBranchById(urlBranchId);
         if (data) {
+          console.log('[BranchMenuPage] Loaded branch:', data.branch?.name, 'ID:', data.branch?.id);
           setBranchData(data);
         }
       } else {
+        console.log('[BranchMenuPage] No URL ID, loading Albaron default');
         const restaurant = await restaurantService.getRestaurantBySlug('albaron');
+        console.log('[BranchMenuPage] Albaron restaurant:', restaurant);
         if (restaurant && restaurant.branches && restaurant.branches.length > 0) {
           const firstBranch = restaurant.branches[0];
+          console.log('[BranchMenuPage] Using first branch:', firstBranch.name, 'ID:', firstBranch.id);
           const data = await restaurantService.getBranchById(firstBranch.id);
           if (data) {
+            console.log('[BranchMenuPage] Branch data loaded:', data);
             setBranchData(data);
           }
         } else {
@@ -160,7 +166,9 @@ export const BranchMenuPage: React.FC = () => {
 
     const fetchWorkingHours = async () => {
       try {
-        const dayOfWeek = getCurrentTime().getDay();
+        const currentTime = getCurrentTime();
+        const dayOfWeek = currentTime.getDay();
+        console.log('[BranchMenuPage] Fetching hours for branch:', effectiveBranchId, 'day:', dayOfWeek, 'Libya time:', currentTime.toLocaleString());
 
         const { data, error} = await supabase
           .from('branch_operating_hours')
@@ -169,7 +177,10 @@ export const BranchMenuPage: React.FC = () => {
           .eq('day_of_week', dayOfWeek)
           .single();
 
+        console.log('[BranchMenuPage] Operating hours query result:', { data, error });
+
         if (error || !data) {
+          console.log('[BranchMenuPage] No hours found, using defaults');
           setWorkingHours('يومياً من 11:00 ص إلى 11:59 م');
           return;
         }
